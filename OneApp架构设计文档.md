@@ -886,7 +886,11 @@ class AppModule extends Module  {
 
 #### Bloc架构模式
 
-![bloc](./images/Bloc-1.awebp)
+![bloc_architecture](./images/bloc_architecture_full.webp)
+
+![cubit_architecture](./images/cubit_architecture_full.webp)
+
+![bloc_system](./images/Bloc-1.awebp)
 
 ```mermaid
 graph LR
@@ -1724,113 +1728,779 @@ graph TB
 
 #### 2.1 分层架构设计
 
-**用户界面层 (UI Layer)**
-```dart
-// 主要职责：用户交互和界面渲染
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          CarControlCard(),      // 车辆控制卡片
-          ChargingServiceCard(), // 充电服务卡片
-          CommunityCard(),       // 社区功能卡片
-          MembershipCard(),      // 会员中心卡片
-        ],
-      ),
-    );
-  }
-}
-```
+基于OneApp项目的代码结构，展示各层的具体实现和职责划分：
 
-**业务逻辑层 (Business Layer)**
+##### 用户界面层 (UI Layer)
+
+**主页面实现** - 基于 `HomePage` 的代码：
+
 ```dart
-// 业务模块示例：车辆控制模块
-class CarModule extends Module {
+/// OneApp 主页面 - 底部Tab导航架构
+class HomePage extends StatefulWidget with RouteObjProvider {
+  /// 构造器
+  /// [initialBottomTabKey] 底部tab key, value = [HomeBottomTabKey]
+  /// [initialTopTabKey] 顶部tab key, value = [DiscoveryTabKey]
+  /// [argsData] 传入的参数数据
+  HomePage({
+    String? initialBottomTabKey,
+    String? initialTopTabKey,
+    Map<String, dynamic>? argsData,
+    Key? key,
+  })  : initialBottomTabIndex = HomeBottomTabKeyEx.createFrom(initialBottomTabKey).index,
+        initialTopTabKey = initialTopTabKey ?? '',
+        argsMap = argsData,
+        super(key: key);
+
+  final int initialBottomTabIndex;
+  final String initialTopTabKey;
+  final Map<String, dynamic>? argsMap;
+
   @override
-  List<Bind> get binds => [
-    // 业务服务
-    Bind.singleton((i) => CarControlService(i())),
-    Bind.singleton((i) => VehicleStatusService(i())),
-    
-    // 业务状态管理
-    Bind.factory((i) => CarControlBloc(i())),
-    Bind.factory((i) => VehicleStatusBloc(i())),
-  ];
+  State<StatefulWidget> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with RouteAware {
+  final Map<HomeBottomTabKey, Widget> _pages = {};
+  HomeBloc? _bloc;
+  late StreamSubscription? _createEvent;
+  late StreamSubscription? _mainPageIndexChangeEvent;
   
   @override
-  List<ModularRoute> get routes => [
-    ChildRoute('/control', child: (_, __) => CarControlPage()),
-    ChildRoute('/status', child: (_, __) => VehicleStatusPage()),
-  ];
-}
-```
-
-**服务接入层 (Service Layer)**
-```dart
-// 服务抽象接口
-abstract class IChargingService {
-  Future<List<ChargingStation>> findNearbyStations(LatLng location);
-  Future<ChargingSession> startCharging(String stationId);
-  Future<void> stopCharging(String sessionId);
-}
-
-// 具体服务实现
-class ChargingService implements IChargingService {
-  final NetworkClient _client;
-  final CacheManager _cache;
-  
-  @override
-  Future<List<ChargingStation>> findNearbyStations(LatLng location) async {
-    // 1. 检查缓存
-    final cached = await _cache.get('stations_${location.hashCode}');
-    if (cached != null) return cached;
+  void initState() {
+    super.initState();
+    Logger.i('HomePage initState...bottom index = ${widget.initialBottomTabIndex}');
     
-    // 2. 网络请求
-    final response = await _client.get('/charging/stations', {
-      'lat': location.latitude,
-      'lng': location.longitude,
-      'radius': 5000,
+    // 初始化HomeBloc，注入依赖服务
+    _bloc = HomeBloc(
+      widget.initialBottomTabIndex,
+      Modular.get<IGarageFacade>(),    // 车库服务
+      Modular.get<IAuthFacade>(),      // 认证服务
+    )..add(const HomeEvent.checkIfHasDefaultCar());
+
+    // 订阅社区模块事件
+    _createEvent = OneAppEventBus.addListen<UserCreationEditEvent>((event) {
+      if (event.editType == UserCreationType.add) {
+        _bloc?.add(const HomeEvent.viewPagerChanged(index: 1));
+      }
+      if (event.editType == UserCreationType.buyCar) {
+        _bloc?.add(const HomeEvent.viewPagerChanged(index: 2));
+      }
+      // 更多事件处理...
     });
+
+    // 订阅主页索引变化事件
+    _mainPageIndexChangeEvent = OneAppEventBus.addListen<MainPageIndexChangeEvent>((event) {
+      _bloc?.add(HomeEvent.viewPagerChanged(index: event.oneIndex));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: _bloc!,
+    child: LocaleConsumer(
+      builder: (BuildContext context) => BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
+          // 状态变化监听，控制页面跳转
+          final bloc = BlocProvider.of<HomeBloc>(context);
+          final index = state.bottomTabIndex;
+          bloc.pageController.jumpToPage(index);
+        },
+        builder: (context, state) {
+          return Scaffold(
+            body: PageView.builder(
+              controller: state.pageController,
+              itemCount: 5, // 底部Tab数量
+              itemBuilder: (context, index) => _getPageWidget(context, index),
+            ),
+            bottomNavigationBar: _buildBottomNavigationBar(state),
+          );
+        },
+      ),
+    ),
+  );
+
+  /// 获取对应Tab的页面Widget
+  Widget _getPageWidget(BuildContext context, int index) {
+    final map = {'initialTabKey': widget.initialTopTabKey};
+    final bottomTabValue = HomeBottomTabKey.values[index];
     
-    // 3. 缓存结果
-    final stations = response.data.map((e) => ChargingStation.fromJson(e)).toList();
-    await _cache.set('stations_${location.hashCode}', stations);
-    
-    return stations;
+    // 根据Tab类型返回对应页面
+    var childWidget = bottomTabValue.getWidget(map, widget.argsMap, context);
+    return KeepAliveWrapper(child: childWidget);
   }
 }
-```
 
-**基础设施层 (Infrastructure Layer)**
-```dart
-// 网络通信基础设施
-class NetworkClient {
-  final Dio _dio;
-  final TokenManager _tokenManager;
-  final Logger _logger;
-  
-  Future<Response<T>> get<T>(String path, [Map<String, dynamic>? params]) async {
-    try {
-      _logger.info('API Request: GET $path');
-      
-      final response = await _dio.get<T>(
-        path,
-        queryParameters: params,
-        options: Options(
-          headers: await _tokenManager.getAuthHeaders(),
-        ),
-      );
-      
-      _logger.info('API Response: ${response.statusCode}');
-      return response;
-    } catch (e) {
-      _logger.error('API Error: $e');
-      throw NetworkException(e.toString());
+/// 底部Tab枚举及页面映射
+enum HomeBottomTabKey {
+  discovery,        // 发现页 0
+  community,        // 社区页 1
+  car,             // 车辆控制页 2
+  shop,            // 商城页 3
+  personalCenter,   // 个人中心 4
+}
+
+extension HomeBottomTabKeyEx on HomeBottomTabKey {
+  /// 根据Tab返回对应的页面Widget
+  Widget getWidget(Map<String, dynamic> params, Map<String, dynamic>? argsMap, BuildContext context) {
+    switch (this) {
+      case HomeBottomTabKey.discovery:
+        return ComponentDiscoveryRecommendPage();  // 发现页推荐内容
+        
+      case HomeBottomTabKey.car:
+        // 车辆控制页 - 支持通知栏参数传入
+        String? noticeVin = argsMap?['vin'] as String?;
+        String? target = argsMap?['target'] as String?;
+        bool needExecuteCarLock = (argsMap?['needExecuteCarLock'] as String?) == 'true';
+        
+        Logger.i('noticeVin: $noticeVin, target: $target, needExecuteCarLock: $needExecuteCarLock');
+        return CarPageWrapper(target, noticeVin, needExecuteCarLock: needExecuteCarLock);
+        
+      case HomeBottomTabKey.community:
+        return CommunityTabPage();  // 社区功能页面
+        
+      case HomeBottomTabKey.shop:
+        return BaseWebViewPage(url: AppUtils.getMallIndexUrl(), isShowAppBar: false);
+        
+      case HomeBottomTabKey.personalCenter:
+        return const PersonalCenterPage();  // 个人中心页面
     }
   }
 }
+```
+
+##### 业务逻辑层 (Business Layer)
+
+**主应用模块** - 基于 `AppModule` 的代码：
+
+```dart
+/// OneApp 应用最顶层模块 - 统一管理所有业务模块
+class AppModule extends Module {
+  @override
+  List<Module> get imports => [
+    // === 账户体系模块 ===
+    AccountModule(),              // 用户账户管理
+    AccountConModule(),           // 账户连接层服务
+    
+    // === 车辆相关模块 ===
+    CarControlModule(),           // 车辆控制核心模块
+    AppChargingModule(),          // 充电服务模块
+    ClrChargingModule(),          // 充电连接层
+    AppAvatarModule(),            // 3D虚拟形象
+    AppCarwatcherModule(),        // 车辆监控
+    ClrCarWatcherModule(),        // 车辆监控连接层
+    
+    // === 生活服务模块 ===
+    AppOrderModule(),             // 订单管理
+    ClrOrderModule(),             // 订单连接层
+    AppTouchgoModule(),           // Touch&Go服务
+    ClrTouchgoModule(),           // Touch&Go连接层
+    AppWallboxModule(),           // 家充桩管理
+    ClrWallboxModule(),           // 家充桩连接层
+    
+    // === 内容社区模块 ===
+    CommunityModule(),            // 社区功能
+    MembershipModule(),           // 会员体系
+    AfterSalesModule(),           // 售后服务
+    CarSalesModule(),             // 汽车销售
+    
+    // === 基础设施模块 ===
+    SettingModule(),              // 应用设置
+    SettingConModule(),           // 设置连接层
+    GeoModule(),                  // 地理位置服务
+    AppMessageModule(),           // 消息服务
+    ClrMessageModule(),           // 消息连接层
+    
+    // === 扩展功能模块 ===
+    AppTtsModule(),               // 语音播报
+    AppNavigationModule(),        // 导航服务
+    AppVurModule(),               // VUR功能
+    AppRpaModule(),               // RPA自动化
+    CompanionModule(),            // 伴侣应用
+    TouchPointModule(),           // 触点管理
+    OneAppPopupModule(),          // 弹窗管理
+    
+    // === 开发测试模块 ===
+    TestModule(),                 // 测试模块
+    BasicUIModule(),              // 基础UI组件
+  ];
+
+  @override
+  List<Bind<Object>> get binds => [
+    $AppBloc,  // 应用级别状态管理
+  ];
+
+  @override
+  List<ModularRoute> get routes {
+    // 路由元数据获取 - 通过RouteCenterAPI统一管理
+    final home = RouteCenterAPI.routeMetaBy(HomeRouteExport.keyModule);
+    final account = RouteCenterAPI.routeMetaBy(AccountRouteExport.keyModule);
+    final car = RouteCenterAPI.routeMetaBy(CarControlRouteExport.keyModule);
+    final charging = RouteCenterAPI.routeMetaBy(AppChargingRouteExport.keyModule);
+    final community = RouteCenterAPI.routeMetaBy(CommuntiyRouteExport.keyModule);
+    // ... 更多路由元数据
+
+    // 路由守卫配置
+    const basicGuards = [_StatisticsGuard()];                    // 基础统计守卫
+    final loginRequiredGuards = [const _StatisticsGuard(), LogInGuard._routeGuard];  // 需要登录的路由守卫
+
+    return [
+      // 首页路由 - 无需登录
+      ModuleRoute(home.path, module: HomeModule(), guards: basicGuards),
+      
+      // 账户相关路由 - 无需登录
+      ModuleRoute(account.path, module: AccountModule(), guards: basicGuards),
+      
+      // 车辆控制路由 - 需要登录
+      ModuleRoute(car.path, module: CarControlModule(), guards: loginRequiredGuards),
+      
+      // 充电服务路由 - 需要登录  
+      ModuleRoute(charging.path, module: AppChargingModule(), guards: loginRequiredGuards),
+      
+      // 社区功能路由 - 无需登录
+      ModuleRoute(community.path, module: CommunityModule(), guards: basicGuards),
+      
+      // ... 更多模块路由配置
+    ];
+  }
+}
+```
+
+**子模块实现** - 基于 `AccountModule` 的业务模块：
+
+```dart
+/// 账户模块 - 展示完整的业务模块实现
+class AccountModule extends Module with RouteObjProvider, AppLifeCycleListener {
+  @override
+  List<Module> get imports => [
+    AccountConModule(),  // 导入底层连接服务模块
+  ];
+
+  @override
+  void onNotify(String status) {
+    switch (status) {
+      case 'init':
+        Logger.d('AccountModule 初始化完成');
+        _onAppInitial();  // 执行模块初始化逻辑
+        break;
+      default:
+        Logger.d('AccountModule 收到通知: $status');
+    }
+  }
+
+  @override
+  List<Bind<Object>> get binds => [
+    // === 业务逻辑控制器 ===
+    $PhoneSignInBloc,                     // 手机号登录控制器
+    $VerificationCodeInputBloc,           // 验证码输入控制器
+    $AgreementBloc,                       // 协议页控制器
+    $GarageBloc,                          // 车库页控制器
+    $VehicleInfoBloc,                     // 车辆信息控制器
+    $VehicleAuthBloc,                     // 车辆授权控制器
+    
+    // === 对外暴露的核心服务 ===
+    Bind<PersonalCenterBloc>(
+      (i) => PersonalCenterBloc(
+        i<IAuthFacade>(),        // 注入认证服务接口
+        i<IProfileFacade>(),     // 注入用户资料服务接口
+        i<IGarageFacade>(),      // 注入车库服务接口
+      ),
+      export: true,              // 导出给其他模块使用
+      isSingleton: false,        // 非单例模式，每次获取创建新实例
+    ),
+    
+    // === 更多业务控制器 ===
+    $AuthNewUserBloc,                     // 新用户授权控制器
+    $QrHuConfirmBloc,                     // 二维码确认控制器
+    $PlateNoEditBloc,                     // 车牌号编辑控制器
+    $UpdatePhoneBloc,                     // 更新手机号控制器
+    $CancelAccountBloc,                   // 注销账号控制器
+  ];
+
+  @override
+  List<ModularRoute> get routes {
+    // 通过RouteCenterAPI获取路由元数据
+    final login = RouteCenterAPI.routeMetaBy(AccountRouteExport.keySignIn);
+    final verify = RouteCenterAPI.routeMetaBy(AccountRouteExport.keyVerifyCode);
+    final personal = RouteCenterAPI.routeMetaBy(AccountRouteExport.keyPersonalCenter);
+    final garage = RouteCenterAPI.routeMetaBy(AccountRouteExport.keyGarage);
+    final vehicleInfo = RouteCenterAPI.routeMetaBy(AccountRouteExport.keyVehicleInfo);
+    // ... 更多路由元数据
+
+    return [
+      // 登录页面
+      ChildRoute<dynamic>(
+        login.path,
+        child: (_, args) => login.provider(args).as(),
+        transition: TransitionType.fadeIn,
+      ),
+      
+      // 验证码页面
+      ChildRoute<dynamic>(
+        verify.path,
+        child: (_, args) => verify.provider(args).as(),
+      ),
+      
+      // 个人中心页面
+      ChildRoute<dynamic>(
+        personal.path,
+        child: (_, args) => personal.provider(args).as(),
+      ),
+      
+      // 车库页面 - 需要登录守卫保护
+      ChildRoute<dynamic>(
+        garage.path,
+        child: (_, args) => garage.provider(args).as(),
+        guards: [AccountLoginGuard()],
+      ),
+      
+      // 车辆信息页面
+      ChildRoute<dynamic>(
+        vehicleInfo.path,
+        child: (_, args) => vehicleInfo.provider(args).as(),
+        transition: TransitionType.noTransition,
+      ),
+      
+      // ... 更多子路由配置
+    ];
+  }
+
+  /// 模块初始化逻辑
+  void _onAppInitial() {
+    // 初始化二维码处理器
+    QrCodeProcessor()
+      ..addHandler(qrTypeLoginHU, (code, additionalInfo) async {
+        // 处理车机登录二维码逻辑
+        Logger.i('处理车机登录二维码: $code');
+        // 具体处理逻辑...
+      })
+      ..addHandler(qrTypeBindVehicle, (code, additionalInfo) async {
+        // 处理绑车二维码逻辑
+        Logger.i('处理绑车二维码: $code');
+        // 具体处理逻辑...
+      });
+
+    // 刷新车库信息
+    final facade = Modular.get<IProfileFacade>();
+    if (facade.getUserProfileLocal().toOption().toNullable() != null) {
+      final garageFacade = Modular.get<IGarageFacade>();
+      garageFacade.refreshGarage();
+    }
+  }
+}
+```
+
+**轻量级模块实现** - 基于 `HomeModule` 的简单模块：
+
+```dart
+/// 首页模块 - 展示轻量级模块实现
+class HomeModule extends Module with RouteObjProvider {
+  @override
+  List<Bind> get binds => [];  // 首页模块不需要额外的依赖绑定
+
+  @override
+  List<ModularRoute> get routes {
+    // 获取首页路由元数据
+    final homeRoute = RouteCenterAPI.routeMetaBy(HomeRouteExport.keyHome);
+
+    return [
+      ChildRoute<dynamic>(
+        homeRoute.path,
+        child: (_, args) => homeRoute.provider(args).as(),
+        transition: TransitionType.noTransition,  // 首页无过渡动画
+      ),
+    ];
+  }
+}
+```
+
+##### 服务接入层 (Service Layer)
+
+OneApp的服务层通过抽象接口和具体实现分离，支持灵活的服务替换和测试。
+
+**路由系统架构** - 基于 `RouteCenterAPI` 的统一路由管理：
+
+```dart
+/// 车辆控制模块路由定义 - 基于 route_dp.dart 的代码
+/// 通过RouteKey接口统一管理路由路径
+
+/// 远程空调主页路由
+class CarClimatisationHomepageKey implements RouteKey {
+  const CarClimatisationHomepageKey();
+
+  @override
+  String get routeKey => CarControlRouteExport.keyCarClimatisationHomepage;
+
+  /// 获取实际路由路径
+  String get routePath {
+    final List<RouteMeta> list = CarControlRouteExport().exportRoutes();
+    return list[10].routePath;  // 从路由导出列表中获取实际路径
+  }
+}
+
+/// 充电场景管理路由
+class CarChargingProfilesKey implements RouteKey {
+  const CarChargingProfilesKey();
+
+  @override
+  String get routeKey => CarControlRouteExport.keyCarChargingProfiles;
+
+  String get routePath {
+    final List<RouteMeta> list = CarControlRouteExport().exportRoutes();
+    return list[14].routePath;
+  }
+}
+
+/// 车辆监控主页路由
+class CarWatcherHomePageRouteKey implements RouteKey {
+  @override
+  String get routeKey => 'app_carWatcher.carWatcher_home';
+}
+
+/// 充电地图首页路由
+class ChargingMapHomeRouteKey implements RouteKey {
+  @override
+  String get routeKey => 'app_charging.charging_map_home';
+}
+```
+
+**路由守卫系统** - 基于 `AppModule` 中的 `LogInGuard` 实现：
+
+```dart
+/// 登录守卫 - 保护需要登录才能访问的路由
+class LogInGuard extends RouteGuard {
+  factory LogInGuard() => _routeGuard;
+  
+  LogInGuard._() : super();
+
+  static const String _tag = '[route LogInGuard]:';
+  static final LogInGuard _routeGuard = LogInGuard._();
+  
+  /// 前置路由信息
+  ParallelRoute<dynamic>? preRoute;
+
+  @override
+  FutureOr<bool> canActivate(String path, ParallelRoute<dynamic> route) {
+    // 通过依赖注入获取认证服务
+    final authFacade = Modular.get<IAuthFacade>();
+    final isLogin = authFacade.isLogin;
+    
+    Logger.d('路由守卫检查登录状态: $path, isLogin: $isLogin', _tag);
+    return isLogin;
+  }
+
+  @override
+  FutureOr<ModularRoute?> pre(ModularRoute route) {
+    // 保存导航历史
+    if (NavigatorProxy().navigateHistory.isNotEmpty) {
+      preRoute = NavigatorProxy().navigateHistory.last;
+    }
+    return super.pre(route);
+  }
+
+  @override
+  FutureOr<ParallelRoute<dynamic>?> pos(ModularRoute route, dynamic data) async {
+    final authFacade = Modular.get<IAuthFacade>();
+    
+    if (authFacade.isLogin) {
+      return route as ParallelRoute;
+    } else {
+      Logger.d('用户未登录，跳转到登录页', _tag);
+      
+      // 跳转到登录页面，并传递回调参数
+      await Modular.to.pushNamed(
+        '/account/sign_in',
+        arguments: {
+          'callback': () {
+            // 登录成功后的回调处理
+            Logger.d('登录成功，返回原页面', _tag);
+            if (preRoute != null) {
+              Modular.to.navigate(preRoute!.name);
+            }
+          }
+        },
+      );
+      return null;
+    }
+  }
+}
+
+/// 统计守卫 - 记录页面访问统计
+class _StatisticsGuard implements RouteGuard {
+  const _StatisticsGuard();
+
+  static const String _tag = tagRoute;
+
+  @override
+  FutureOr<bool> canActivate(String path, ParallelRoute<dynamic> route) => true;
+
+  @override
+  FutureOr<ModularRoute?> pre(ModularRoute route) => route;
+
+  @override
+  FutureOr<ParallelRoute<dynamic>?> pos(ModularRoute route, ModularArguments data) async {
+    // 记录页面访问日志
+    Logger.d('页面导航统计: ${route.name}', _tag);
+    Logger.d('导航参数: ${data.uri}', _tag);
+    
+    // 可以在这里添加埋点统计逻辑
+    // AnalyticsService.trackPageView(route.name, data.data);
+    
+    return route as ParallelRoute?;
+  }
+
+  @override
+  String? get redirectTo => null;
+}
+```
+
+##### 基础设施层 (Infrastructure Layer)
+
+**事件总线基础设施** - 基于 `OneAppEventBus` 的实现：
+
+```dart
+/// OneApp统一事件总线 - 支持模块间松耦合通信
+class OneAppEventBus extends Object {
+  static final _eventBus = EventBus();  // 基础事件总线
+  static final OneAppEventBus _instance = OneAppEventBus._internal();
+
+  // 高级事件管理
+  final Map<String, StreamController<dynamic>> _eventControllers = {};
+  final Map<String, List<StreamSubscription<dynamic>>> _anonymousSubscriptions = {};
+  final Map<String, Map<String, StreamSubscription<dynamic>>> _identifiedSubscriptions = {};
+
+  OneAppEventBus._internal();
+
+  /// 基础事件发布 - 适用于简单事件
+  static void fireEvent(event) {
+    _eventBus.fire(event);
+  }
+
+  /// 基础事件监听 - 类型安全的事件订阅
+  static StreamSubscription<T> addListen<T>(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return _eventBus.on<T>().listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
+  }
+
+  /// 高级事件订阅 - 支持生命周期管理
+  static void on(String eventType, Function(dynamic event) onEvent, {String? id}) {
+    var controller = _instance._eventControllers.putIfAbsent(
+      eventType,
+      () => StreamController<dynamic>.broadcast(),
+    );
+
+    var subscription = controller.stream.listen(onEvent);
+    
+    if (id == null) {
+      // 匿名订阅 - 需要手动管理生命周期
+      _instance._anonymousSubscriptions
+          .putIfAbsent(eventType, () => [])
+          .add(subscription);
+    } else {
+      // 标识订阅 - 自动管理重复订阅
+      var subscriptions = _instance._identifiedSubscriptions.putIfAbsent(eventType, () => {});
+      subscriptions[id]?.cancel();  // 取消旧订阅
+      subscriptions[id] = subscription;
+    }
+  }
+
+  /// 事件发布
+  static void fire(String eventType, dynamic event) {
+    _instance._eventControllers[eventType]?.add(event);
+  }
+
+  /// 订阅管理 - 支持精确取消和批量取消
+  static void cancel(String eventType, {String? id}) {
+    if (id == null) {
+      // 取消该事件类型的所有订阅
+      _instance._anonymousSubscriptions[eventType]?.forEach((sub) => sub.cancel());
+      _instance._anonymousSubscriptions.remove(eventType);
+      
+      _instance._identifiedSubscriptions[eventType]?.values.forEach((sub) => sub.cancel());
+      _instance._identifiedSubscriptions.remove(eventType);
+    } else {
+      // 取消特定标识的订阅
+      _instance._identifiedSubscriptions[eventType]?[id]?.cancel();
+      _instance._identifiedSubscriptions[eventType]?.remove(id);
+    }
+
+    // 清理空控制器
+    if ((_instance._anonymousSubscriptions[eventType]?.isEmpty ?? true) &&
+        (_instance._identifiedSubscriptions[eventType]?.isEmpty ?? true)) {
+      _instance._eventControllers[eventType]?.close();
+      _instance._eventControllers.remove(eventType);
+    }
+  }
+}
+```
+
+**依赖注入基础设施** - 基于 `Modular` 的服务管理：
+
+```dart
+/// 依赖注入使用模式 - 展示OneApp中的实际使用方式
+
+/// 1. 在HomePage中获取注入的服务
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // 通过Modular获取注入的服务实例
+    _bloc = HomeBloc(
+      widget.initialBottomTabIndex,
+      Modular.get<IGarageFacade>(),      // 车库服务 - 来自clr_account模块
+      Modular.get<IAuthFacade>(),        // 认证服务 - 来自clr_account模块
+    );
+  }
+}
+
+/// 2. 在业务逻辑中使用服务接口
+class PersonalCenterBloc extends Bloc<PersonalCenterEvent, PersonalCenterState> {
+  final IAuthFacade _authFacade;
+  final IProfileFacade _profileFacade;
+  final IGarageFacade _garageFacade;
+
+  PersonalCenterBloc(
+    this._authFacade,        // 构造函数注入
+    this._profileFacade,
+    this._garageFacade,
+  ) : super(PersonalCenterInitial());
+
+  /// 获取用户信息
+  Future<void> loadUserProfile() async {
+    if (!_authFacade.isLogin) {
+      emit(PersonalCenterError('用户未登录'));
+      return;
+    }
+
+    try {
+      final profile = await _profileFacade.getUserProfile();
+      final vehicles = await _garageFacade.getVehicleList();
+      
+      emit(PersonalCenterLoaded(
+        userProfile: profile,
+        vehicles: vehicles,
+      ));
+    } catch (e) {
+      emit(PersonalCenterError(e.toString()));
+    }
+  }
+}
+
+/// 3. 跨模块服务调用
+class HomeBloc extends Bloc<HomeEvent, HomeState> {
+  final IGarageFacade _garageFacade;
+  final IAuthFacade _authFacade;
+  
+  HomeBloc(int initialIndex, this._garageFacade, this._authFacade) 
+      : super(HomeState.initial(initialIndex)) {
+    
+    on<CheckIfHasDefaultCar>((event, emit) async {
+      // 检查是否有默认车辆
+      final defaultVehicle = _garageFacade.getDefaultVehicleLocal();
+      final hasVehicle = defaultVehicle != null && defaultVehicle.vin.isNotEmpty;
+      
+      if (hasVehicle) {
+        emit(state.copyWith(hasDefaultVehicle: true));
+      } else {
+        emit(state.copyWith(hasDefaultVehicle: false));
+      }
+    });
+  }
+}
+```
+
+#### 2.2 模块依赖关系图
+
+基于OneApp的模块结构，模块间的依赖关系如下：
+
+```mermaid
+graph TB
+    subgraph "应用入口层"
+        MAIN[oneapp_main<br/>AppModule]
+    end
+    
+    subgraph "页面模块层"
+        HOME[app_home<br/>HomeModule]
+        DISC[app_discover<br/>DiscoveryModule]  
+        TEST[app_test<br/>TestModule]
+    end
+    
+    subgraph "业务功能模块层"
+        ACC[oneapp_account<br/>AccountModule]
+        COM[oneapp_community<br/>CommunityModule]
+        MEM[oneapp_membership<br/>MembershipModule]
+        SET[oneapp_setting<br/>SettingModule]
+        CS[oneapp_car_sales<br/>CarSalesModule]
+        AS[oneapp-after-sales<br/>AfterSalesModule]
+        TP[oneapp-touch-point<br/>TouchPointModule]
+        POPUP[OneAppPopupModule]
+    end
+    
+    subgraph "车辆功能模块群"
+        CAR[app_car<br/>CarControlModule]
+        CHARGE[app_charging<br/>AppChargingModule]
+        AVATAR[app_avatar<br/>AppAvatarModule]
+        MAINT[app_maintenance<br/>MaintenanceControlModule]
+        WATCH[app_carwatcher<br/>AppCarwatcherModule]
+        TG[app_touchgo<br/>AppTouchgoModule]
+        WB[app_wallbox<br/>AppWallboxModule]
+        VUR[app_vur<br/>AppVurModule]
+        RPA[app_rpa<br/>AppRpaModule]
+        NAV[app_navigation<br/>AppNavigationModule]
+    end
+    
+    subgraph "连接层服务模块群 (CLR)"
+        ACC_C[clr_account<br/>AccountConModule]
+        CHARGE_C[clr_charging<br/>ClrChargingModule]
+        ORDER_C[clr_order<br/>ClrOrderModule]
+        SET_C[clr_setting<br/>SettingConModule]
+        GEO_C[clr_geo<br/>GeoModule]
+        MSG_C[clr_message<br/>ClrMessageModule]
+        TG_C[clr_touchgo<br/>ClrTouchgoModule]
+        WB_C[clr_wallbox<br/>ClrWallboxModule]
+        WATCH_C[clr_carwatcher<br/>ClrCarWatcherModule]
+    end
+    
+    subgraph "UI基础设施层"
+        UI_BASIC[ui_basic<br/>BasicUIModule]
+        UI_PAY[ui_payment<br/>PayModule]
+    end
+    
+    MAIN --> HOME
+    MAIN --> DISC
+    MAIN --> TEST
+    MAIN --> ACC
+    MAIN --> COM
+    MAIN --> MEM
+    MAIN --> CAR
+    MAIN --> CHARGE
+    MAIN --> AVATAR
+    
+    ACC --> ACC_C
+    CAR --> ACC_C
+    CHARGE --> CHARGE_C
+    CHARGE --> ACC_C
+    SET --> SET_C
+    CAR --> GEO_C
+    WATCH --> WATCH_C
+    TG --> TG_C
+    WB --> WB_C
+    
+    HOME --> ACC_C
+    HOME --> GEO_C
+    
+    UI_PAY --> UI_BASIC
+    COM --> UI_BASIC
+    MEM --> UI_BASIC
 ```
 
 #### 2.3 技术栈选择
@@ -1868,196 +2538,1117 @@ class NetworkClient {
 
 #### 3.1 应用启动流程
 
+基于OneApp的启动代码，应用启动分为两个阶段的初始化：不依赖隐私合规的基础初始化和依赖隐私合规的完整初始化。
+
 ```mermaid
 sequenceDiagram
     participant User as 用户
     participant Main as main.dart
-    participant Init as 初始化模块
+    participant BasicInit as 基础初始化
     participant Privacy as 隐私检查
+    participant FullInit as 完整初始化
     participant Module as 模块系统
     participant UI as 用户界面
     
     User->>Main: 启动应用
-    Main->>Init: _initBasicPartWithoutPrivacy()
-    Init->>Init: 基础服务初始化
+    Main->>Main: WidgetsFlutterBinding.ensureInitialized()
+    Main->>BasicInit: _initBasicPartWithoutPrivacy()
+    BasicInit->>BasicInit: initStorage() 存储初始化
+    BasicInit->>BasicInit: initLoggerModule() 日志初始化
+    BasicInit->>BasicInit: initTheme() 主题初始化
+    BasicInit->>BasicInit: initNetworkModule() 网络初始化
+    BasicInit->>BasicInit: initModular() 路由初始化
     Main->>Privacy: wrapPrivacyCheck()
-    Privacy->>Privacy: 隐私政策检查
-    Privacy->>Main: 用户同意
-    Main->>Init: _initBasicPartWithPrivacy()
-    Init->>Init: 网络服务初始化
-    Main->>Module: ModularApp启动
+    Privacy->>Privacy: 检查隐私政策同意状态
+    Privacy->>Main: 用户已同意或完成同意
+    Main->>FullInit: _initBasicPartWithPrivacy()
+    FullInit->>FullInit: initPushAndEventBus() 推送初始化
+    FullInit->>FullInit: initVehicle() 车辆服务初始化
+    FullInit->>FullInit: initModules() 业务模块初始化
+    Main->>Module: ModularApp(module: AppModule())启动
     Module->>UI: 渲染主界面
     UI->>User: 显示应用首页
 ```
 
+**启动流程代码** - 基于 OneApp `main.dart`：
+
 ```dart
-// 启动流程核心代码
+/// OneApp 应用入口 - main.dart实现
+void main() {
+  // 捕获flutter异常处理，实际项目中启动主函数
+  _realMain();
+}
+
+/// 应用启动流程
 Future<void> _realMain() async {
-  // 1. 确保Flutter绑定初始化
+  // 1. Flutter框架绑定初始化
   WidgetsFlutterBinding.ensureInitialized();
   
-  // 2. 无隐私依赖的基础初始化
+  // 2. 不依赖隐私合规的基础部分初始化
   await _initBasicPartWithoutPrivacy();
   
-  // 3. 隐私合规检查和有隐私依赖的初始化
+  // 3. 隐私合规检查包装器，只有用户同意后才进行完整初始化
   await wrapPrivacyCheck(_initBasicPartWithPrivacy);
   
-  // 4. 设置屏幕方向
+  // 4. 锁定屏幕方向为竖屏
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   
-  // 5. 启动模块化应用
+  // 5. 启动模块化应用，注入AppModule作为根模块
   runApp(ModularApp(module: AppModule(), child: const AppWidget()));
+}
+
+/// 第一阶段：不依赖隐私合规的基础初始化
+Future<void> _initBasicPartWithoutPrivacy() async {
+  // 全局模块状态管理初始化
+  moduleStatusMgmt = newModuleStatusMgmt();
+  
+  // 本地存储服务初始化
+  await initStorage();
+  
+  // 开发配置工具初始化（IP代理、后端环境配置）
+  await DeveloperConfigBoxUtil.init();
+  
+  // 日志系统初始化
+  await initLoggerModule(debuggable: debuggable);
+  Logger.i('开发配置初始化完成: environment = $environment, debuggable: $debuggable');
+  
+  // 主题系统初始化
+  await initTheme();
+  
+  // 字体配置初始化
+  initFont();
+  
+  // 网络模块初始化
+  await initNetworkModule(debuggable: !AppStoreVersion);
+  
+  // 资源下载模块初始化
+  await initBasicResource();
+  
+  // 国际化模块初始化
+  await initIntl();
+  
+  // 全局错误处理器初始化
+  initErrorHandlers();
+  
+  // 模块化路由和依赖注入容器初始化
+  initModular(debug: debuggable);
+  
+  // WebView初始化
+  initWebView();
+  
+  // Deep Link处理器初始化
+  await initUniLink();
+  
+  // 系统UI配置（异步执行）
+  unawaited(_initSystemUI());
+  
+  // === 路由配置逻辑 ===
+  final signed = localPrivacySigned();  // 检查本地隐私协议签署状态
+  final showAd = await SplashAdDataManager().shouldShowSplashAd();  // 检查开屏广告
+  
+  if (signed) {
+    if (showAd) {
+      // 已签署协议且有广告：显示启动广告页
+      Modular.setInitialRoute(RouteCenterAPI.getRoutePathBy(LaunchAdPageKey()));
+    } else {
+      // 已签署协议且无广告：直接进入首页
+      Modular.setInitialRoute(RouteCenterAPI.getRoutePathBy(const HomeRouteKey()));
+    }
+  } else {
+    // 未签署协议：显示隐私政策页
+    Modular.setInitialRoute('/app/app_privacy');
+  }
+  
+  // Debug工具初始化（仅Debug/Profile模式）
+  initDebugTools();
+  
+  // 添加路由监控
+  NavigatorProxy().addObserver(AppRouteObserver().routeObserver);
+  
+  // 输出版本信息
+  final packageInfo = await PackageInfo.fromPlatform();
+  Logger.i('''
+    ################################
+    VersionName: ${packageInfo.version}
+    VersionCode: ${packageInfo.buildNumber}
+    ConnectivityVersion: $versionConnectivity
+    Integration: $integrationNum
+    ################################
+  ''');
+}
+
+/// 第二阶段：依赖隐私合规的完整初始化
+Future<void> _initBasicPartWithPrivacy() async {
+  // Token管理器必须就绪
+  await tokenMgmt.hasInitialized();
+  
+  // 设置隐私检查完成标记
+  await bs.globalBox.put('key_user_privacy_check', true);
+  
+  // 网络连接检查和推送初始化
+  final connectivityResult = await Connectivity().checkConnectivity();
+  if (connectivityResult != ConnectivityResult.none) {
+    await initPushAndEventBus(debuggable: debuggable);
+  }
+  
+  // 平台相关服务初始化
+  await initPlatform(debug: debuggable);
+  
+  // 分享功能初始化
+  await initBasicShare();
+  
+  // 车辆服务初始化
+  initVehicle();
+  
+  // TTS和购物服务初始化
+  initTtsShop();
+  
+  // 3D虚拟形象服务初始化
+  initAvatar();
+  
+  // CLR伴侣服务初始化
+  initClrCompanion(DeveloperConfigBoxUtil.getBaseUrlHost());
+  
+  // 各个业务模块初始化
+  initModules();
+  
+  // 二维码处理器初始化
+  initQrProcessor();
+  
+  // 项目配置初始化（异步）
+  unawaited(initBasicConfig());
+  
+  // 订单服务初始化
+  initOrder();
+  
+  // 环境配置初始化（需要在存储初始化后）
+  await initEnvironmentConfig();
+  
+  // 腾讯Aegis监控SDK初始化
+  await initAegisSDK();
+  
+  // 腾讯云对象存储SDK初始化
+  initCosFileManagerSDK();
+  
+  // 用户行为埋点初始化
+  UserBehaviorTrackManager().initDefaultInfo();
+  
+  // 车钥匙SDK初始化
+  initInGeekCarKeySDK();
+  
+  // 超级播放器许可证设置
+  SuperPlayerPlugin.setGlobalLicense(licenceURL, licenceKey);
+  
+  Logger.i('完整初始化流程完成');
 }
 ```
 
 #### 3.2 模块化依赖注入实现
 
+基于OneApp的AppModule实现，展示30+业务模块的完整依赖注入和路由配置：
+
+**AppModule实现** - OneApp主应用模块：
+
 ```dart
-// 应用主模块
+/// OneApp 应用最顶层模块 - 管理30+个业务和基础服务模块
 class AppModule extends Module {
   @override
   List<Module> get imports => [
-    // 基础模块导入
-    CoreModule(),
-    NetworkModule(),
-    StorageModule(),
+    // === 账户体系模块 ===
+    AccountModule(),              // 用户账户管理模块
+    AccountConModule(),           // 账户连接层服务模块
     
-    // 业务模块导入
-    AccountModule(),
-    CarModule(),
-    ChargingModule(),
-    CommunityModule(),
+    // === 车辆控制模块群 ===
+    CarControlModule(),           // 车辆控制核心模块
+    AppChargingModule(),          // 充电服务模块
+    ClrChargingModule(),          // 充电连接层服务
+    AppAvatarModule(),            // 3D虚拟形象模块
+    AppCarwatcherModule(),        // 车辆监控模块
+    ClrCarWatcherModule(),        // 车辆监控连接层
+    AppTouchgoModule(),           // TouchGo免密支付
+    ClrTouchgoModule(),           // TouchGo连接层
+    AppWallboxModule(),           // 家充桩管理
+    ClrWallboxModule(),           // 家充桩连接层
+    MaintenanceControlModule(),   // 保养维护模块
+    AppVurModule(),               // 车辆升级记录
+    CarVurModule(),               // 车辆升级连接层
+    AppRpaModule(),               // RPA自动化
+    CarRpaModule(),               // RPA连接层
+    
+    // === 基础功能模块 ===
+    DiscoveryModule(),            // 发现页模块
+    TestModule(),                 // 测试功能模块
+    SettingModule(),              // 设置模块
+    SettingConModule(),           // 设置连接层
+    GeoModule(),                  // 地理位置服务
+    PayModule(),                  // 支付模块
+    AppOrderModule(),             // 订单管理模块
+    ClrOrderModule(),             // 订单连接层服务
+    AppNavigationModule(),        // 导航模块
+    AppConsentModule(),           // 用户协议模块
+    
+    // === 媒体和通信模块 ===
+    AppTtsModule(),               // 语音合成模块
+    AppMessageModule(),           // 消息模块
+    ClrMessageModule(),           // 消息连接层
+    AppMnoModule(),               // 移动网络服务
+    ClrMnoModule(),               // 移动网络连接层
+    AppComposerModule(),          // 内容编辑器
+    
+    // === 业务应用模块 ===
+    CommunityModule(),            // 社区模块
+    MembershipModule(),           // 会员模块
+    CarSalesModule(),             // 汽车销售模块
+    AfterSalesModule(),           // 售后服务模块
+    TouchPointModule(),           // 触点管理模块
+    CompanionModule(),            // 伴侣服务模块
+    AppConfigurationModule(),     // 应用配置模块
+    OneAppPopupModule(),          // 弹窗管理模块
+    
+    // === UI基础设施模块 ===
+    BasicUIModule(),              // 基础UI组件库
   ];
-  
+
   @override
-  List<Bind> get binds => [
-    // 全局单例服务
-    Bind.singleton((i) => AppConfig()),
-    Bind.singleton((i) => UserSession()),
-    Bind.singleton((i) => EventBus()),
+  List<Bind<Object>> get binds => [
+    $AppBloc,  // 应用级别的Bloc状态管理器
   ];
-  
+
   @override
-  List<ModularRoute> get routes => [
-    ChildRoute('/', child: (_, __) => HomePage()),
-    ModuleRoute('/account', module: AccountModule()),
-    ModuleRoute('/car', module: CarModule()),
-    ModuleRoute('/community', module: CommunityModule()),
-  ];
+  List<ModularRoute> get routes {
+    // 通过RouteCenterAPI获取各模块的路由元数据
+    final home = RouteCenterAPI.routeMetaBy(HomeRouteExport.keyModule);
+    final discovery = RouteCenterAPI.routeMetaBy(DiscoveryRouteExport.keyModule);
+    final car = RouteCenterAPI.routeMetaBy(CarControlRouteExport.keyModule);
+    final tts = RouteCenterAPI.routeMetaBy(TtsRouteExport.keyModule);
+    final account = RouteCenterAPI.routeMetaBy(AccountRouteExport.keyModule);
+    final setting = RouteCenterAPI.routeMetaBy(SettingRouteExport.keyModule);
+    final webview = RouteCenterAPI.routeMetaBy(WebViewRouteExport.keyModule);
+    final maintenance = RouteCenterAPI.routeMetaBy(MaintenanceRouteExport.keyModule);
+    final pay = RouteCenterAPI.routeMetaBy(PayRouteExport.keyModule);
+    final order = RouteCenterAPI.routeMetaBy(AppOrderRouteExport.keyModule);
+    final appCharging = RouteCenterAPI.routeMetaBy(AppChargingRouteExport.keyModule);
+    final appNavigation = RouteCenterAPI.routeMetaBy(AppNavigationRouteExport.keyModule);
+    final appAvatar = RouteCenterAPI.routeMetaBy(AvatarRouteExport.keyModule);
+    final community = RouteCenterAPI.routeMetaBy(CommuntiyRouteExport.keyModule);
+    final membership = RouteCenterAPI.routeMetaBy(MembershipRouteExport.keyModule);
+    final wallbox = RouteCenterAPI.routeMetaBy(AppWallboxRouteExport.keyModule);
+    final appMessage = RouteCenterAPI.routeMetaBy(AppMessageRouteExport.keyModule);
+    final appTouchGo = RouteCenterAPI.routeMetaBy(AppTouchgoRouteExport.keyModule);
+    // ... 更多路由元数据获取
+
+    // 定义不同的路由守卫列表
+    const list = [_StatisticsGuard()];  // 基础统计守卫
+    final carList = [const _StatisticsGuard(), LogInGuard._routeGuard];  // 车辆功能守卫（需要登录）
+    final composerList = [const _StatisticsGuard(), LogInGuard._routeGuard];  // 编辑功能守卫
+    
+    return [
+      // === 核心页面路由 ===
+      ModuleRoute(home.path, module: home.provider(emptyArgs()).as(), guards: list),
+      
+      // 隐私政策页面（特殊处理）
+      ChildRoute('/app/app_privacy', 
+        child: (BuildContext context, ModularArguments args) => LocalPrivacyPage()),
+        
+      ModuleRoute(discovery.path, module: discovery.provider(emptyArgs()).as(), guards: list),
+      ModuleRoute(account.path, module: account.provider(emptyArgs()).as(), guards: list),
+      ModuleRoute(setting.path, module: setting.provider(emptyArgs()).as(), guards: list),
+      
+      // === 车辆相关路由（需要登录守卫） ===
+      ModuleRoute(car.path, module: car.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(maintenance.path, module: maintenance.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(appCharging.path, module: appCharging.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(appNavigation.path, module: appNavigation.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(wallbox.path, module: wallbox.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(appMessage.path, module: appMessage.provider(emptyArgs()).as(), guards: carList),
+      
+      // === 业务功能路由 ===
+      ModuleRoute(community.path, module: community.provider(emptyArgs()).as(), guards: list),
+      ModuleRoute(membership.path, module: membership.provider(emptyArgs()).as(), guards: list),
+      ModuleRoute(pay.path, module: pay.provider(emptyArgs()).as(), guards: list),
+      ModuleRoute(order.path, module: order.provider(emptyArgs()).as(), guards: carList),
+      
+      // === 特殊功能路由 ===
+      ModuleRoute(appAvatar.path, module: appAvatar.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(tts.path, module: tts.provider(emptyArgs()).as(), guards: carList),
+      ModuleRoute(appTouchGo.path, module: appTouchGo.provider(emptyArgs()).as(), guards: list),
+      
+      // 更多路由配置...
+    ];
+  }
+
+  @override
+  Map<ModularKey, ModularRoute> init() {
+    // 通知应用生命周期监听器
+    notifyAppLifeCycle(this, 'init');
+    return super.init();
+  }
+}
+```
+
+**路由守卫实现** - 基于OneApp的LogInGuard：
+
+```dart
+/// 登录守卫 - 保护需要登录才能访问的车辆相关功能
+class LogInGuard extends RouteGuard {
+  factory LogInGuard() => _routeGuard;
+  LogInGuard._() : super();
+
+  static const String _tag = '[route LogInGuard]:';
+  static final LogInGuard _routeGuard = LogInGuard._();
+  
+  ParallelRoute<dynamic>? preRoute;  // 前置路由信息
+
+  @override
+  FutureOr<bool> canActivate(String path, ParallelRoute<dynamic> route) {
+    // 通过依赖注入获取认证服务
+    final authFacade = Modular.get<IAuthFacade>();
+    final isLogin = authFacade.isLogin;
+    return isLogin;
+  }
+
+  @override
+  FutureOr<ModularRoute?> pre(ModularRoute route) {
+    // 保存当前导航历史
+    if (NavigatorProxy().navigateHistory.isNotEmpty) {
+      preRoute = NavigatorProxy().navigateHistory.last;
+    }
+    return super.pre(route);
+  }
+
+  @override
+  FutureOr<ParallelRoute<dynamic>?> pos(ModularRoute route, dynamic data) async {
+    final authFacade = Modular.get<IAuthFacade>();
+    final isLogin = authFacade.isLogin;
+    
+    if (isLogin) {
+      return route as ParallelRoute;
+    } else {
+      // 创建登录同步器
+      final c = Completer<bool>();
+      
+      // 启动登录流程
+      await startLoginForResult(
+        mode: LaunchMode.navigator,
+        onSuccess: () {
+          Logger.i('登录成功', _tag);
+          c.complete(true);
+        },
+        onError: () {
+          Logger.i('登录失败', _tag);
+          c.complete(false);
+        },
+        onCancel: () {
+          Logger.i('用户取消登录', _tag);
+          c.complete(false);
+        },
+      );
+
+      final loginResult = await c.future;
+      final isLoginAfter = authFacade.isLogin;
+
+      Logger.d('登录结果: $loginResult, 当前登录状态: $isLoginAfter', _tag);
+      
+      return null;  // 阻止路由继续
+    }
+  }
+}
+
+/// 统计守卫 - 记录所有路由跳转的统计信息
+class _StatisticsGuard implements RouteGuard {
+  const _StatisticsGuard();
+  static const String _tag = tagRoute;
+
+  @override
+  FutureOr<bool> canActivate(String path, ParallelRoute<dynamic> route) => true;
+
+  @override
+  FutureOr<ModularRoute?> pre(ModularRoute route) => route;
+
+  @override
+  FutureOr<ParallelRoute<dynamic>?> pos(ModularRoute route, ModularArguments data) async {
+    // 记录路由跳转日志
+    Logger.d('路由跳转到: ${route.name}', _tag);
+    Logger.d('路由参数: ${data.uri}', _tag);
+    
+    // 这里可以添加埋点统计逻辑
+    // AnalyticsService.trackPageView(route.name, data.data);
+    
+    return route as ParallelRoute?;
+  }
+
+  @override
+  String? get redirectTo => null;
 }
 ```
 
 #### 3.3 跨模块通信机制
 
-```dart
-// 事件驱动的模块间通信
-class CarControlEvent {
-  final String action;
-  final Map<String, dynamic> data;
-  
-  CarControlEvent(this.action, this.data);
-}
+基于OneApp的事件总线系统，展示模块间松耦合通信的完整实现：
 
-// 发布事件
-class CarControlService {
-  final EventBus _eventBus = Modular.get<EventBus>();
-  
-  Future<void> lockCar() async {
-    // 执行车辆控制
-    final result = await _carControlAPI.lock();
+**OneAppEventBus实现** - 支持匿名和标识订阅的事件总线：
+
+```dart
+/// OneApp统一事件总线 - 支持模块间松耦合通信的实现
+class OneAppEventBus extends Object {
+  static final _eventBus = EventBus();  // 基础事件总线
+  static final OneAppEventBus _instance = OneAppEventBus._internal();
+
+  // 高级事件管理器
+  final Map<String, StreamController<dynamic>> _eventControllers = {};
+  final Map<String, List<StreamSubscription<dynamic>>> _anonymousSubscriptions = {};
+  final Map<String, Map<String, StreamSubscription<dynamic>>> _identifiedSubscriptions = {};
+
+  OneAppEventBus._internal();
+
+  /// 基础事件发布 - 适用于简单事件通信
+  static void fireEvent(event) {
+    _eventBus.fire(event);
+  }
+
+  /// 基础事件监听 - 类型安全的事件订阅
+  static StreamSubscription<T> addListen<T>(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return _eventBus.on<T>().listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
+  }
+
+  /// 高级事件订阅 - 支持生命周期管理和重复订阅控制
+  static void on(String eventType, Function(dynamic event) onEvent, {String? id}) {
+    var controller = _instance._eventControllers.putIfAbsent(
+      eventType,
+      () => StreamController<dynamic>.broadcast(),
+    );
+
+    var subscription = controller.stream.listen(onEvent);
     
-    // 发布事件通知其他模块
-    _eventBus.publish(CarControlEvent('car_locked', {
-      'timestamp': DateTime.now().toIso8601String(),
-      'result': result,
-    }));
+    if (id == null) {
+      // 匿名订阅 - 需要手动管理生命周期
+      _instance._anonymousSubscriptions
+          .putIfAbsent(eventType, () => [])
+          .add(subscription);
+    } else {
+      // 标识订阅 - 自动管理重复订阅，新订阅会替换旧订阅
+      var subscriptions = _instance._identifiedSubscriptions.putIfAbsent(eventType, () => {});
+      subscriptions[id]?.cancel();  // 取消旧的同名订阅
+      subscriptions[id] = subscription;
+    }
+  }
+
+  /// 事件发布
+  static void fire(String eventType, dynamic event) {
+    _instance._eventControllers[eventType]?.add(event);
+  }
+
+  /// 订阅管理 - 支持精确取消和批量取消
+  static void cancel(String eventType, {String? id}) {
+    if (id == null) {
+      // 取消该事件类型的所有订阅
+      _instance._anonymousSubscriptions[eventType]?.forEach((sub) => sub.cancel());
+      _instance._anonymousSubscriptions.remove(eventType);
+      
+      _instance._identifiedSubscriptions[eventType]?.values.forEach((sub) => sub.cancel());
+      _instance._identifiedSubscriptions.remove(eventType);
+    } else {
+      // 取消特定标识的订阅
+      _instance._identifiedSubscriptions[eventType]?[id]?.cancel();
+      _instance._identifiedSubscriptions[eventType]?.remove(id);
+    }
+
+    // 清理空的事件控制器
+    if ((_instance._anonymousSubscriptions[eventType]?.isEmpty ?? true) &&
+        (_instance._identifiedSubscriptions[eventType]?.isEmpty ?? true)) {
+      _instance._eventControllers[eventType]?.close();
+      _instance._eventControllers.remove(eventType);
+    }
+  }
+}
+```
+
+**跨模块通信使用案例** - 车辆控制事件通信：
+
+```dart
+/// 事件发布方 - 车辆控制服务模块
+class CarControlService {
+  /// 执行车辆锁定操作并发布事件
+  Future<void> lockCar(String vin) async {
+    try {
+      // 1. 执行实际的车辆锁定API调用
+      final result = await Vehicle.rlu().doAction(RluAction.lock);
+      
+      // 2. 发布车辆锁定成功事件，通知其他模块
+      OneAppEventBus.fire('car_control_result', {
+        'action': 'lock',
+        'vin': vin,
+        'success': true,
+        'timestamp': DateTime.now().toIso8601String(),
+        'result': result.toString(),
+      });
+      
+      Logger.i('车辆锁定成功，事件已发布');
+      
+    } catch (error) {
+      // 3. 发布车辆锁定失败事件
+      OneAppEventBus.fire('car_control_result', {
+        'action': 'lock',
+        'vin': vin,
+        'success': false,
+        'error': error.toString(),
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+      
+      Logger.e('车辆锁定失败: $error');
+    }
+  }
+  
+  /// 执行空调开启操作
+  Future<void> startClimatization() async {
+    try {
+      final result = await Vehicle.climatization().doAction(ClimatizationAction.start);
+      
+      OneAppEventBus.fire('climatization_status_changed', {
+        'action': 'start',
+        'status': 'running',
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+      
+    } catch (error) {
+      OneAppEventBus.fire('climatization_status_changed', {
+        'action': 'start',
+        'status': 'error',
+        'error': error.toString(),
+      });
+    }
   }
 }
 
-// 订阅事件
+/// 事件订阅方1 - 通知服务模块
 class NotificationService {
-  final EventBus _eventBus = Modular.get<EventBus>();
-  
   void initialize() {
-    _eventBus.subscribe<CarControlEvent>().listen((event) {
-      if (event.action == 'car_locked') {
-        showNotification('车辆已锁定');
+    // 订阅车辆控制结果事件
+    OneAppEventBus.on('car_control_result', (event) {
+      final data = event as Map<String, dynamic>;
+      final action = data['action'] as String;
+      final success = data['success'] as bool;
+      
+      if (success) {
+        switch (action) {
+          case 'lock':
+            _showSuccessNotification('车辆已成功锁定');
+            break;
+          case 'unlock':
+            _showSuccessNotification('车辆已成功解锁');
+            break;
+        }
+      } else {
+        _showErrorNotification('车辆操作失败: ${data['error']}');
+      }
+    }, id: 'notification_service');  // 使用标识ID，避免重复订阅
+    
+    // 订阅空调状态变化事件
+    OneAppEventBus.on('climatization_status_changed', (event) {
+      final data = event as Map<String, dynamic>;
+      final status = data['status'] as String;
+      
+      switch (status) {
+        case 'running':
+          _showInfoNotification('空调已启动');
+          break;
+        case 'stopped':
+          _showInfoNotification('空调已关闭');
+          break;
+        case 'error':
+          _showErrorNotification('空调操作失败');
+          break;
+      }
+    }, id: 'notification_climatization');
+  }
+  
+  void _showSuccessNotification(String message) {
+    // 显示成功通知的实现
+    Logger.i('成功通知: $message');
+  }
+  
+  void _showErrorNotification(String message) {
+    // 显示错误通知的实现
+    Logger.e('错误通知: $message');
+  }
+  
+  void _showInfoNotification(String message) {
+    // 显示信息通知的实现
+    Logger.i('信息通知: $message');
+  }
+}
+
+/// 事件订阅方2 - 统计服务模块
+class AnalyticsService {
+  void initialize() {
+    // 匿名订阅，用于统计分析
+    OneAppEventBus.on('car_control_result', (event) {
+      final data = event as Map<String, dynamic>;
+      
+      // 记录车辆操作统计
+      _recordCarControlEvent(
+        action: data['action'],
+        success: data['success'],
+        vin: data['vin'],
+        timestamp: data['timestamp'],
+      );
+    });  // 不提供id参数，创建匿名订阅
+  }
+  
+  void _recordCarControlEvent({
+    required String action,
+    required bool success,
+    required String vin,
+    required String timestamp,
+  }) {
+    // 埋点统计实现
+    Logger.i('统计记录: 车辆操作[$action] 结果[$success] VIN[$vin]');
+  }
+}
+
+/// 事件订阅方3 - 首页Widget状态更新
+class HomePageBloc extends Bloc<HomeEvent, HomeState> {
+  StreamSubscription? _carControlSubscription;
+  
+  HomePageBloc() : super(HomeInitial()) {
+    _initEventSubscriptions();
+  }
+  
+  void _initEventSubscriptions() {
+    // 订阅车辆控制事件，更新首页UI状态
+    _carControlSubscription = OneAppEventBus.addListen<Map<String, dynamic>>((event) {
+      if (event['action'] == 'lock' && event['success'] == true) {
+        add(UpdateCarLockStatus(isLocked: true));
+      } else if (event['action'] == 'unlock' && event['success'] == true) {
+        add(UpdateCarLockStatus(isLocked: false));
       }
     });
+  }
+  
+  @override
+  Future<void> close() {
+    _carControlSubscription?.cancel();
+    return super.close();
   }
 }
 ```
 
 #### 3.4 数据流管理
 
+基于OneApp的Bloc实现，展示完整的数据流从UI事件到状态更新的处理过程：
+
 ```mermaid
 graph LR
-    A[UI Event] --> B[Bloc]
-    B --> C[Service Layer]
-    C --> D[Repository]
-    D --> E[Data Source]
-    E --> F[API/Cache]
+    A[用户操作] --> B[RemoteClimatisationControlBloc]
+    B --> C[ClimatizationService]
+    C --> D[Vehicle.climatization]
+    D --> E[车辆API]
     
-    F --> E
     E --> D
-    D --> C
-    C --> B
-    B --> G[State]
-    G --> H[UI Update]
+    D --> F[ObserverClient监听]
+    F --> B
+    B --> G[RemoteClimatisationState]
+    G --> H[UI更新]
+    
+    I[OneAppEventBus] --> J[跨模块通知]
 ```
 
+**Bloc数据流实现** - 基于OneApp的远程空调控制：
+
 ```dart
-// 完整的数据流示例：充电桩查找
+/// 远程空调控制状态 - 使用Freezed确保不可变性
+@freezed
+class RemoteClimatisationState with _$RemoteClimatisationState {
+  const factory RemoteClimatisationState({
+    required ClimatizationService climatization,      // 空调服务实例
+    required bool climatizationAtUnlock,              // 解锁启动开关
+    required double temperature,                      // 空调温度
+    ClimatisationStatus? status,                      // 空调状态
+    ClimatizationParameter? parameter,                // 空调参数
+    bool? actionStart,                                // 开启操作执行状态
+    bool? actionStop,                                 // 关闭操作执行状态
+    bool? actionSetting,                              // 设置保存操作状态
+    bool? updatePage,                                 // 页面更新标记
+    double? sliderValue,                              // 温度滑动条值
+  }) = _RemoteClimatisationState;
+}
+
+/// 远程空调控制事件
+@freezed
+class RemoteClimatisationControlEvent with _$RemoteClimatisationControlEvent {
+  /// 温度设置事件
+  const factory RemoteClimatisationControlEvent.updateTemperatureSettingEvent({
+    required double temperature,
+  }) = UpdateTemperatureSettingEvent;
+
+  /// 解锁启动开关事件
+  const factory RemoteClimatisationControlEvent.updateClimatizationAtUnlockEvent({
+    required bool climatizationAtUnlock,
+  }) = UpdateClimatizationAtUnlockEvent;
+
+  /// 执行空调操作事件
+  const factory RemoteClimatisationControlEvent.updateActionExecuteEvent({
+    required ClimatizationAction action,
+  }) = UpdateActionExecuteEvent;
+
+  /// 滑动条值更新事件
+  const factory RemoteClimatisationControlEvent.updateSliderExecuteEvent({
+    required double sliderValue,
+  }) = UpdateSliderExecuteEvent;
+
+  /// 页面数据刷新事件
+  const factory RemoteClimatisationControlEvent.updatePageDataEvent() = UpdatePageDataEventEvent;
+}
+
+/// 远程空调控制Bloc
+class RemoteClimatisationControlBloc
+    extends Bloc<RemoteClimatisationControlEvent, RemoteClimatisationState> {
+  
+  /// 车辆服务观察者客户端
+  late ObserverClient client;
+  
+  RemoteClimatisationControlBloc(
+    ClimatizationService climatization,
+    double temperature,
+    bool climatizationAtUnlock,
+    String? noticeVin,  // 通知栏传入的VIN码
+    BuildContext? context,
+  ) : super(RemoteClimatisationState(
+        climatization: climatization,
+        temperature: temperature,
+        climatizationAtUnlock: climatizationAtUnlock,
+      )) {
+    
+    // 注册事件处理器
+    on<UpdateTemperatureSettingEvent>(_onUpdateTemperatureSetting);
+    on<UpdateClimatizationAtUnlockEvent>(_onUpdateClimatizationAtUnlockEvent);
+    on<UpdateActionExecuteEvent>(_onUpdateActionExecuteEvent);
+    on<UpdateSliderExecuteEvent>(_onUpdateSliderExecuteEvent);
+    on<UpdatePageDataEventEvent>(_onUpdatePageDataEventEvent);
+
+    // 检查服务状态并初始化
+    if (climatization.isStatusReady && climatization.isParameterReady) {
+      // 状态和参数都准备就绪
+      _updateCompleteState();
+    } else if (climatization.isStatusReady) {
+      // 仅状态准备就绪
+      emit(state.copyWith(status: climatization.status as ClimatisationStatus));
+    } else if (climatization.isParameterReady) {
+      // 仅参数准备就绪
+      _updateParameterState();
+    }
+
+    CarAppLog.i('RemoteClimatisationControlBloc 初始化完成');
+    CarAppLog.i('actionStart: ${state.actionStart}');
+    CarAppLog.i('actionStop: ${state.actionStop}');
+    CarAppLog.i('actionSetting: ${state.actionSetting}');
+
+    // 刷新空调数据
+    climatization.doAction(ClimatizationAction.refresh);
+
+    // 订阅空调服务变化
+    _subscribeToClimatizationService(climatization);
+
+    // 检查默认车辆（异步）
+    checkDefaultVehicle(context, noticeVin);
+  }
+
+  /// 订阅空调服务变化
+  void _subscribeToClimatizationService(ClimatizationService climatization) {
+    client = Vehicle.addServiceObserver(
+      serviceCategory: VehicleServiceCategory.climatisation,
+      onChange: (serviceBase) {
+        final service = serviceBase as ClimatizationService;
+        CarAppLog.i('空调服务状态变化回调');
+        
+        // 检查各种操作状态
+        final actionStartRunning = checkActionStartRun(service);
+        final actionStopRunning = checkActionStopRun(service);
+        final actionSettingRunning = checkActionSettingRun(service);
+        
+        // 更新状态
+        emit(state.copyWith(
+          climatization: service,
+          status: service.status as ClimatisationStatus?,
+          parameter: service.parameter,
+          actionStart: actionStartRunning,
+          actionStop: actionStopRunning,
+          actionSetting: actionSettingRunning,
+          updatePage: !(state.updatePage ?? false),  // 切换更新标记
+        ));
+        
+        CarAppLog.i('空调状态已更新: start=$actionStartRunning, stop=$actionStopRunning');
+      },
+    );
+  }
+
+  /// 检查空调启动操作是否正在执行
+  bool checkActionStartRun(ClimatizationService climatization) {
+    final InProcessActions inProcessActions = climatization.inProcessActions;
+    return inProcessActions.getServiceAction(ClimatizationAction.start) != null;
+  }
+
+  /// 检查空调停止操作是否正在执行
+  bool checkActionStopRun(ClimatizationService climatization) {
+    final InProcessActions inProcessActions = climatization.inProcessActions;
+    return inProcessActions.getServiceAction(ClimatizationAction.stop) != null;
+  }
+
+  /// 检查空调设置操作是否正在执行
+  bool checkActionSettingRun(ClimatizationService climatization) {
+    final InProcessActions inProcessActions = climatization.inProcessActions;
+    return inProcessActions.getServiceAction(ClimatizationAction.setting) != null;
+  }
+
+  /// 温度设置事件处理
+  FutureOr<void> _onUpdateTemperatureSetting(
+    UpdateTemperatureSettingEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('处理温度设置事件: ${event.temperature}');
+
+    if (state.climatization.isParameterReady) {
+      // 参数准备就绪，更新温度设置
+      final updatedParameter = state.parameter?.copyWith(
+        targetTemperature: TargetTemperature.fromCelsius(event.temperature),
+      );
+      
+      emit(state.copyWith(
+        temperature: event.temperature,
+        parameter: updatedParameter,
+      ));
+    } else {
+      CarAppLog.w('空调参数未准备就绪，跳过温度设置');
+    }
+  }
+
+  /// 解锁启动开关事件处理
+  FutureOr<void> _onUpdateClimatizationAtUnlockEvent(
+    UpdateClimatizationAtUnlockEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('处理解锁启动开关事件: ${event.climatizationAtUnlock}');
+
+    emit(state.copyWith(climatizationAtUnlock: event.climatizationAtUnlock));
+    
+    // 保存设置到本地存储或发送到服务器
+    // 具体实现略...
+  }
+
+  /// 空调操作执行事件处理
+  FutureOr<void> _onUpdateActionExecuteEvent(
+    UpdateActionExecuteEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('执行空调操作: ${event.action}');
+
+    // 执行具体的空调操作
+    state.climatization.doAction(event.action);
+    
+    // 更新对应的操作状态
+    switch (event.action) {
+      case ClimatizationAction.start:
+        emit(state.copyWith(actionStart: true));
+        break;
+      case ClimatizationAction.stop:
+        emit(state.copyWith(actionStop: true));
+        break;
+      case ClimatizationAction.setting:
+        emit(state.copyWith(actionSetting: true));
+        break;
+      default:
+        break;
+    }
+  }
+
+  /// 滑动条值更新事件处理
+  FutureOr<void> _onUpdateSliderExecuteEvent(
+    UpdateSliderExecuteEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    emit(state.copyWith(sliderValue: event.sliderValue));
+  }
+
+  /// 页面数据刷新事件处理
+  FutureOr<void> _onUpdatePageDataEventEvent(
+    UpdatePageDataEventEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('刷新页面数据');
+    
+    // 切换更新标记，触发UI重新构建
+    emit(state.copyWith(updatePage: !(state.updatePage ?? false)));
+    
+    // 刷新空调服务数据
+    state.climatization.doAction(ClimatizationAction.refresh);
+  }
+
+  /// 检查默认车辆
+  Future<void> checkDefaultVehicle(BuildContext? context, String? noticeVin) async {
+    await VehicleUtils.checkDefaultVehicle(context, noticeVin, (value) {
+      // 车辆检查回调处理
+      CarAppLog.i('默认车辆检查完成: $value');
+    });
+  }
+
+  /// 更新完整状态
+  void _updateCompleteState() {
+    emit(state.copyWith(
+      status: state.climatization.status as ClimatisationStatus,
+      parameter: state.climatization.parameter,
+      actionStart: checkActionStartRun(state.climatization),
+      actionStop: checkActionStopRun(state.climatization),
+      actionSetting: checkActionSettingRun(state.climatization),
+    ));
+  }
+
+  /// 更新参数状态
+  void _updateParameterState() {
+    emit(state.copyWith(
+      parameter: state.climatization.parameter,
+      actionSetting: checkActionSettingRun(state.climatization),
+    ));
+  }
+
+  @override
+  Future<void> close() {
+    CarAppLog.i('RemoteClimatisationControlBloc 资源清理');
+    Vehicle.removeServiceObserver(client);  // 取消服务订阅
+    return super.close();
+  }
+}
+```
+
+**使用Repository模式的数据流实现**：
+
+```dart
+/// 充电桩Repository - 数据源管理实现
+class ChargingStationRepository {
+  final ChargingStationApi _api = Modular.get<ChargingStationApi>();
+  final ChargingStationCache _cache = Modular.get<ChargingStationCache>();
+
+  /// 查找附近充电桩 - 实现缓存优先策略
+  Future<List<ChargingStation>> findNearbyStations(
+    LatLng location, {
+    int radius = 5000,
+  }) async {
+    try {
+      // 1. 优先从缓存获取数据
+      final cached = await _cache.getNearbyStations(location, radius);
+      if (cached.isNotEmpty && !_cache.isExpired(location)) {
+        Logger.i('从缓存获取充电桩数据: ${cached.length}个');
+        return cached;
+      }
+
+      // 2. 缓存过期或无数据，从API获取
+      Logger.i('从API获取充电桩数据');
+      final stations = await _api.findNearbyStations(location, radius);
+
+      // 3. 更新缓存
+      await _cache.cacheStations(location, stations);
+
+      return stations;
+    } catch (error) {
+      Logger.e('获取充电桩数据失败: $error');
+      
+      // 4. 出错时返回缓存数据（如果有）
+      final cached = await _cache.getNearbyStations(location, radius);
+      if (cached.isNotEmpty) {
+        Logger.w('返回过期缓存数据: ${cached.length}个');
+        return cached;
+      }
+      
+      rethrow;
+    }
+  }
+}
+
+/// 充电桩搜索Bloc - 完整的数据流管理
 class ChargingStationBloc extends Bloc<ChargingStationEvent, ChargingStationState> {
   final ChargingStationRepository repository;
-  
+
   ChargingStationBloc(this.repository) : super(ChargingStationInitial()) {
     on<LoadNearbyStations>(_onLoadNearbyStations);
+    on<RefreshStations>(_onRefreshStations);
   }
-  
+
+  /// 加载附近充电桩
   Future<void> _onLoadNearbyStations(
     LoadNearbyStations event,
     Emitter<ChargingStationState> emit,
   ) async {
     emit(ChargingStationLoading());
-    
+
     try {
-      // 1. 通过Repository获取数据
+      // 通过Repository获取数据
       final stations = await repository.findNearbyStations(
         event.location,
         radius: event.radius,
       );
+
+      emit(ChargingStationLoaded(
+        stations: stations,
+        location: event.location,
+        lastUpdateTime: DateTime.now(),
+      ));
+
+      // 发布事件通知其他模块
+      OneAppEventBus.fire('charging_stations_loaded', {
+        'count': stations.length,
+        'location': event.location,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
       
-      // 2. 发射新状态
-      emit(ChargingStationLoaded(stations));
     } catch (error) {
       emit(ChargingStationError(error.toString()));
+      
+      // 发布错误事件
+      OneAppEventBus.fire('charging_stations_error', {
+        'error': error.toString(),
+        'location': event.location,
+      });
     }
   }
-}
 
-// Repository层实现数据来源策略
-class ChargingStationRepository {
-  final ChargingStationApi _api;
-  final ChargingStationCache _cache;
-  
-  Future<List<ChargingStation>> findNearbyStations(
-    LatLng location, {
-    int radius = 5000,
-  }) async {
-    // 1. 尝试从缓存获取
-    final cached = await _cache.getNearbyStations(location, radius);
-    if (cached.isNotEmpty && !_cache.isExpired(location)) {
-      return cached;
+  /// 刷新充电桩数据
+  Future<void> _onRefreshStations(
+    RefreshStations event,
+    Emitter<ChargingStationState> emit,
+  ) async {
+    if (state is ChargingStationLoaded) {
+      final currentState = state as ChargingStationLoaded;
+      emit(ChargingStationRefreshing(currentState.stations));
+
+      try {
+        final stations = await repository.findNearbyStations(
+          currentState.location,
+          radius: 5000,
+        );
+
+        emit(ChargingStationLoaded(
+          stations: stations,
+          location: currentState.location,
+          lastUpdateTime: DateTime.now(),
+        ));
+      } catch (error) {
+        emit(ChargingStationLoaded(
+          stations: currentState.stations,
+          location: currentState.location,
+          lastUpdateTime: currentState.lastUpdateTime,
+          error: error.toString(),
+        ));
+      }
     }
-    
-    // 2. 从API获取最新数据
-    final stations = await _api.findNearbyStations(location, radius);
-    
-    // 3. 更新缓存
-    await _cache.cacheStations(location, stations);
-    
-    return stations;
   }
 }
 ```
