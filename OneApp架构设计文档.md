@@ -901,67 +901,310 @@ graph LR
 
 #### 在OneApp中的实现
 
+基于OneApp项目中的实际代码，以远程空调控制为例展示Bloc模式的三层架构：
+
+##### 1. Event层 (所有的交互事件)
+
+Event定义了用户可以触发的所有事件类型，使用`freezed`注解生成不可变对象：
+
 ```dart
-// 1. 事件定义
-abstract class ChargingEvent {}
-class LoadChargingStations extends ChargingEvent {
-  final LatLng location;
-  LoadChargingStations(this.location);
-}
+/// 远程空调控制事件定义
+@freezed
+class RemoteClimatisationControlEvent with _$RemoteClimatisationControlEvent {
+  /// 温度设置事件
+  /// [temperature] 空调温度
+  const factory RemoteClimatisationControlEvent.updateTemperatureSettingEvent({
+    required double temperature,
+  }) = UpdateTemperatureSettingEvent;
 
-// 2. 状态定义
-abstract class ChargingState {}
-class ChargingLoading extends ChargingState {}
-class ChargingLoaded extends ChargingState {
-  final List<ChargingStation> stations;
-  ChargingLoaded(this.stations);
-}
-class ChargingError extends ChargingState {
-  final String message;
-  ChargingError(this.message);
-}
+  /// 解锁启动开关事件
+  /// [climatizationAtUnlock] 解锁启动开关状态
+  const factory RemoteClimatisationControlEvent.updateClimatizationAtUnlockEvent({
+    required bool climatizationAtUnlock,
+  }) = UpdateClimatizationAtUnlockEvent;
 
-// 3. Bloc实现
-class ChargingBloc extends Bloc<ChargingEvent, ChargingState> {
-  final ChargingRepository repository;
+  /// 执行空调动作事件
+  /// [action] 执行ClimatizationAction动作的action
+  const factory RemoteClimatisationControlEvent.updateActionExecuteEvent({
+    required ClimatizationAction action,
+  }) = UpdateActionExecuteEvent;
+
+  /// 滑块值更新事件
+  /// [sliderValue] 主要用来更新滑块的值
+  const factory RemoteClimatisationControlEvent.updateSliderExecuteEvent({
+    required double sliderValue,
+  }) = UpdateSliderExecuteEvent;
+
+  /// 页面数据刷新事件
+  /// 当前页面暂停了再次回来就执行这个方法,刷新一下页面
+  const factory RemoteClimatisationControlEvent.updatePageDataEvent() = UpdatePageDataEventEvent;
+}
+```
+
+##### 2. State层 (数据层)
+
+State包含了页面所需的所有状态数据，同样使用`freezed`确保不可变性：
+
+```dart
+/// 远程空调控制状态定义
+@freezed
+class RemoteClimatisationState with _$RemoteClimatisationState {
+  /// [climatization] 空调服务类
+  /// [climatizationAtUnlock] 解锁启动开关
+  /// [temperature] 空调温度
+  /// [status] 空调状态
+  /// [parameter] 空调模块参数
+  /// [actionStart] 打开空调操作是否正在执行
+  /// [actionStop] 关闭操作是否正在执行
+  /// [actionSetting] 保存设置操作是否正在执行
+  /// [updatePage] 更新页面,bool值取反
+  /// [sliderValue] 空调滑动条的值
+  const factory RemoteClimatisationState({
+    required ClimatizationService climatization,  // 空调服务实例
+    required bool climatizationAtUnlock,          // 解锁时自动启动开关
+    required double temperature,                  // 当前设置温度
+    ClimatisationStatus? status,                  // 空调运行状态
+    ClimatizationParameter? parameter,            // 空调参数配置
+    bool? actionStart,                           // 启动操作进行中标志
+    bool? actionStop,                            // 停止操作进行中标志
+    bool? actionSetting,                         // 设置操作进行中标志
+    bool? updatePage,                            // 页面更新标志
+    double? sliderValue,                         // 温度滑块当前值
+  }) = _RemoteClimatisationState;
+}
+```
+
+##### 3. Bloc层 (逻辑层)
+
+Bloc负责处理事件并更新状态，包含业务逻辑和与外部服务的交互：
+
+```dart
+/// 远程空调控制业务逻辑层
+class RemoteClimatisationControlBloc extends Bloc<RemoteClimatisationControlEvent, RemoteClimatisationState> {
   
-  ChargingBloc(this.repository) : super(ChargingLoading()) {
-    on<LoadChargingStations>(_onLoadStations);
+  RemoteClimatisationControlBloc(
+    ClimatizationService climatization,
+    double temperature,
+    bool climatizationAtUnlock,
+    String? noticeVin,
+    BuildContext? context,
+  ) : super(
+          RemoteClimatisationState(
+            climatization: climatization,
+            temperature: temperature,
+            climatizationAtUnlock: climatizationAtUnlock,
+          ),
+        ) {
+    // 注册事件处理器
+    on<UpdateTemperatureSettingEvent>(_onUpdateTemperatureSetting);
+    on<UpdateClimatizationAtUnlockEvent>(_onUpdateClimatizationAtUnlockEvent);
+    on<UpdateActionExecuteEvent>(_onUpdateActionExecuteEvent);
+    on<UpdateSliderExecuteEvent>(_onUpdateSliderExecuteEvent);
+    on<UpdatePageDataEventEvent>(_onUpdatePageDataEventEvent);
+
+    // 初始化状态
+    _initializeState(climatization);
+    
+    // 订阅空调服务变化
+    _subscribeToClimatizationService(climatization);
   }
-  
-  Future<void> _onLoadStations(
-    LoadChargingStations event,
-    Emitter<ChargingState> emit,
-  ) async {
-    try {
-      emit(ChargingLoading());
-      final stations = await repository.findNearbyStations(event.location);
-      emit(ChargingLoaded(stations));
-    } catch (e) {
-      emit(ChargingError(e.toString()));
+
+  /// 处理温度设置事件
+  FutureOr<void> _onUpdateTemperatureSetting(
+    UpdateTemperatureSettingEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('更新温度设置: ${event.temperature}');
+
+    if (state.climatization.isParameterReady) {
+      // 更新空调设置参数
+      final ClimatizationSetting setting = state.parameter!.setting.copyWith(
+        targetTemperatureC: event.temperature,
+        unitInCar: 'celsius',
+      );
+      
+      // 更新RPC参数
+      final ClimatizationRpcParameter rpc = ClimatizationRpcParameter();
+      rpc.targetTemperature = event.temperature;
+      rpc.targetTemperatureUnit = 'celsius';
+
+      final ClimatizationParameter parameter = ClimatizationParameter();
+      parameter.setting = setting;
+      parameter.rpc = rpc;
+      parameter.timer = state.parameter!.timer;
+
+      // 更新服务参数
+      state.climatization.parameter = parameter;
+
+      emit(state.copyWith(
+        parameter: parameter,
+        temperature: event.temperature,
+      ));
+    } else {
+      emit(state.copyWith(temperature: event.temperature));
     }
   }
-}
 
-// 4. UI中使用
-class ChargingMapPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ChargingBloc, ChargingState>(
-      builder: (context, state) {
-        if (state is ChargingLoading) {
-          return Center(child: CircularProgressIndicator());
-        } else if (state is ChargingLoaded) {
-          return MapView(stations: state.stations);
-        } else if (state is ChargingError) {
-          return ErrorWidget(message: state.message);
+  /// 处理解锁启动开关事件
+  FutureOr<void> _onUpdateClimatizationAtUnlockEvent(
+    UpdateClimatizationAtUnlockEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('更新解锁启动开关: ${event.climatizationAtUnlock}');
+
+    if (state.climatization.isParameterReady) {
+      final ClimatizationSetting setting = state.parameter!.setting
+          .copyWith(climatizationAtUnlock: event.climatizationAtUnlock);
+
+      final ClimatizationParameter parameter = 
+          state.climatization.parameter as ClimatizationParameter;
+      parameter.setting = setting;
+      state.climatization.parameter = parameter;
+
+      emit(state.copyWith(
+        parameter: parameter,
+        climatizationAtUnlock: event.climatizationAtUnlock,
+      ));
+    } else {
+      emit(state.copyWith(climatizationAtUnlock: event.climatizationAtUnlock));
+    }
+  }
+
+  /// 处理空调动作执行事件
+  FutureOr<void> _onUpdateActionExecuteEvent(
+    UpdateActionExecuteEvent event,
+    Emitter<RemoteClimatisationState> emit,
+  ) {
+    CarAppLog.i('执行空调动作: ${event.action}');
+
+    // 根据不同动作更新对应的执行状态
+    if (ClimatizationAction.stop == event.action) {
+      emit(state.copyWith(actionStop: true));
+    } else if (ClimatizationAction.start == event.action) {
+      emit(state.copyWith(actionStart: true));
+    } else if (ClimatizationAction.setting == event.action) {
+      emit(state.copyWith(actionSetting: true));
+    }
+  }
+
+  /// 订阅空调服务状态变化
+  void _subscribeToClimatizationService(ClimatizationService climatization) {
+    client = Vehicle.addServiceObserver(
+      ServiceType.remoteChimatization,
+      (UpdateEvent event, ConnectorAction action, dynamic value) {
+        CarAppLog.i('空调服务状态变化: $event');
+        
+        if (event == UpdateEvent.onStatusChange) {
+          // 空调状态变化
+          emit(state.copyWith(status: value as ClimatisationStatus));
+        } else if (event == UpdateEvent.onSettingChange) {
+          // 空调设置变化
+          if (climatization.parameter.setting != null) {
+            final ClimatizationSetting setting =
+                climatization.parameter.setting as ClimatizationSetting;
+            emit(state.copyWith(
+              parameter: value as ClimatizationParameter,
+              temperature: setting.targetTemperatureC ?? 0,
+              climatizationAtUnlock: setting.climatizationAtUnlock ?? false,
+            ));
+          }
+        } else if (event == UpdateEvent.onActionStatusChange) {
+          // 动作执行状态变化
+          final ServiceAction serviceAction = value as ServiceAction;
+          _handleActionStatusChange(serviceAction, action);
         }
-        return Container();
       },
     );
   }
 }
 ```
+
+##### 4. UI中使用Bloc
+
+```dart
+class ClimatizationControlPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<RemoteClimatisationControlBloc, RemoteClimatisationState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(title: Text('远程空调控制')),
+          body: Column(
+            children: [
+              // 温度显示和控制
+              Text('当前温度: ${state.temperature.toInt()}°C'),
+              
+              // 温度滑块
+              Slider(
+                value: state.sliderValue ?? state.temperature,
+                min: 16.0,
+                max: 32.0,
+                onChanged: (value) {
+                  context.read<RemoteClimatisationControlBloc>().add(
+                    RemoteClimatisationControlEvent.updateSliderExecuteEvent(
+                      sliderValue: value,
+                    ),
+                  );
+                },
+              ),
+              
+              // 解锁启动开关
+              SwitchListTile(
+                title: Text('解锁时自动启动'),
+                value: state.climatizationAtUnlock,
+                onChanged: (value) {
+                  context.read<RemoteClimatisationControlBloc>().add(
+                    RemoteClimatisationControlEvent.updateClimatizationAtUnlockEvent(
+                      climatizationAtUnlock: value,
+                    ),
+                  );
+                },
+              ),
+              
+              // 控制按钮
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: state.actionStart == true ? null : () {
+                      context.read<RemoteClimatisationControlBloc>().add(
+                        RemoteClimatisationControlEvent.updateActionExecuteEvent(
+                          action: ClimatizationAction.start,
+                        ),
+                      );
+                    },
+                    child: state.actionStart == true 
+                        ? CircularProgressIndicator() 
+                        : Text('启动空调'),
+                  ),
+                  ElevatedButton(
+                    onPressed: state.actionStop == true ? null : () {
+                      context.read<RemoteClimatisationControlBloc>().add(
+                        RemoteClimatisationControlEvent.updateActionExecuteEvent(
+                          action: ClimatizationAction.stop,
+                        ),
+                      );
+                    },
+                    child: state.actionStop == true 
+                        ? CircularProgressIndicator() 
+                        : Text('关闭空调'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+```
+
+**Bloc模式三层架构优势**：
+
+1. **Event层**: 定义所有可能的用户交互，类型安全，易于测试
+2. **State层**: 集中管理页面状态，不可变设计保证状态一致性  
+3. **Bloc层**: 封装业务逻辑，处理异步操作，与UI完全分离
 
 ### 4. OneApp中的模块化实践
 
@@ -1056,41 +1299,349 @@ dependency_overrides:
 
 #### 模块间通信机制
 
+OneApp采用多种方式实现模块间通信，主要包括事件总线通信和依赖注入通信两种机制。
+
+##### 1. 事件总线通信 (OneAppEventBus)
+
+基于发布-订阅模式的事件总线，支持匿名订阅和标识订阅两种方式：
+
 ```dart
-// 1. 事件总线通信
-class EventBus {
-  static final _instance = EventBus._internal();
-  static EventBus get instance => _instance;
+/// OneApp事件总线实现
+class OneAppEventBus extends Object {
+  static final _eventBus = EventBus();
+  static final OneAppEventBus _instance = OneAppEventBus._internal();
   
-  final StreamController<dynamic> _controller = StreamController.broadcast();
-  
-  void publish<T>(T event) => _controller.add(event);
-  
-  Stream<T> subscribe<T>() => _controller.stream.where((event) => event is T).cast<T>();
-}
+  // 控制器管理
+  final Map<String, StreamController<dynamic>> _eventControllers = {};
+  final Map<String, List<StreamSubscription<dynamic>>> _anonymousSubscriptions = {};
+  final Map<String, Map<String, StreamSubscription<dynamic>>> _identifiedSubscriptions = {};
 
-// 2. 服务接口定义
-abstract class IChargingService {
-  Future<List<ChargingStation>> findNearbyStations(LatLng location);
-  Future<void> startCharging(String stationId);
-}
+  OneAppEventBus._internal();
 
-// 3. 模块注册
-class CarModule extends Module {
-  @override
-  List<Bind> get binds => [
-    Bind.singleton<IChargingService>((i) => ChargingService()),
-  ];
-}
+  /// 基础事件发布
+  static void fireEvent(event) {
+    _eventBus.fire(event);
+  }
 
-// 4. 跨模块调用
-class OrderService {
-  void createChargingOrder() {
-    final chargingService = Modular.get<IChargingService>();
-    // 使用充电服务
+  /// 基础事件监听
+  static StreamSubscription<T> addListen<T>(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return _eventBus.on<T>().listen(onData,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+  }
+
+  /// 高级事件订阅 - 支持匿名和标识订阅
+  /// [eventType] 事件类型
+  /// [onEvent] 事件处理回调
+  /// [id] 可选的订阅标识，用于管理订阅生命周期
+  static void on(String eventType, Function(dynamic event) onEvent, {String? id}) {
+    var controller = _instance._eventControllers.putIfAbsent(
+      eventType,
+      () => StreamController<dynamic>.broadcast(),
+    );
+
+    var subscription = controller.stream.listen(onEvent);
+    
+    if (id == null) {
+      // 匿名订阅
+      _instance._anonymousSubscriptions
+          .putIfAbsent(eventType, () => [])
+          .add(subscription);
+    } else {
+      // 标识订阅 - 自动取消同ID的旧订阅
+      var subscriptions = _instance._identifiedSubscriptions.putIfAbsent(eventType, () => {});
+      subscriptions[id]?.cancel();
+      subscriptions[id] = subscription;
+    }
+  }
+
+  /// 事件发布
+  /// [eventType] 事件类型
+  /// [event] 事件数据
+  static void fire(String eventType, dynamic event) {
+    _instance._eventControllers[eventType]?.add(event);
+  }
+
+  /// 取消订阅
+  /// [eventType] 事件类型
+  /// [id] 可选的订阅标识
+  static void cancel(String eventType, {String? id}) {
+    if (id == null) {
+      // 取消所有匿名订阅
+      _instance._anonymousSubscriptions[eventType]?.forEach((sub) => sub.cancel());
+      _instance._anonymousSubscriptions.remove(eventType);
+      
+      // 取消所有标识订阅
+      _instance._identifiedSubscriptions[eventType]?.values.forEach((sub) => sub.cancel());
+      _instance._identifiedSubscriptions.remove(eventType);
+    } else {
+      // 取消特定标识订阅
+      _instance._identifiedSubscriptions[eventType]?[id]?.cancel();
+      _instance._identifiedSubscriptions[eventType]?.remove(id);
+    }
+
+    // 清理空控制器
+    if ((_instance._anonymousSubscriptions[eventType]?.isEmpty ?? true) &&
+        (_instance._identifiedSubscriptions[eventType]?.isEmpty ?? true)) {
+      _instance._eventControllers[eventType]?.close();
+      _instance._eventControllers.remove(eventType);
+    }
+  }
+
+  /// 取消所有订阅
+  static void cancelAll() {
+    _instance._anonymousSubscriptions.forEach((eventType, subscriptions) {
+      for (var subscription in subscriptions) {
+        subscription.cancel();
+      }
+    });
+    _instance._anonymousSubscriptions.clear();
+
+    _instance._identifiedSubscriptions.forEach((eventType, subscriptions) {
+      for (var subscription in subscriptions.values) {
+        subscription.cancel();
+      }
+    });
+    _instance._identifiedSubscriptions.clear();
+
+    for (var controller in _instance._eventControllers.values) {
+      controller.close();
+    }
+    _instance._eventControllers.clear();
   }
 }
 ```
+
+**事件总线使用示例**：
+
+```dart
+// 1. 定义事件类型
+class VehicleStatusChangedEvent {
+  final String vin;
+  final VehicleStatus status;
+  VehicleStatusChangedEvent(this.vin, this.status);
+}
+
+// 2. 发布事件
+class CarService {
+  void updateVehicleStatus(String vin, VehicleStatus status) {
+    // 更新车辆状态后发布事件
+    OneAppEventBus.fire('vehicle_status_changed', 
+        VehicleStatusChangedEvent(vin, status));
+  }
+}
+
+// 3. 订阅事件
+class HomePageBloc {
+  late StreamSubscription _statusSubscription;
+  
+  void init() {
+    // 匿名订阅方式
+    _statusSubscription = OneAppEventBus.addListen<VehicleStatusChangedEvent>(
+      (event) {
+        // 处理车辆状态变化
+        emit(state.copyWith(vehicleStatus: event.status));
+      },
+    );
+    
+    // 标识订阅方式
+    OneAppEventBus.on('vehicle_status_changed', (event) {
+      if (event is VehicleStatusChangedEvent) {
+        emit(state.copyWith(vehicleStatus: event.status));
+      }
+    }, id: 'home_page_bloc');
+  }
+  
+  @override
+  Future<void> close() {
+    _statusSubscription.cancel();
+    OneAppEventBus.cancel('vehicle_status_changed', id: 'home_page_bloc');
+    return super.close();
+  }
+}
+```
+
+##### 2. 依赖注入通信 (Modular)
+
+通过Modular的依赖注入系统实现模块间服务共享和Bloc对象通信：
+
+```dart
+/// 应用主模块 - 模块注册和依赖管理
+class AppModule extends Module {
+  @override
+  List<Module> get imports => [
+    AccountModule(),        // 账户模块
+    CarControlModule(),     // 车控模块
+    SettingModule(),        // 设置模块
+    AppChargingModule(),    // 充电模块
+    AppOrderModule(),       // 订单模块
+    MembershipModule(),     // 会员模块
+    CommunityModule(),      // 社区模块
+    // ... 更多业务模块
+  ];
+
+  @override
+  List<Bind<Object>> get binds => [
+    $AppBloc,  // 应用级别的Bloc
+  ];
+
+  @override
+  List<ModularRoute> get routes {
+    // 路由配置，支持路由守卫
+    final List<RouteGuard> carList = [const _StatisticsGuard(), LogInGuard._routeGuard];
+    
+    return [
+      ModuleRoute('/account', module: AccountModule(), guards: [const _StatisticsGuard()]),
+      ModuleRoute('/car', module: CarControlModule(), guards: carList),
+      ModuleRoute('/charging', module: AppChargingModule(), guards: carList),
+      // ... 更多路由配置
+    ];
+  }
+}
+```
+
+**业务模块依赖注入实现**：
+
+```dart
+/// 账户模块 - 展示完整的依赖注入配置
+class AccountModule extends Module with RouteObjProvider, AppLifeCycleListener {
+  @override
+  List<Module> get imports => [AccountConModule()]; // 导入底层账户连接模块
+
+  @override
+  List<Bind<Object>> get binds => [
+    // 业务逻辑Bloc注册
+    $PhoneSignInBloc,                    // 手机号登录控制器
+    $VerificationCodeInputBloc,          // 验证码输入控制器
+    $AgreementBloc,                      // 协议页控制器
+    $GarageBloc,                         // 车库页控制器
+    $VehicleInfoBloc,                    // 车辆信息页控制器
+    
+    // 对外暴露的单例服务
+    Bind<PersonalCenterBloc>(
+      (i) => PersonalCenterBloc(
+        i<IAuthFacade>(),          // 注入认证服务接口
+        i<IProfileFacade>(),       // 注入用户资料服务接口  
+        i<IGarageFacade>(),        // 注入车库服务接口
+      ),
+      export: true,                // 导出给其他模块使用
+      isSingleton: false,          // 非单例模式
+    ),
+    
+    // 更多业务Bloc...
+    $VehicleAuthBloc,
+    $AuthNewUserBloc,
+    $QrHuConfirmBloc,
+    $PlateNoEditBloc,
+    $UpdatePhoneBloc,
+    $CancelAccountBloc,
+  ];
+}
+```
+
+**跨模块Bloc通信示例**：
+
+```dart
+/// 首页Bloc - 需要使用账户模块的服务
+class HomePageBloc extends Bloc<HomeEvent, HomeState> {
+  final PersonalCenterBloc _personalCenterBloc;
+  late StreamSubscription _personalCenterSubscription;
+
+  HomePageBloc() : super(HomeInitial()) {
+    // 通过依赖注入获取其他模块的Bloc
+    _personalCenterBloc = Modular.get<PersonalCenterBloc>();
+    
+    // 订阅其他模块Bloc的状态变化
+    _personalCenterSubscription = _personalCenterBloc.stream.listen((state) {
+      if (state is PersonalCenterLoaded) {
+        // 响应个人中心状态变化，更新首页状态
+        add(UpdateUserInfo(state.userProfile));
+      }
+    });
+    
+    on<UpdateUserInfo>(_onUpdateUserInfo);
+  }
+
+  Future<void> _onUpdateUserInfo(UpdateUserInfo event, Emitter<HomeState> emit) async {
+    emit(state.copyWith(userProfile: event.userProfile));
+  }
+
+  @override
+  Future<void> close() {
+    _personalCenterSubscription.cancel();
+    return super.close();
+  }
+}
+
+/// 充电模块调用账户模块服务
+class ChargingBloc extends Bloc<ChargingEvent, ChargingState> {
+  ChargingBloc() : super(ChargingInitial()) {
+    on<StartCharging>(_onStartCharging);
+  }
+
+  Future<void> _onStartCharging(StartCharging event, Emitter<ChargingState> emit) async {
+    // 通过依赖注入获取账户认证服务
+    final authFacade = Modular.get<IAuthFacade>();
+    
+    if (!authFacade.isLogin) {
+      emit(ChargingError('请先登录'));
+      return;
+    }
+
+    // 获取用户信息进行充电
+    final profileFacade = Modular.get<IProfileFacade>();
+    final userProfile = profileFacade.getUserProfileLocal();
+    
+    // 执行充电逻辑...
+    emit(ChargingInProgress(event.stationId));
+  }
+}
+```
+
+**路由守卫实现模块间权限控制**：
+
+```dart
+/// 登录守卫 - 保护需要登录的路由
+class LogInGuard extends RouteGuard {
+  factory LogInGuard() => _routeGuard;
+  LogInGuard._() : super();
+
+  static final LogInGuard _routeGuard = LogInGuard._();
+
+  @override
+  FutureOr<bool> canActivate(String path, ParallelRoute<dynamic> route) {
+    // 通过依赖注入获取认证服务
+    final authFacade = Modular.get<IAuthFacade>();
+    return authFacade.isLogin;
+  }
+
+  @override
+  FutureOr<ParallelRoute<dynamic>?> pos(ModularRoute route, dynamic data) async {
+    final authFacade = Modular.get<IAuthFacade>();
+    
+    if (authFacade.isLogin) {
+      return route as ParallelRoute;
+    } else {
+      // 未登录时跳转到登录页
+      await Modular.to.pushNamed('/account/sign_in');
+      return null;
+    }
+  }
+}
+```
+
+**通信机制对比**：
+
+| 通信方式 | 适用场景 | 优点 | 缺点 |
+|---------|----------|------|------|
+| **OneAppEventBus** | 松耦合的事件通知、状态广播 | 解耦性强、支持一对多通信 | 类型安全性较弱、调试困难 |
+| **依赖注入** | 服务共享、Bloc间直接通信 | 类型安全、IDE支持好 | 模块间耦合度较高 |
+
+这两种机制在OneApp中协同工作，事件总线用于广播式通知，依赖注入用于服务共享和直接通信，共同构建了灵活而高效的模块间通信体系。
 
 ## OneApp架构
 
