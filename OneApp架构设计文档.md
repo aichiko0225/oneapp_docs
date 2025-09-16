@@ -352,6 +352,16 @@ graph TB
     subgraph "Platform"
         J[Android/iOS/Web/Desktop<br/>目标平台]
     end
+    
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> H
+    F --> I
+    I --> J
 ```
 
 **架构层次详解**
@@ -717,7 +727,7 @@ graph TB
     C --> E[Factory Binds]
     C --> F[Lazy Binds]
     
-    G[Widget] --> H[Modular.get<T>()]
+    G[Widget] --> H["Modular.get&lt;T&gt;()"]
     H --> C
 ```
 
@@ -890,7 +900,7 @@ class AppModule extends Module  {
 
 ![cubit_architecture](./images/cubit_architecture_full.webp)
 
-![bloc_system](./images/Bloc-1.awebp)
+![bloc_system](./images/Bloc-1.webp)
 
 ```mermaid
 graph LR
@@ -3681,28 +3691,41 @@ class ChargingStationBloc extends Bloc<ChargingStationEvent, ChargingStationStat
 
 **功能丰富度**
 ```mermaid
-mindmap
-  root((OneApp功能))
-    车辆服务
-      远程控制
-      状态监控
-      维护提醒
-      虚拟钥匙
-    充电服务
-      充电桩查找
-      充电预约
-      支付结算
-      充电记录
-    生活服务
-      订单管理
-      社区互动
-      会员权益
-      个人设置
-    增值服务
-      Touch&Go
-      家充桩管理
-      汽车销售
-      售后服务
+graph TB
+    OneApp[OneApp功能]
+    
+    subgraph "车辆服务"
+        A1[远程控制]
+        A2[状态监控]
+        A3[维护提醒]
+        A4[虚拟钥匙]
+    end
+    
+    subgraph "充电服务"
+        B1[充电桩查找]
+        B2[充电预约]
+        B3[支付结算]
+        B4[充电记录]
+    end
+    
+    subgraph "生活服务"
+        C1[订单管理]
+        C2[社区互动]
+        C3[会员权益]
+        C4[个人设置]
+    end
+    
+    subgraph "增值服务"
+        D1[Touch&Go]
+        D2[家充桩管理]
+        D3[汽车销售]
+        D4[售后服务]
+    end
+    
+    OneApp --> A1
+    OneApp --> B1
+    OneApp --> C1
+    OneApp --> D1
 ```
 
 **用户体验**
