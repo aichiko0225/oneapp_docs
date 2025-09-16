@@ -315,59 +315,324 @@ graph TB
 
     `EventChannel`：用于数据流式传输，通常用于原生代码向 Flutter 层推送事件。
 
-
-
-
 ## Flutter知识
 
-### 1. Flutter 基础架构
+### 1. Flutter 架构概览
 
-Flutter是Google开发的跨平台UI工具包，采用自绘制引擎，实现了"一套代码，多端运行"的目标。
+Flutter 是 Google 开发的跨平台 UI 工具包，采用自绘制引擎，实现了"一套代码，多端运行"的目标。它被设计为一个可扩展的分层系统，各个独立的组件系列合集，上层组件各自依赖下层组件。
 
-![](./images/flutter-archdiagram.png)
+> 参考：[Flutter架构概览官方文档](https://docs.flutter.cn/resources/architectural-overview)
 
+#### Flutter 架构
 
-#### Flutter架构层次
+Flutter 采用分层架构设计，从上到下分为 Framework 层、Engine 层和 Platform 层：
+
+![Flutter架构图](https://docs.flutter.cn/assets/images/docs/arch-overview/archdiagram.png)
 
 ```mermaid
 graph TB
-    subgraph "Framework Layer (Dart)"
-        A[Material/Cupertino] --> B[Widgets]
-        B --> C[Rendering]
-        C --> D[Foundation]
+    subgraph "Dart App"
+        A[业务逻辑<br/>Business Logic]
     end
     
-    subgraph "Engine Layer (C++)"
-        D --> E[Dart Runtime]
-        E --> F[Skia Graphics]
-        F --> G[Text Layout]
-        G --> H[Platform Channels]
+    subgraph "Framework (Dart)"
+        B[Material/Cupertino<br/>设计语言实现]
+        C[Widgets<br/>组合抽象]
+        D[Rendering<br/>渲染层]
+        E[Foundation<br/>基础库]
     end
     
-    subgraph "Platform Layer"
-        H --> I[Android/iOS/Web/Desktop]
+    subgraph "Engine (C++)"
+        F[Dart Runtime<br/>Dart虚拟机]
+        G[Skia/Impeller<br/>图形引擎]
+        H[Text Layout<br/>文本排版]
+        I[Platform Channels<br/>平台通道]
+    end
+    
+    subgraph "Platform"
+        J[Android/iOS/Web/Desktop<br/>目标平台]
     end
 ```
 
-**各层职责**
+**架构层次详解**
 
-1. **Framework Layer (Dart)**
-   - **Widget Layer**: 提供基础UI组件和组合能力
-   - **Rendering Layer**: 负责布局、绘制和合成
-   - **Foundation Layer**: 提供基础服务如动画、手势等
+| 架构层 | 主要职责 | 核心组件 | 关键特点 |
+|--------|----------|----------|----------|
+| **Framework层** | 提供上层API封装 | Material、Widgets、Rendering、Foundation | Dart语言实现，响应式编程 |
+| **Engine层** | 底层渲染和运行时支持 | Dart Runtime、图形引擎、文本布局 | C++实现，高性能渲染 |
+| **Platform层** | 与底层操作系统交互 | 嵌入层、系统API | 平台特定实现 |
 
-2. **Engine Layer (C++)**
-   - **Dart Runtime**: 执行Dart代码
-   - **Skia**: 2D图形渲染引擎
-   - **Text**: 文本排版和渲染
-   - **Platform Channel**: 与原生平台通信
+#### Flutter 应用架构
 
-3. **Platform Layer**
-   - 各平台的原生实现和系统集成
+基于官方推荐的 MVVM 架构模式，Flutter 应用采用关注点分离原则，分为 UI 层和数据层。
+
+> 参考：[Flutter应用架构指南](https://docs.flutter.cn/app-architecture/guide)
+
+![MVVM架构模式](https://docs.flutter.cn/assets/images/docs/app-architecture/guide/mvvm-intro-with-layers.png)
+
+**分层架构设计**
+
+```mermaid
+graph TB
+    subgraph "UI Layer 用户界面层"
+        A[View<br/>视图组件]
+        B[ViewModel<br/>视图模型]
+    end
+    
+    subgraph "Domain Layer 领域层 (可选)"
+        E[Use Cases<br/>业务用例]
+        F[Domain Models<br/>领域模型]
+    end
+    
+    subgraph "Data Layer 数据层"
+        C[Repository<br/>数据仓库]
+        D[Service<br/>数据服务]
+    end
+    
+    A -.->|用户事件| B
+    B -.->|状态更新| A
+    B --> C
+    B --> E
+    E --> F
+    E --> C
+    C --> D
+```
+
+**完整的功能模块架构**
+
+![功能架构示例](https://docs.flutter.cn/assets/images/docs/app-architecture/guide/feature-architecture-example.png)
+
+**架构组件职责**
+
+| 组件层 | 主要职责 | 核心特点 | 示例 |
+|--------|----------|----------|------|
+| **View** | UI渲染和用户交互 | 无业务逻辑，接收ViewModel数据 | StatelessWidget页面 |
+| **ViewModel** | 业务逻辑和状态管理 | 数据转换，状态维护，命令处理 | Bloc、Provider |
+| **Repository** | 数据源管理 | 缓存策略，错误处理，数据转换 | UserRepository |
+| **Service** | 外部数据源封装 | API调用，本地存储，平台服务 | ApiService |
+| **Use Cases** | 复杂业务逻辑封装 | 跨Repository逻辑，可复用业务 | LoginUseCase |
+
+#### 推荐项目结构
+
+基于官方最佳实践的项目文件组织方式：
+
+```
+lib/
+├── ui/                          # UI层 - 用户界面
+│   ├── core/                    # 核心UI组件
+│   │   ├── widgets/             # 通用Widget组件
+│   │   ├── themes/              # 主题配置
+│   │   └── extensions/          # UI扩展方法
+│   └── features/                # 功能模块
+│       ├── home/                # 首页功能
+│       │   ├── view_models/     # 视图模型
+│       │   │   └── home_view_model.dart
+│       │   ├── views/           # 视图组件
+│       │   │   ├── home_screen.dart
+│       │   │   └── widgets/
+│       │   └── models/          # UI状态模型
+│       ├── car_control/         # 车控功能
+│       └── profile/             # 个人中心
+├── domain/                      # 领域层 - 业务逻辑
+│   ├── models/                  # 领域模型
+│   │   ├── car.dart
+│   │   └── user.dart
+│   ├── use_cases/               # 业务用例
+│   │   ├── login_use_case.dart
+│   │   └── car_control_use_case.dart
+│   └── repositories/            # 仓库接口
+│       └── i_car_repository.dart
+├── data/                        # 数据层 - 数据访问
+│   ├── repositories/            # 仓库实现
+│   │   ├── car_repository_impl.dart
+│   │   └── user_repository_impl.dart
+│   ├── services/                # 数据服务
+│   │   ├── api/                 # API服务
+│   │   │   ├── car_api_service.dart
+│   │   │   └── auth_api_service.dart
+│   │   ├── local/               # 本地存储
+│   │   │   └── cache_service.dart
+│   │   └── platform/            # 平台服务
+│   │       └── bluetooth_service.dart
+│   └── models/                  # 数据传输对象
+│       ├── api/                 # API模型
+│       └── local/               # 本地模型
+├── core/                        # 核心基础设施
+│   ├── di/                      # 依赖注入
+│   ├── network/                 # 网络配置
+│   ├── storage/                 # 存储配置
+│   ├── constants/               # 常量定义
+│   └── utils/                   # 工具类
+├── config/                      # 配置文件
+│   ├── app_config.dart
+│   └── environment.dart
+└── main.dart                    # 应用入口
+```
 
 ### 2. Flutter 工作原理
-<!-- 介绍Flutter的布局组件，以及渲染原理 -->
 
+Flutter 的核心设计理念是"**一切皆Widget**"，通过积极的组合模式构建用户界面。为了支撑大量Widget的高效运行，Flutter采用了多层次的架构设计和优化算法。
+
+#### 2.1 Flutter 三棵树架构
+
+Flutter 使用三棵树来管理UI状态和渲染：
+
+```mermaid
+graph TD
+    subgraph "Widget Tree (配置描述)"
+        W1[StatelessWidget] --> W2[Container]
+        W1 --> W3[Text]
+        W2 --> W4[Padding]
+        W4 --> W5[Image]
+    end
+    
+    subgraph "Element Tree (桥梁管理)"
+        E1[StatelessElement] --> E2[SingleChildRenderObjectElement]
+        E1 --> E3[LeafRenderObjectElement]
+        E2 --> E4[SingleChildRenderObjectElement]
+        E4 --> E5[LeafRenderObjectElement]
+    end
+    
+    subgraph "RenderObject Tree (渲染实现)"
+        R1[RenderBox] --> R2[RenderPadding]
+        R1 --> R3[RenderParagraph]
+        R2 --> R4[RenderImage]
+    end
+    
+    W1 -.->|创建| E1
+    W2 -.->|创建| E2
+    W3 -.->|创建| E3
+    W4 -.->|创建| E4
+    W5 -.->|创建| E5
+    
+    E2 -.->|创建| R1
+    E3 -.->|创建| R3
+    E4 -.->|创建| R2
+    E5 -.->|创建| R4
+```
+
+**三棵树的职责分工**
+
+| 树类型            | 主要职责                           | 生命周期     | 特点           |
+| ----------------- | ---------------------------------- | ------------ | -------------- |
+| **Widget Tree**   | UI配置描述，定义界面应该是什么样子 | 每帧重建     | 不可变、轻量级 |
+| **Element Tree**  | Widget和RenderObject的桥梁        | 相对稳定     | 维护状态和关系 |
+| **RenderObject**  | 实际的布局、绘制和命中测试         | 长期存在     | 可变、性能关键 |
+
+#### 2.2 Widget 构建与更新流程
+
+```mermaid
+sequenceDiagram
+    participant User as 用户操作
+    participant Widget as Widget Tree
+    participant Element as Element Tree
+    participant Render as RenderObject Tree
+    participant Engine as Flutter Engine
+    
+    User->>Widget: setState() 触发更新
+    Widget->>Widget: build() 创建新Widget树
+    Widget->>Element: 比较新旧Widget
+    
+    alt Widget相同
+        Element->>Element: 复用现有Element
+    else Widget不同
+        Element->>Element: 创建新Element
+        Element->>Render: 更新RenderObject
+    end
+    
+    Element->>Render: markNeedsLayout()
+    Render->>Render: layout() 布局计算
+    Render->>Render: paint() 绘制操作
+    Render->>Engine: 提交渲染数据
+    Engine->>User: 显示更新后的UI
+```
+
+#### 2.3 布局系统 (Layout System)
+
+Flutter 采用**单遍布局算法**，确保每个RenderObject在布局过程中最多被访问两次。
+
+```mermaid
+graph TB
+    subgraph "布局约束传递 (Constraints Down)"
+        A[Parent RenderObject] -->|BoxConstraints| B[Child RenderObject]
+        B -->|BoxConstraints| C[Grandchild RenderObject]
+    end
+    
+    subgraph "尺寸信息回传 (Size Up)"
+        C -->|Size| B
+        B -->|Size| A
+    end
+    
+    subgraph "位置确定 (Position)"
+        A -->|Offset| B
+        B -->|Offset| C
+    end
+```
+
+#### 2.4 绘制系统 (Painting System)
+
+绘制系统负责将布局完成的RenderObject转换为实际的像素。
+
+```mermaid
+sequenceDiagram
+    participant RO as RenderObject
+    participant Layer as Layer Tree
+    participant Canvas as Canvas
+    participant Skia as Skia Engine
+    participant GPU as GPU
+    
+    RO->>RO: markNeedsPaint()
+    RO->>Layer: 创建绘制层
+    RO->>Canvas: paint(Canvas, Offset)
+    Canvas->>Skia: 绘制命令
+    Skia->>GPU: 光栅化
+    GPU->>GPU: 合成显示
+```
+
+#### 2.5 渲染管线 (Render Pipeline)
+
+Flutter的完整渲染管线包含四个主要阶段：
+
+```mermaid
+graph LR
+    A[Build 构建] --> B[Layout 布局]
+    B --> C[Paint 绘制]
+    C --> D[Composite 合成]
+    
+    A1[Widget.build] --> A
+    B1[RenderObject.layout] --> B
+    C1[RenderObject.paint] --> C
+    D1[Layer.composite] --> D
+    
+    subgraph "优化策略"
+        E[只有脏节点参与]
+        F[次线性算法]
+        G[缓存复用]
+        H[GPU加速]
+    end
+    
+    E --> A
+    F --> B
+    G --> C
+    H --> D
+```
+
+**渲染管线优化**
+
+1. **构建阶段优化**
+   - 只重建标记为dirty的Widget
+   - Element复用机制
+   - 构建缓存策略
+
+2. **布局阶段优化**
+   - 单遍布局算法
+   - 约束传播优化
+   - 边界检测跳过
+
+3. **绘制阶段优化**
+   - Layer层缓存
+   - 重绘区域最小化
+   - GPU合成加速
 
 ## Flutter 模块化
 
