@@ -327,7 +327,7 @@ Flutter 是 Google 开发的跨平台 UI 工具包，采用自绘制引擎，实
 
 Flutter 采用分层架构设计，从上到下分为 Framework 层、Engine 层和 Platform 层：
 
-![Flutter架构图](https://docs.flutter.cn/assets/images/docs/arch-overview/archdiagram.png)
+![Flutter架构图](./images/flutter-archdiagram.png)
 
 ```mermaid
 graph TB
@@ -400,7 +400,7 @@ graph TB
 
 **完整的功能模块架构**
 
-![功能架构示例](https://docs.flutter.cn/assets/images/docs/app-architecture/guide/feature-architecture-example.png)
+![功能架构示例](./images/feature-architecture-example.png)
 
 **架构组件职责**
 
@@ -748,6 +748,71 @@ class HomePage extends StatelessWidget {
 }
 ```
 
+依赖注入也可以通过`Service`来完成某一些功能的实现
+
+```dart
+abstract class EmailService {
+  void sendEmail(String email, String title, String body);
+}
+
+class XPTOEmailService implements EmailService {
+
+  final XPTOEmail xpto;
+  XPTOEmailService(this.xpto);
+
+  void sendEmail(String email, String title, String body) {
+    xpto.sendEmail(email, title, body);
+  }
+}
+
+class Client {
+
+  final EmailService service;
+  Client(this.service);
+
+  void sendEmail(String email, String title, String body){
+    service.sendEmail(email, title, body);
+  }
+}
+```
+
+```dart
+class AppModule extends Module {
+  // v5 写法
+  @override
+  List<Bind> get binds => [
+    Bind.factory((i) => XPTOEmail())
+    Bind.factory<EmailService>((i) => XPTOEmailService(i()))
+    Bind.singleton((i) => Client(i()))
+  ];
+  // v6 写法
+  @override
+  void binds(i) {
+    i.add(XPTOEmail.new);
+    i.add<EmailService>(XPTOEmailService.new);
+    i.addSingleton(Client.new);
+
+    // Register with Key
+    i.addSingleton(Client.new, key: 'OtherClient');
+  }
+}
+```
+
+在模块中就可以获取到注入的service依赖
+```dart
+final client = Modular.get<Client>();
+// or set a default value
+final client = Modular.get<Client>(defaultValue: Client());
+
+// or use tryGet
+Client? client = Modular.tryGet<Client>();
+
+// or get with key
+Client client = Modular.get(key: 'OtherCLient');
+
+client.sendEmail('email@xxx.com', 'title', 'email body')
+```
+
 #### 路由管理
 
 ```dart
@@ -769,9 +834,59 @@ class NavigationService {
 }
 ```
 
+-----
+
+#### Flutter Modular 6.x.x
+
+Flutter Modular v5 和 v6 有一个变化，不过核心的概念不变
+
+```dart
+class AppModule extends Module  {
+
+  @override
+  List<Module> get imports => [];
+
+  @override
+  void routes(RouteManager r) {
+    r.child('/', child: (context) => HomePage(title: 'Home Page'));
+  }
+
+  @override
+  void binds(Injector i) {
+  }
+
+  @override
+  void exportedBinds(Injector i) {
+    
+  }
+}
+```
+
 ### 3. Bloc 状态管理
 
+`Flutter`的很多灵感来自于`React`，它的设计思想是数据与视图分离，由数据映射渲染视图。所以在Flutter中，它的Widget是`immutable`的，而它的动态部分全部放到了状态(`State`)中。
+
+在项目越来越复杂之后，就需要一个状态管理库，实现高效地管理状态、处理依赖注入以及实现路由导航。
+
+`BLoC（Business Logic Component`）是一种由 `Google` 推出的状态管理模式，最初为 `Angular` 框架设计，后被广泛应用于 `Flutter` 开发中。其核心思想是将业务逻辑与 UI 界面分离，通过流（Stream）实现单向数据流，使得状态变化可预测且易于测试。
+
+
+- `Bloc`模式：该模式划分四层结构
+  
+  - bloc：逻辑层
+  - state：数据层
+  - event：所有的交互事件
+  - view：页面
+  
+- `Cubit`模式：该模式划分了三层结构
+  
+  - cubit：逻辑层
+  - state：数据层
+  - view：页面
+
 #### Bloc架构模式
+
+![bloc](./images/Bloc-1.awebp)
 
 ```mermaid
 graph LR
@@ -1167,79 +1282,6 @@ class NetworkClient {
 }
 ```
 
-#### 2.2 模块依赖关系图
-
-```mermaid
-graph TB
-    subgraph "主应用"
-        MA[oneapp_main]
-    end
-    
-    subgraph "业务模块群"
-        AC[oneapp_account]
-        CO[oneapp_community]
-        ME[oneapp_membership]
-        SE[oneapp_setting]
-        CS[oneapp_car_sales]
-        AS[oneapp-after-sales]
-        TP[oneapp-touch-point]
-    end
-    
-    subgraph "车辆功能模块群"
-        CAR[app_car]
-        CHA[app_charging]
-        AV[app_avatar]
-        MA_M[app_maintenance]
-        CW[app_carwatcher]
-        TG[app_touchgo]
-        WB[app_wallbox]
-    end
-    
-    subgraph "服务SDK模块群"
-        CLR_C[clr_charging]
-        CLR_P[clr_payment]
-        CLR_O[clr_order]
-        CLR_M[clr_media]
-        CLR_G[clr_geo]
-    end
-    
-    subgraph "基础设施模块群"
-        BN[basic_network]
-        BS[basic_storage]
-        BL[basic_logger]
-        BC[basic_config]
-        BP[basic_platform]
-        UB[ui_basic]
-        UBU[ui_business]
-    end
-    
-    MA --> AC
-    MA --> CO
-    MA --> ME
-    MA --> SE
-    MA --> CS
-    MA --> AS
-    MA --> TP
-    
-    CAR --> CLR_C
-    CHA --> CLR_C
-    CO --> CLR_M
-    ME --> CLR_P
-    CS --> CLR_O
-    
-    CLR_C --> BN
-    CLR_P --> BN
-    CLR_O --> BS
-    CLR_M --> BL
-    CLR_G --> BC
-    
-    BN --> BP
-    BS --> BP
-    BL --> BP
-    UB --> BP
-    UBU --> UB
-```
-
 #### 2.3 技术栈选择
 
 **前端技术栈**
@@ -1527,7 +1569,7 @@ mindmap
 - 🎯 **响应性**: 快速的页面加载和数据响应
 - 🎯 **可用性**: 离线功能和网络异常处理
 
-### 2. 当前面临的挑战
+### 2. 面临的挑战
 
 #### 2.1 技术挑战
 
@@ -1546,7 +1588,6 @@ dependency_overrides:
 - ⚠️ **模块粒度**: 部分模块粒度过小，增加了管理复杂度
 - ⚠️ **循环依赖**: 某些模块间存在潜在的循环依赖风险
 
-
 ### 3. 架构演进方向
 
 #### 3.1 短期优化
@@ -1564,11 +1605,3 @@ dependencies:
 **具体措施**
 - 🔧 **版本统一**: 统一各模块的基础依赖版本
 - 🔧 **依赖精简**: 合并功能相似的小模块
-
-### 4. 结语
-
-通过Flutter的跨平台能力和模块化架构设计，OneApp实现了：
-- 🎯 **开发效率**: 一套代码支持多平台，大幅提升开发效率
-- 🎯 **用户体验**: 统一的UI设计和流畅的交互体验
-- 🎯 **业务敏捷**: 模块化设计支持快速的业务功能迭代
-- 🎯 **技术沉淀**: 完整的基础设施和工具链体系
