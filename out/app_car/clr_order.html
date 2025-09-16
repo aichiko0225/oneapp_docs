@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>CLR Order - &#x8ba2;&#x5355;&#x670d;&#x52a1; SDK</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="clr-order---订单服务-sdk">CLR Order - 订单服务 SDK</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>clr_order</code> 是 OneApp 车辆订单管理的核心服务 SDK，提供了完整的订单生命周期管理功能。该模块封装了订单创建、支付、状态跟踪、取消退款等核心业务逻辑，为上层应用模块提供统一的订单服务接口。</p>
+<h2 id="核心功能">核心功能</h2>
+<h3 id="1-订单管理">1. 订单管理</h3>
+<ul>
+<li><strong>订单创建</strong>：支持多种类型订单的创建和初始化</li>
+<li><strong>订单查询</strong>：提供订单详情查询和列表获取功能</li>
+<li><strong>订单更新</strong>：支持订单状态和信息的实时更新</li>
+<li><strong>订单取消</strong>：处理订单取消和退款流程</li>
+</ul>
+<h3 id="2-支付集成">2. 支付集成</h3>
+<ul>
+<li><strong>支付方式管理</strong>：支持多种支付渠道的集成</li>
+<li><strong>支付状态跟踪</strong>：实时监控支付进度和结果</li>
+<li><strong>退款处理</strong>：自动化的退款流程处理</li>
+<li><strong>支付安全</strong>：确保支付过程的安全性和可靠性</li>
+</ul>
+<h3 id="3-订单类型支持">3. 订单类型支持</h3>
+<ul>
+<li><strong>充电订单</strong>：电动车充电服务订单</li>
+<li><strong>维保订单</strong>：车辆维护保养服务订单</li>
+<li><strong>配件订单</strong>：车辆配件和用品订单</li>
+<li><strong>服务订单</strong>：各类增值服务订单</li>
+</ul>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="架构设计">架构设计</h3>
+<pre><code>┌─────────────────────────────────────┐
+│            应用层                    │
+│  (app_order, app_charging, etc.)    │
+├─────────────────────────────────────┤
+│            CLR Order SDK            │
+│  ┌─────────────┬─────────────────┐   │
+│  │  订单管理   │    支付服务     │   │
+│  ├─────────────┼─────────────────┤   │
+│  │  状态机制   │    安全认证     │   │
+│  └─────────────┴─────────────────┘   │
+├─────────────────────────────────────┤
+│            网络层                    │
+│     (RESTful API / GraphQL)         │
+├─────────────────────────────────────┤
+│            后端服务                  │
+│  ┌─────────────┬─────────────────┐   │
+│  │  订单服务   │    支付网关     │   │
+│  └─────────────┴─────────────────┘   │
+└─────────────────────────────────────┘
+</code></pre>
+<h3 id="核心组件">核心组件</h3>
+<h4 id="1-订单管理器-ordermanager">1. 订单管理器 (OrderManager)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OrderManager</span> </span>{
+  <span class="hljs-comment">// 创建订单</span>
+  Future&lt;OrderResult&gt; createOrder(OrderRequest request);
+  
+  <span class="hljs-comment">// 查询订单</span>
+  Future&lt;Order&gt; getOrder(<span class="hljs-built_in">String</span> orderId);
+  
+  <span class="hljs-comment">// 更新订单状态</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; updateOrderStatus(<span class="hljs-built_in">String</span> orderId, OrderStatus status);
+  
+  <span class="hljs-comment">// 取消订单</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; cancelOrder(<span class="hljs-built_in">String</span> orderId, <span class="hljs-built_in">String</span> reason);
+}
+</code></pre>
+<h4 id="2-支付处理器-paymentprocessor">2. 支付处理器 (PaymentProcessor)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaymentProcessor</span> </span>{
+  <span class="hljs-comment">// 发起支付</span>
+  Future&lt;PaymentResult&gt; initiatePayment(PaymentRequest request);
+  
+  <span class="hljs-comment">// 查询支付状态</span>
+  Future&lt;PaymentStatus&gt; getPaymentStatus(<span class="hljs-built_in">String</span> paymentId);
+  
+  <span class="hljs-comment">// 处理退款</span>
+  Future&lt;RefundResult&gt; processRefund(RefundRequest request);
+}
+</code></pre>
+<h4 id="3-订单状态机-orderstatemachine">3. 订单状态机 (OrderStateMachine)</h4>
+<pre><code class="language-dart"><span class="hljs-keyword">enum</span> OrderStatus {
+  created,      <span class="hljs-comment">// 已创建</span>
+  paid,         <span class="hljs-comment">// 已支付</span>
+  processing,   <span class="hljs-comment">// 处理中</span>
+  completed,    <span class="hljs-comment">// 已完成</span>
+  cancelled,    <span class="hljs-comment">// 已取消</span>
+  refunded      <span class="hljs-comment">// 已退款</span>
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OrderStateMachine</span> </span>{
+  <span class="hljs-built_in">bool</span> canTransition(OrderStatus from, OrderStatus to);
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; transition(<span class="hljs-built_in">String</span> orderId, OrderStatus to);
+}
+</code></pre>
+<h2 id="数据模型">数据模型</h2>
+<h3 id="订单模型">订单模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Order</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> userId;
+  <span class="hljs-keyword">final</span> OrderType type;
+  <span class="hljs-keyword">final</span> OrderStatus status;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> createdAt;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> updatedAt;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;OrderItem&gt; items;
+  <span class="hljs-keyword">final</span> PaymentInfo payment;
+  <span class="hljs-keyword">final</span> DeliveryInfo delivery;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> totalAmount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> currency;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; metadata;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OrderItem</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> productId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> name;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> quantity;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> price;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; attributes;
+}
+</code></pre>
+<h3 id="支付模型">支付模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaymentInfo</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> paymentId;
+  <span class="hljs-keyword">final</span> PaymentMethod method;
+  <span class="hljs-keyword">final</span> PaymentStatus status;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> amount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> currency;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> paidAt;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> transactionId;
+}
+
+<span class="hljs-keyword">enum</span> PaymentMethod {
+  creditCard,
+  debitCard,
+  digitalWallet,
+  bankTransfer,
+  cryptocurrency
+}
+</code></pre>
+<h2 id="api-接口">API 接口</h2>
+<h3 id="订单接口">订单接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OrderService</span> </span>{
+  <span class="hljs-comment">// 创建订单</span>
+  Future&lt;ApiResponse&lt;Order&gt;&gt; createOrder(CreateOrderRequest request);
+  
+  <span class="hljs-comment">// 获取订单列表</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">List</span>&lt;Order&gt;&gt;&gt; getOrders(OrderQuery query);
+  
+  <span class="hljs-comment">// 获取订单详情</span>
+  Future&lt;ApiResponse&lt;Order&gt;&gt; getOrderById(<span class="hljs-built_in">String</span> orderId);
+  
+  <span class="hljs-comment">// 更新订单</span>
+  Future&lt;ApiResponse&lt;Order&gt;&gt; updateOrder(<span class="hljs-built_in">String</span> orderId, UpdateOrderRequest request);
+  
+  <span class="hljs-comment">// 取消订单</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; cancelOrder(<span class="hljs-built_in">String</span> orderId, CancelOrderRequest request);
+}
+</code></pre>
+<h3 id="支付接口">支付接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaymentService</span> </span>{
+  <span class="hljs-comment">// 创建支付</span>
+  Future&lt;ApiResponse&lt;PaymentSession&gt;&gt; createPayment(CreatePaymentRequest request);
+  
+  <span class="hljs-comment">// 确认支付</span>
+  Future&lt;ApiResponse&lt;PaymentResult&gt;&gt; confirmPayment(<span class="hljs-built_in">String</span> paymentId, ConfirmPaymentRequest request);
+  
+  <span class="hljs-comment">// 查询支付状态</span>
+  Future&lt;ApiResponse&lt;PaymentStatus&gt;&gt; getPaymentStatus(<span class="hljs-built_in">String</span> paymentId);
+  
+  <span class="hljs-comment">// 申请退款</span>
+  Future&lt;ApiResponse&lt;RefundResult&gt;&gt; requestRefund(RefundRequest request);
+}
+</code></pre>
+<h2 id="配置管理">配置管理</h2>
+<h3 id="环境配置">环境配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OrderConfig</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">String</span> baseUrl = <span class="hljs-built_in">String</span>.fromEnvironment(<span class="hljs-string">&#x27;ORDER_API_BASE_URL&#x27;</span>);
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">String</span> apiKey = <span class="hljs-built_in">String</span>.fromEnvironment(<span class="hljs-string">&#x27;ORDER_API_KEY&#x27;</span>);
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">int</span> timeoutSeconds = <span class="hljs-number">30</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">int</span> maxRetries = <span class="hljs-number">3</span>;
+}
+</code></pre>
+<h3 id="支付配置">支付配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaymentConfig</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">Map</span>&lt;PaymentMethod, PaymentProviderConfig&gt; providers = {
+    PaymentMethod.creditCard: PaymentProviderConfig(
+      provider: <span class="hljs-string">&#x27;stripe&#x27;</span>,
+      publicKey: <span class="hljs-string">&#x27;pk_live_...&#x27;</span>,
+    ),
+    PaymentMethod.digitalWallet: PaymentProviderConfig(
+      provider: <span class="hljs-string">&#x27;alipay&#x27;</span>,
+      appId: <span class="hljs-string">&#x27;app_...&#x27;</span>,
+    ),
+  };
+}
+</code></pre>
+<h2 id="错误处理">错误处理</h2>
+<h3 id="订单错误类型">订单错误类型</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">enum</span> OrderErrorType {
+  invalidRequest,       <span class="hljs-comment">// 无效请求</span>
+  orderNotFound,       <span class="hljs-comment">// 订单未找到</span>
+  paymentFailed,       <span class="hljs-comment">// 支付失败</span>
+  insufficientStock,   <span class="hljs-comment">// 库存不足</span>
+  orderExpired,        <span class="hljs-comment">// 订单过期</span>
+  unauthorized,        <span class="hljs-comment">// 未授权</span>
+  networkError,        <span class="hljs-comment">// 网络错误</span>
+  serverError          <span class="hljs-comment">// 服务器错误</span>
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OrderException</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Exception</span> </span>{
+  <span class="hljs-keyword">final</span> OrderErrorType type;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> message;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? details;
+  
+  <span class="hljs-keyword">const</span> OrderException(<span class="hljs-keyword">this</span>.type, <span class="hljs-keyword">this</span>.message, [<span class="hljs-keyword">this</span>.details]);
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="创建订单">创建订单</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">try</span> {
+  <span class="hljs-keyword">final</span> orderRequest = CreateOrderRequest(
+    userId: <span class="hljs-string">&#x27;user123&#x27;</span>,
+    items: [
+      OrderItem(
+        productId: <span class="hljs-string">&#x27;charging_session&#x27;</span>,
+        quantity: <span class="hljs-number">1</span>,
+        price: <span class="hljs-number">25.0</span>,
+      ),
+    ],
+    paymentMethod: PaymentMethod.creditCard,
+  );
+  
+  <span class="hljs-keyword">final</span> order = <span class="hljs-keyword">await</span> OrderManager.instance.createOrder(orderRequest);
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;订单创建成功: <span class="hljs-subst">${order.id}</span>&#x27;</span>);
+} <span class="hljs-keyword">catch</span> (e) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;订单创建失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+}
+</code></pre>
+<h3 id="处理支付">处理支付</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">try</span> {
+  <span class="hljs-keyword">final</span> paymentRequest = PaymentRequest(
+    orderId: order.id,
+    amount: order.totalAmount,
+    method: PaymentMethod.creditCard,
+    cardToken: <span class="hljs-string">&#x27;card_token_123&#x27;</span>,
+  );
+  
+  <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> PaymentProcessor.instance.initiatePayment(paymentRequest);
+  
+  <span class="hljs-keyword">if</span> (result.isSuccess) {
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;支付成功: <span class="hljs-subst">${result.transactionId}</span>&#x27;</span>);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;支付失败: <span class="hljs-subst">${result.errorMessage}</span>&#x27;</span>);
+  }
+} <span class="hljs-keyword">catch</span> (e) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;支付处理异常: <span class="hljs-subst">$e</span>&#x27;</span>);
+}
+</code></pre>
+<h3 id="查询订单状态">查询订单状态</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">try</span> {
+  <span class="hljs-keyword">final</span> order = <span class="hljs-keyword">await</span> OrderManager.instance.getOrder(orderId);
+  
+  <span class="hljs-keyword">switch</span> (order.status) {
+    <span class="hljs-keyword">case</span> OrderStatus.created:
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;订单已创建，等待支付&#x27;</span>);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> OrderStatus.paid:
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;订单已支付，正在处理&#x27;</span>);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> OrderStatus.completed:
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;订单已完成&#x27;</span>);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> OrderStatus.cancelled:
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;订单已取消&#x27;</span>);
+      <span class="hljs-keyword">break</span>;
+  }
+} <span class="hljs-keyword">catch</span> (e) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;查询订单失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+}
+</code></pre>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="单元测试">单元测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;OrderManager Tests&#x27;</span>, () {
+  test(<span class="hljs-string">&#x27;should create order successfully&#x27;</span>, () <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> request = CreateOrderRequest(<span class="hljs-comment">/* ... */</span>);
+    
+    <span class="hljs-comment">// When</span>
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> orderManager.createOrder(request);
+    
+    <span class="hljs-comment">// Then</span>
+    expect(result.isSuccess, <span class="hljs-keyword">true</span>);
+    expect(result.data.status, OrderStatus.created);
+  });
+  
+  test(<span class="hljs-string">&#x27;should handle payment failure&#x27;</span>, () <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> request = PaymentRequest(<span class="hljs-comment">/* invalid data */</span>);
+    
+    <span class="hljs-comment">// When &amp; Then</span>
+    expect(
+      () =&gt; paymentProcessor.initiatePayment(request),
+      throwsA(isA&lt;OrderException&gt;()),
+    );
+  });
+});
+</code></pre>
+<h3 id="集成测试">集成测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;Order Integration Tests&#x27;</span>, () {
+  testWidgets(<span class="hljs-string">&#x27;complete order flow&#x27;</span>, (tester) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 1. 创建订单</span>
+    <span class="hljs-keyword">final</span> order = <span class="hljs-keyword">await</span> createTestOrder();
+    
+    <span class="hljs-comment">// 2. 处理支付</span>
+    <span class="hljs-keyword">final</span> payment = <span class="hljs-keyword">await</span> processTestPayment(order.id);
+    
+    <span class="hljs-comment">// 3. 验证订单状态</span>
+    <span class="hljs-keyword">final</span> updatedOrder = <span class="hljs-keyword">await</span> getOrder(order.id);
+    expect(updatedOrder.status, OrderStatus.completed);
+  });
+});
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="缓存策略">缓存策略</h3>
+<ul>
+<li><strong>订单缓存</strong>：本地缓存常用订单信息</li>
+<li><strong>支付状态缓存</strong>：缓存支付状态避免频繁查询</li>
+<li><strong>配置缓存</strong>：缓存支付配置和费率信息</li>
+</ul>
+<h3 id="网络优化">网络优化</h3>
+<ul>
+<li><strong>请求合并</strong>：合并多个订单查询请求</li>
+<li><strong>分页加载</strong>：大量订单数据分页获取</li>
+<li><strong>压缩传输</strong>：启用 gzip 压缩减少传输量</li>
+</ul>
+<h2 id="安全考虑">安全考虑</h2>
+<h3 id="数据安全">数据安全</h3>
+<ul>
+<li><strong>敏感信息加密</strong>：支付信息和个人数据加密存储</li>
+<li><strong>传输安全</strong>：使用 HTTPS 和证书绑定</li>
+<li><strong>访问控制</strong>：基于角色的权限控制</li>
+</ul>
+<h3 id="支付安全">支付安全</h3>
+<ul>
+<li><strong>PCI DSS 合规</strong>：遵循支付卡行业数据安全标准</li>
+<li><strong>令牌化</strong>：敏感支付信息使用令牌替换</li>
+<li><strong>风险控制</strong>：实时风险评估和欺诈检测</li>
+</ul>
+<h2 id="监控和分析">监控和分析</h2>
+<h3 id="业务指标">业务指标</h3>
+<ul>
+<li><strong>订单转化率</strong>：从创建到完成的转化率</li>
+<li><strong>支付成功率</strong>：支付处理的成功率</li>
+<li><strong>平均订单价值</strong>：订单金额统计分析</li>
+<li><strong>退款率</strong>：退款订单占比</li>
+</ul>
+<h3 id="技术指标">技术指标</h3>
+<ul>
+<li><strong>API 响应时间</strong>：接口性能监控</li>
+<li><strong>错误率</strong>：系统错误和异常监控</li>
+<li><strong>可用性</strong>：服务可用性监控</li>
+<li><strong>吞吐量</strong>：系统处理能力监控</li>
+</ul>
+<h2 id="版本历史">版本历史</h2>
+<h3 id="v0263-当前版本">v0.2.6+3 (当前版本)</h3>
+<ul>
+<li>新增加密货币支付支持</li>
+<li>优化订单状态机逻辑</li>
+<li>修复支付回调处理问题</li>
+<li>改进错误处理机制</li>
+</ul>
+<h3 id="v025">v0.2.5</h3>
+<ul>
+<li>支持批量订单操作</li>
+<li>新增订单搜索功能</li>
+<li>优化支付流程</li>
+<li>修复已知 bug</li>
+</ul>
+<h3 id="v024">v0.2.4</h3>
+<ul>
+<li>支持多币种订单</li>
+<li>新增订单模板功能</li>
+<li>改进性能和稳定性</li>
+</ul>
+<h2 id="依赖关系">依赖关系</h2>
+<h3 id="内部依赖">内部依赖</h3>
+<ul>
+<li><code>basic_network</code>: 网络请求基础库</li>
+<li><code>basic_storage</code>: 本地存储服务</li>
+<li><code>basic_error</code>: 错误处理框架</li>
+<li><code>basic_track</code>: 埋点统计服务</li>
+</ul>
+<h3 id="外部依赖">外部依赖</h3>
+<ul>
+<li><code>dio</code>: HTTP 客户端</li>
+<li><code>json_annotation</code>: JSON 序列化</li>
+<li><code>rxdart</code>: 响应式编程支持</li>
+</ul>
+<h2 id="部署说明">部署说明</h2>
+<h3 id="环境变量">环境变量</h3>
+<pre><code class="language-bash">ORDER_API_BASE_URL=https://api.oneapp.com/order
+ORDER_API_KEY=your_api_key_here
+PAYMENT_PROVIDER_STRIPE_KEY=pk_live_...
+PAYMENT_PROVIDER_ALIPAY_APP_ID=app_...
+</code></pre>
+<h3 id="配置文件">配置文件</h3>
+<pre><code class="language-yaml"><span class="hljs-attr">order:</span>
+  <span class="hljs-attr">timeout:</span> <span class="hljs-string">30s</span>
+  <span class="hljs-attr">retry_count:</span> <span class="hljs-number">3</span>
+  <span class="hljs-attr">cache_ttl:</span> <span class="hljs-string">300s</span>
+  
+<span class="hljs-attr">payment:</span>
+  <span class="hljs-attr">providers:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">stripe</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">alipay</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">wechat_pay</span>
+  <span class="hljs-attr">security:</span>
+    <span class="hljs-attr">encryption:</span> <span class="hljs-string">aes256</span>
+    <span class="hljs-attr">signature:</span> <span class="hljs-string">hmac_sha256</span>
+</code></pre>
+<h2 id="总结">总结</h2>
+<p><code>clr_order</code> 作为订单服务的核心 SDK，提供了完整的订单生命周期管理能力。通过统一的接口设计、可靠的支付处理、完善的错误处理和安全保障，为 OneApp 的各个业务模块提供了稳定高效的订单服务支持。</p>
+<p>该模块在设计上充分考虑了可扩展性、安全性和性能要求，能够很好地支撑车辆相关的各种订单业务场景，是 OneApp 电商和服务体系的重要基础设施。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

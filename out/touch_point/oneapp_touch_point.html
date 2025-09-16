@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>OneApp Touch Point - &#x89e6;&#x70b9;&#x670d;&#x52a1;&#x4e3b;&#x6a21;&#x5757;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="oneapp-touch-point---触点服务主模块">OneApp Touch Point - 触点服务主模块</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>oneapp_touch_point</code> 是 OneApp 的触点服务主模块，负责用户触点数据的收集、管理和分析。该模块通过跟踪用户在应用中的各种交互行为，构建完整的用户行为路径，为用户体验优化、个性化推荐和业务决策提供数据支撑。</p>
+<h2 id="核心功能">核心功能</h2>
+<h3 id="1-用户触点数据收集">1. 用户触点数据收集</h3>
+<ul>
+<li><strong>行为事件跟踪</strong>：记录用户的点击、滑动、停留等行为</li>
+<li><strong>页面访问跟踪</strong>：跟踪用户的页面访问路径和时长</li>
+<li><strong>功能使用统计</strong>：统计各功能模块的使用频率</li>
+<li><strong>异常行为监控</strong>：监控和记录异常的用户行为</li>
+</ul>
+<h3 id="2-触点事件跟踪和分析">2. 触点事件跟踪和分析</h3>
+<ul>
+<li><strong>事件分类管理</strong>：对触点事件进行分类和标签管理</li>
+<li><strong>实时事件处理</strong>：实时处理和响应触点事件</li>
+<li><strong>事件关联分析</strong>：分析事件之间的关联关系</li>
+<li><strong>趋势分析</strong>：分析用户行为的趋势变化</li>
+</ul>
+<h3 id="3-用户行为路径记录">3. 用户行为路径记录</h3>
+<ul>
+<li><strong>用户旅程映射</strong>：构建完整的用户旅程地图</li>
+<li><strong>转化漏斗分析</strong>：分析用户在关键流程中的转化情况</li>
+<li><strong>路径优化建议</strong>：基于数据分析提供路径优化建议</li>
+<li><strong>异常路径识别</strong>：识别和分析异常的用户行为路径</li>
+</ul>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="架构设计">架构设计</h3>
+<pre><code>┌─────────────────────────────────────┐
+│            应用界面层                │
+│         (Application UI)            │
+├─────────────────────────────────────┤
+│        OneApp Touch Point           │
+│  ┌──────────┬──────────┬──────────┐ │
+│  │ 数据收集 │ 事件处理 │ 行为分析 │ │
+│  ├──────────┼──────────┼──────────┤ │
+│  │ 路径跟踪 │ 数据存储 │ 报告生成 │ │
+│  └──────────┴──────────┴──────────┘ │
+├─────────────────────────────────────┤
+│           数据处理层                │
+│  ┌──────────┬──────────┬──────────┐ │
+│  │ 数据清洗 │ 数据聚合 │ 数据分析 │ │
+│  └──────────┴──────────┴──────────┘ │
+├─────────────────────────────────────┤
+│           数据存储层                │
+│    (Local DB + Remote Analytics)    │
+└─────────────────────────────────────┘
+</code></pre>
+<h3 id="核心组件">核心组件</h3>
+<h4 id="1-触点数据收集器-touchpointcollector">1. 触点数据收集器 (TouchPointCollector)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointCollector</span> </span>{
+  <span class="hljs-comment">// 记录触点事件</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; trackEvent(TouchPointEvent event);
+  
+  <span class="hljs-comment">// 记录页面访问</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; trackPageView(PageViewEvent event);
+  
+  <span class="hljs-comment">// 记录用户行为</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; trackUserAction(UserActionEvent event);
+  
+  <span class="hljs-comment">// 批量上传数据</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; uploadBatchData();
+}
+</code></pre>
+<h4 id="2-事件分析器-eventanalyzer">2. 事件分析器 (EventAnalyzer)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointEventAnalyzer</span> </span>{
+  <span class="hljs-comment">// 分析用户行为模式</span>
+  Future&lt;UserBehaviorPattern&gt; analyzeUserBehavior(<span class="hljs-built_in">String</span> userId, TimeRange timeRange);
+  
+  <span class="hljs-comment">// 生成用户旅程</span>
+  Future&lt;UserJourney&gt; generateUserJourney(<span class="hljs-built_in">String</span> userId, <span class="hljs-built_in">String</span> sessionId);
+  
+  <span class="hljs-comment">// 计算转化率</span>
+  Future&lt;ConversionRate&gt; calculateConversionRate(ConversionFunnel funnel);
+  
+  <span class="hljs-comment">// 识别异常行为</span>
+  Future&lt;<span class="hljs-built_in">List</span>&lt;AnomalousEvent&gt;&gt; detectAnomalousEvents(AnalysisConfig config);
+}
+</code></pre>
+<h4 id="3-路径跟踪器-pathtracker">3. 路径跟踪器 (PathTracker)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserPathTracker</span> </span>{
+  <span class="hljs-comment">// 开始路径跟踪</span>
+  Future&lt;<span class="hljs-built_in">String</span>&gt; startPathTracking(<span class="hljs-built_in">String</span> userId);
+  
+  <span class="hljs-comment">// 记录路径节点</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; recordPathNode(<span class="hljs-built_in">String</span> sessionId, PathNode node);
+  
+  <span class="hljs-comment">// 结束路径跟踪</span>
+  Future&lt;UserPath&gt; endPathTracking(<span class="hljs-built_in">String</span> sessionId);
+  
+  <span class="hljs-comment">// 获取用户路径历史</span>
+  Future&lt;<span class="hljs-built_in">List</span>&lt;UserPath&gt;&gt; getUserPathHistory(<span class="hljs-built_in">String</span> userId, <span class="hljs-built_in">int</span> limit);
+}
+</code></pre>
+<h4 id="4-数据管理器-touchpointdatamanager">4. 数据管理器 (TouchPointDataManager)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointDataManager</span> </span>{
+  <span class="hljs-comment">// 存储触点数据</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; storeTouchPointData(TouchPointData data);
+  
+  <span class="hljs-comment">// 查询触点数据</span>
+  Future&lt;<span class="hljs-built_in">List</span>&lt;TouchPointData&gt;&gt; queryTouchPointData(DataQuery query);
+  
+  <span class="hljs-comment">// 清理过期数据</span>
+  Future&lt;<span class="hljs-built_in">int</span>&gt; cleanupExpiredData(<span class="hljs-built_in">Duration</span> retentionPeriod);
+  
+  <span class="hljs-comment">// 导出数据</span>
+  Future&lt;<span class="hljs-built_in">String</span>&gt; exportData(ExportConfig config);
+}
+</code></pre>
+<h2 id="数据模型">数据模型</h2>
+<h3 id="触点事件模型">触点事件模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointEvent</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> userId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> sessionId;
+  <span class="hljs-keyword">final</span> EventType type;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> category;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> action;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> target;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; properties;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> pageUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> referrer;
+  <span class="hljs-keyword">final</span> DeviceInfo deviceInfo;
+  <span class="hljs-keyword">final</span> LocationInfo? locationInfo;
+}
+
+<span class="hljs-keyword">enum</span> EventType {
+  click,        <span class="hljs-comment">// 点击事件</span>
+  view,         <span class="hljs-comment">// 查看事件</span>
+  scroll,       <span class="hljs-comment">// 滚动事件</span>
+  input,        <span class="hljs-comment">// 输入事件</span>
+  search,       <span class="hljs-comment">// 搜索事件</span>
+  purchase,     <span class="hljs-comment">// 购买事件</span>
+  share,        <span class="hljs-comment">// 分享事件</span>
+  download,     <span class="hljs-comment">// 下载事件</span>
+  upload,       <span class="hljs-comment">// 上传事件</span>
+  custom        <span class="hljs-comment">// 自定义事件</span>
+}
+</code></pre>
+<h3 id="用户路径模型">用户路径模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserPath</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> userId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> sessionId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> startTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> endTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;PathNode&gt; nodes;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> totalDuration;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> goalAchieved;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; metadata;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PathNode</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> pageUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> pageName;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> entryTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime?</span> exitTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration?</span> duration;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;TouchPointEvent&gt; events;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> exitMethod;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; pageData;
+}
+</code></pre>
+<h3 id="用户行为分析模型">用户行为分析模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserBehaviorPattern</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> userId;
+  <span class="hljs-keyword">final</span> TimeRange analysisPeriod;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; frequentPages;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; preferredFeatures;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">int</span>&gt; actionCounts;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;BehaviorInsight&gt; insights;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> engagementScore;
+  <span class="hljs-keyword">final</span> UserSegment segment;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConversionFunnel</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> name;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;FunnelStep&gt; steps;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, ConversionMetric&gt; metrics;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> analysisTime;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConversionMetric</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> totalUsers;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> convertedUsers;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> conversionRate;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> averageTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; dropOffReasons;
+}
+</code></pre>
+<h2 id="api-接口">API 接口</h2>
+<h3 id="数据收集接口">数据收集接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointTrackingService</span> </span>{
+  <span class="hljs-comment">// 跟踪事件</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; trackEvent(TrackEventRequest request);
+  
+  <span class="hljs-comment">// 批量跟踪事件</span>
+  Future&lt;ApiResponse&lt;BatchResult&gt;&gt; trackBatchEvents(BatchTrackRequest request);
+  
+  <span class="hljs-comment">// 跟踪页面访问</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; trackPageView(PageViewRequest request);
+  
+  <span class="hljs-comment">// 跟踪用户会话</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">String</span>&gt;&gt; trackUserSession(SessionRequest request);
+}
+</code></pre>
+<h3 id="数据分析接口">数据分析接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointAnalyticsService</span> </span>{
+  <span class="hljs-comment">// 获取用户行为分析</span>
+  Future&lt;ApiResponse&lt;UserBehaviorPattern&gt;&gt; getUserBehaviorAnalysis(BehaviorAnalysisRequest request);
+  
+  <span class="hljs-comment">// 获取转化漏斗分析</span>
+  Future&lt;ApiResponse&lt;ConversionFunnelResult&gt;&gt; getConversionAnalysis(ConversionAnalysisRequest request);
+  
+  <span class="hljs-comment">// 获取用户旅程分析</span>
+  Future&lt;ApiResponse&lt;UserJourneyResult&gt;&gt; getUserJourneyAnalysis(JourneyAnalysisRequest request);
+  
+  <span class="hljs-comment">// 获取实时分析数据</span>
+  Future&lt;ApiResponse&lt;RealtimeAnalytics&gt;&gt; getRealtimeAnalytics();
+}
+</code></pre>
+<h3 id="数据管理接口">数据管理接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointDataService</span> </span>{
+  <span class="hljs-comment">// 查询触点数据</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">List</span>&lt;TouchPointData&gt;&gt;&gt; queryTouchPointData(DataQueryRequest request);
+  
+  <span class="hljs-comment">// 导出触点数据</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">String</span>&gt;&gt; exportTouchPointData(ExportRequest request);
+  
+  <span class="hljs-comment">// 删除用户数据</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; deleteUserData(DeleteUserDataRequest request);
+  
+  <span class="hljs-comment">// 获取数据统计</span>
+  Future&lt;ApiResponse&lt;DataStatistics&gt;&gt; getDataStatistics(StatisticsRequest request);
+}
+</code></pre>
+<h2 id="配置管理">配置管理</h2>
+<h3 id="触点跟踪配置">触点跟踪配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TouchPointConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableTracking;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableRealTimeAnalysis;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> batchUploadSize;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> uploadInterval;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;EventType&gt; trackedEventTypes;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> dataRetentionPeriod;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableLocationTracking;
+  <span class="hljs-keyword">final</span> PrivacyLevel privacyLevel;
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> TouchPointConfig defaultConfig = TouchPointConfig(
+    enableTracking: <span class="hljs-keyword">true</span>,
+    enableRealTimeAnalysis: <span class="hljs-keyword">true</span>,
+    batchUploadSize: <span class="hljs-number">100</span>,
+    uploadInterval: <span class="hljs-built_in">Duration</span>(minutes: <span class="hljs-number">5</span>),
+    trackedEventTypes: [
+      EventType.click,
+      EventType.view,
+      EventType.search,
+      EventType.purchase,
+    ],
+    dataRetentionPeriod: <span class="hljs-built_in">Duration</span>(days: <span class="hljs-number">90</span>),
+    enableLocationTracking: <span class="hljs-keyword">false</span>,
+    privacyLevel: PrivacyLevel.standard,
+  );
+}
+</code></pre>
+<h3 id="分析配置">分析配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AnalyticsConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableBehaviorAnalysis;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enablePathAnalysis;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableConversionTracking;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> analysisInterval;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> maxPathLength;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; conversionGoals;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">double</span>&gt; eventWeights;
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> AnalyticsConfig defaultAnalyticsConfig = AnalyticsConfig(
+    enableBehaviorAnalysis: <span class="hljs-keyword">true</span>,
+    enablePathAnalysis: <span class="hljs-keyword">true</span>,
+    enableConversionTracking: <span class="hljs-keyword">true</span>,
+    analysisInterval: <span class="hljs-built_in">Duration</span>(hours: <span class="hljs-number">1</span>),
+    maxPathLength: <span class="hljs-number">50</span>,
+    conversionGoals: [<span class="hljs-string">&#x27;purchase&#x27;</span>, <span class="hljs-string">&#x27;registration&#x27;</span>, <span class="hljs-string">&#x27;subscription&#x27;</span>],
+    eventWeights: {
+      <span class="hljs-string">&#x27;click&#x27;</span>: <span class="hljs-number">1.0</span>,
+      <span class="hljs-string">&#x27;view&#x27;</span>: <span class="hljs-number">0.5</span>,
+      <span class="hljs-string">&#x27;search&#x27;</span>: <span class="hljs-number">1.5</span>,
+      <span class="hljs-string">&#x27;purchase&#x27;</span>: <span class="hljs-number">5.0</span>,
+    },
+  );
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="基本事件跟踪">基本事件跟踪</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化触点服务</span>
+<span class="hljs-keyword">final</span> touchPointService = TouchPointCollector.instance;
+<span class="hljs-keyword">await</span> touchPointService.initialize(TouchPointConfig.defaultConfig);
+
+<span class="hljs-comment">// 跟踪页面访问</span>
+<span class="hljs-keyword">await</span> touchPointService.trackPageView(
+  PageViewEvent(
+    userId: <span class="hljs-string">&#x27;user123&#x27;</span>,
+    sessionId: <span class="hljs-string">&#x27;session456&#x27;</span>,
+    pageUrl: <span class="hljs-string">&#x27;/home&#x27;</span>,
+    pageName: <span class="hljs-string">&#x27;首页&#x27;</span>,
+    timestamp: <span class="hljs-built_in">DateTime</span>.now(),
+    properties: {
+      <span class="hljs-string">&#x27;source&#x27;</span>: <span class="hljs-string">&#x27;direct&#x27;</span>,
+      <span class="hljs-string">&#x27;previous_page&#x27;</span>: <span class="hljs-string">&#x27;/login&#x27;</span>,
+    },
+  ),
+);
+
+<span class="hljs-comment">// 跟踪用户行为</span>
+<span class="hljs-keyword">await</span> touchPointService.trackEvent(
+  TouchPointEvent(
+    userId: <span class="hljs-string">&#x27;user123&#x27;</span>,
+    sessionId: <span class="hljs-string">&#x27;session456&#x27;</span>,
+    type: EventType.click,
+    category: <span class="hljs-string">&#x27;navigation&#x27;</span>,
+    action: <span class="hljs-string">&#x27;menu_click&#x27;</span>,
+    target: <span class="hljs-string">&#x27;vehicle_menu&#x27;</span>,
+    properties: {
+      <span class="hljs-string">&#x27;menu_position&#x27;</span>: <span class="hljs-string">&#x27;top&#x27;</span>,
+      <span class="hljs-string">&#x27;menu_index&#x27;</span>: <span class="hljs-number">2</span>,
+    },
+    timestamp: <span class="hljs-built_in">DateTime</span>.now(),
+    pageUrl: <span class="hljs-string">&#x27;/home&#x27;</span>,
+  ),
+);
+</code></pre>
+<h3 id="用户路径跟踪">用户路径跟踪</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 开始用户路径跟踪</span>
+<span class="hljs-keyword">final</span> pathTracker = UserPathTracker.instance;
+<span class="hljs-keyword">final</span> sessionId = <span class="hljs-keyword">await</span> pathTracker.startPathTracking(<span class="hljs-string">&#x27;user123&#x27;</span>);
+
+<span class="hljs-comment">// 记录路径节点</span>
+<span class="hljs-keyword">await</span> pathTracker.recordPathNode(
+  sessionId,
+  PathNode(
+    id: <span class="hljs-string">&#x27;node1&#x27;</span>,
+    pageUrl: <span class="hljs-string">&#x27;/vehicle/list&#x27;</span>,
+    pageName: <span class="hljs-string">&#x27;车辆列表&#x27;</span>,
+    entryTime: <span class="hljs-built_in">DateTime</span>.now(),
+    pageData: {
+      <span class="hljs-string">&#x27;filter&#x27;</span>: <span class="hljs-string">&#x27;electric&#x27;</span>,
+      <span class="hljs-string">&#x27;sort&#x27;</span>: <span class="hljs-string">&#x27;price&#x27;</span>,
+    },
+  ),
+);
+
+<span class="hljs-comment">// 记录页面内的事件</span>
+<span class="hljs-keyword">await</span> pathTracker.recordPathNode(
+  sessionId,
+  PathNode(
+    id: <span class="hljs-string">&#x27;node2&#x27;</span>,
+    pageUrl: <span class="hljs-string">&#x27;/vehicle/detail/123&#x27;</span>,
+    pageName: <span class="hljs-string">&#x27;车辆详情&#x27;</span>,
+    entryTime: <span class="hljs-built_in">DateTime</span>.now(),
+    events: [
+      TouchPointEvent(
+        type: EventType.view,
+        action: <span class="hljs-string">&#x27;image_view&#x27;</span>,
+        target: <span class="hljs-string">&#x27;vehicle_gallery&#x27;</span>,
+      ),
+    ],
+  ),
+);
+
+<span class="hljs-comment">// 结束路径跟踪</span>
+<span class="hljs-keyword">final</span> userPath = <span class="hljs-keyword">await</span> pathTracker.endPathTracking(sessionId);
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;用户路径总时长: <span class="hljs-subst">${userPath.totalDuration}</span>&#x27;</span>);
+</code></pre>
+<h3 id="用户行为分析">用户行为分析</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 分析用户行为模式</span>
+<span class="hljs-keyword">final</span> analyzer = TouchPointEventAnalyzer.instance;
+<span class="hljs-keyword">final</span> behaviorPattern = <span class="hljs-keyword">await</span> analyzer.analyzeUserBehavior(
+  <span class="hljs-string">&#x27;user123&#x27;</span>,
+  TimeRange.lastMonth,
+);
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;用户参与度评分: <span class="hljs-subst">${behaviorPattern.engagementScore}</span>&#x27;</span>);
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;常访问页面: <span class="hljs-subst">${behaviorPattern.frequentPages}</span>&#x27;</span>);
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;偏好功能: <span class="hljs-subst">${behaviorPattern.preferredFeatures}</span>&#x27;</span>);
+
+<span class="hljs-comment">// 生成用户旅程</span>
+<span class="hljs-keyword">final</span> userJourney = <span class="hljs-keyword">await</span> analyzer.generateUserJourney(<span class="hljs-string">&#x27;user123&#x27;</span>, <span class="hljs-string">&#x27;session456&#x27;</span>);
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;旅程步骤数: <span class="hljs-subst">${userJourney.steps.length}</span>&#x27;</span>);
+
+<span class="hljs-comment">// 计算转化率</span>
+<span class="hljs-keyword">final</span> conversionFunnel = ConversionFunnel(
+  name: <span class="hljs-string">&#x27;购车转化漏斗&#x27;</span>,
+  steps: [
+    FunnelStep(name: <span class="hljs-string">&#x27;浏览车辆&#x27;</span>, event: <span class="hljs-string">&#x27;vehicle_view&#x27;</span>),
+    FunnelStep(name: <span class="hljs-string">&#x27;查看详情&#x27;</span>, event: <span class="hljs-string">&#x27;vehicle_detail&#x27;</span>),
+    FunnelStep(name: <span class="hljs-string">&#x27;预约试驾&#x27;</span>, event: <span class="hljs-string">&#x27;test_drive_booking&#x27;</span>),
+    FunnelStep(name: <span class="hljs-string">&#x27;下单购买&#x27;</span>, event: <span class="hljs-string">&#x27;purchase&#x27;</span>),
+  ],
+);
+
+<span class="hljs-keyword">final</span> conversionRate = <span class="hljs-keyword">await</span> analyzer.calculateConversionRate(conversionFunnel);
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;总体转化率: <span class="hljs-subst">${conversionRate.overallConversionRate}</span>%&#x27;</span>);
+</code></pre>
+<h3 id="数据导出和管理">数据导出和管理</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 查询触点数据</span>
+<span class="hljs-keyword">final</span> dataManager = TouchPointDataManager.instance;
+<span class="hljs-keyword">final</span> touchPointData = <span class="hljs-keyword">await</span> dataManager.queryTouchPointData(
+  DataQuery(
+    userId: <span class="hljs-string">&#x27;user123&#x27;</span>,
+    timeRange: TimeRange.lastWeek,
+    eventTypes: [EventType.click, EventType.view],
+  ),
+);
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;查询到 <span class="hljs-subst">${touchPointData.length}</span> 条数据&#x27;</span>);
+
+<span class="hljs-comment">// 导出数据</span>
+<span class="hljs-keyword">final</span> exportPath = <span class="hljs-keyword">await</span> dataManager.exportData(
+  ExportConfig(
+    format: ExportFormat.csv,
+    timeRange: TimeRange.lastMonth,
+    includePersonalData: <span class="hljs-keyword">false</span>,
+  ),
+);
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;数据已导出到: <span class="hljs-subst">$exportPath</span>&#x27;</span>);
+
+<span class="hljs-comment">// 清理过期数据</span>
+<span class="hljs-keyword">final</span> cleanedCount = <span class="hljs-keyword">await</span> dataManager.cleanupExpiredData(
+  <span class="hljs-built_in">Duration</span>(days: <span class="hljs-number">90</span>),
+);
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;清理了 <span class="hljs-subst">$cleanedCount</span> 条过期数据&#x27;</span>);
+</code></pre>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="单元测试">单元测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;TouchPointCollector Tests&#x27;</span>, () {
+  test(<span class="hljs-string">&#x27;should track event successfully&#x27;</span>, () <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> collector = TouchPointCollector();
+    <span class="hljs-keyword">final</span> event = TouchPointEvent(
+      userId: <span class="hljs-string">&#x27;test_user&#x27;</span>,
+      type: EventType.click,
+      action: <span class="hljs-string">&#x27;button_click&#x27;</span>,
+    );
+    
+    <span class="hljs-comment">// When</span>
+    <span class="hljs-keyword">await</span> collector.trackEvent(event);
+    
+    <span class="hljs-comment">// Then</span>
+    <span class="hljs-keyword">final</span> storedEvents = <span class="hljs-keyword">await</span> collector.getStoredEvents();
+    expect(storedEvents, contains(event));
+  });
+  
+  test(<span class="hljs-string">&#x27;should analyze user behavior correctly&#x27;</span>, () <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> analyzer = TouchPointEventAnalyzer();
+    <span class="hljs-keyword">final</span> userId = <span class="hljs-string">&#x27;test_user&#x27;</span>;
+    
+    <span class="hljs-comment">// When</span>
+    <span class="hljs-keyword">final</span> pattern = <span class="hljs-keyword">await</span> analyzer.analyzeUserBehavior(userId, TimeRange.lastWeek);
+    
+    <span class="hljs-comment">// Then</span>
+    expect(pattern.userId, userId);
+    expect(pattern.engagementScore, greaterThan(<span class="hljs-number">0</span>));
+  });
+});
+</code></pre>
+<h3 id="集成测试">集成测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;TouchPoint Integration Tests&#x27;</span>, () {
+  testWidgets(<span class="hljs-string">&#x27;complete tracking flow&#x27;</span>, (tester) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 1. 初始化触点服务</span>
+    <span class="hljs-keyword">await</span> TouchPointCollector.instance.initialize(TouchPointConfig.defaultConfig);
+    
+    <span class="hljs-comment">// 2. 模拟用户操作</span>
+    <span class="hljs-keyword">await</span> tester.tap(find.byKey(Key(<span class="hljs-string">&#x27;vehicle_button&#x27;</span>)));
+    <span class="hljs-keyword">await</span> tester.pumpAndSettle();
+    
+    <span class="hljs-comment">// 3. 验证事件被跟踪</span>
+    <span class="hljs-keyword">final</span> trackedEvents = <span class="hljs-keyword">await</span> TouchPointCollector.instance.getStoredEvents();
+    expect(trackedEvents, isNotEmpty);
+    
+    <span class="hljs-comment">// 4. 验证用户路径记录</span>
+    <span class="hljs-keyword">final</span> userPaths = <span class="hljs-keyword">await</span> UserPathTracker.instance.getUserPathHistory(<span class="hljs-string">&#x27;test_user&#x27;</span>, <span class="hljs-number">10</span>);
+    expect(userPaths, isNotEmpty);
+  });
+});
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="数据收集优化">数据收集优化</h3>
+<ul>
+<li><strong>批量上传</strong>：批量上传触点数据减少网络请求</li>
+<li><strong>数据压缩</strong>：压缩数据减少存储空间和传输量</li>
+<li><strong>异步处理</strong>：异步处理数据收集和上传</li>
+<li><strong>本地缓存</strong>：本地缓存数据防止数据丢失</li>
+</ul>
+<h3 id="分析性能优化">分析性能优化</h3>
+<ul>
+<li><strong>增量分析</strong>：只分析新增的数据</li>
+<li><strong>并行处理</strong>：并行处理多个分析任务</li>
+<li><strong>结果缓存</strong>：缓存分析结果避免重复计算</li>
+<li><strong>数据预聚合</strong>：预聚合常用的分析指标</li>
+</ul>
+<h2 id="隐私和合规">隐私和合规</h2>
+<h3 id="数据隐私保护">数据隐私保护</h3>
+<ul>
+<li><strong>数据匿名化</strong>：敏感数据匿名化处理</li>
+<li><strong>用户同意管理</strong>：用户数据收集同意管理</li>
+<li><strong>数据加密</strong>：敏感数据加密存储和传输</li>
+<li><strong>访问控制</strong>：严格的数据访问权限控制</li>
+</ul>
+<h3 id="合规要求">合规要求</h3>
+<ul>
+<li><strong>GDPR合规</strong>：支持GDPR数据保护要求</li>
+<li><strong>数据删除权</strong>：支持用户数据删除请求</li>
+<li><strong>数据导出权</strong>：支持用户数据导出请求</li>
+<li><strong>透明度报告</strong>：提供数据使用透明度报告</li>
+</ul>
+<h2 id="版本历史">版本历史</h2>
+<h3 id="v0328-当前版本">v0.3.2+8 (当前版本)</h3>
+<ul>
+<li>新增实时行为分析功能</li>
+<li>优化数据收集性能</li>
+<li>支持用户路径可视化</li>
+<li>修复数据同步问题</li>
+</ul>
+<h3 id="v031">v0.3.1</h3>
+<ul>
+<li>支持转化漏斗分析</li>
+<li>新增异常行为检测</li>
+<li>优化数据存储结构</li>
+<li>改进隐私保护机制</li>
+</ul>
+<h2 id="依赖关系">依赖关系</h2>
+<h3 id="内部依赖">内部依赖</h3>
+<ul>
+<li><code>basic_storage</code>: 本地数据存储</li>
+<li><code>basic_network</code>: 网络请求服务</li>
+<li><code>basic_logger</code>: 日志记录服务</li>
+<li><code>basic_utils</code>: 工具类库</li>
+</ul>
+<h3 id="外部依赖">外部依赖</h3>
+<ul>
+<li><code>sqflite</code>: 本地数据库</li>
+<li><code>dio</code>: HTTP客户端</li>
+<li><code>uuid</code>: 唯一标识符生成</li>
+<li><code>path_provider</code>: 文件路径管理</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>oneapp_touch_point</code> 模块为 OneApp 提供了完整的用户触点管理和分析能力。通过全面的数据收集、智能的行为分析和详细的路径跟踪，该模块帮助产品团队深入了解用户行为，优化用户体验，提升产品价值。同时，模块严格遵循隐私保护原则，确保用户数据的安全和合规使用。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

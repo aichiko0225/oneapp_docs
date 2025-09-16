@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Basic Network - &#x7f51;&#x7edc;&#x901a;&#x4fe1;&#x6a21;&#x5757;&#x6587;&#x6863;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="basic-network---网络通信模块文档">Basic Network - 网络通信模块文档</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>basic_network</code> 是 OneApp 基础工具模块群中的网络通信核心模块，基于 Dio 框架封装，提供统一的 HTTP 请求接口、拦截器机制、错误处理和日志记录功能。该模块为整个应用提供标准化的网络通信能力。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: basic_network</li>
+<li><strong>版本</strong>: 0.2.3+4</li>
+<li><strong>仓库</strong>: <a href="https://gitlab-rd0.maezia.com/eziahz/oneapp/ezia-oneapp-basic-network">https://gitlab-rd0.maezia.com/eziahz/oneapp/ezia-oneapp-basic-network</a></li>
+<li><strong>Dart 版本</strong>: &gt;=2.17.0 &lt;4.0.0</li>
+</ul>
+<h2 id="目录结构">目录结构</h2>
+<pre><code>basic_network/
+├── lib/
+│   ├── basic_network.dart    # 主导出文件
+│   ├── common_dos.dart       # 通用数据对象
+│   ├── common_dtos.dart      # 通用数据传输对象
+│   └── src/                  # 源代码目录
+│       ├── client/           # HTTP 客户端实现
+│       ├── interceptors/     # 请求拦截器
+│       ├── models/           # 数据模型
+│       ├── exceptions/       # 异常定义
+│       └── utils/            # 工具类
+├── pubspec.yaml              # 依赖配置
+└── README.md                 # 项目说明
+</code></pre>
+<h2 id="核心功能模块">核心功能模块</h2>
+<h3 id="1-http-客户端封装">1. HTTP 客户端封装</h3>
+<h4 id="dio-客户端配置">Dio 客户端配置</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 网络客户端配置</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkClient</span> </span>{
+  <span class="hljs-keyword">late</span> Dio _dio;
+  
+  NetworkClient({
+    <span class="hljs-built_in">String?</span> baseUrl,
+    <span class="hljs-built_in">Duration?</span> connectTimeout,
+    <span class="hljs-built_in">Duration?</span> receiveTimeout,
+    <span class="hljs-built_in">Duration?</span> sendTimeout,
+  }) {
+    _dio = Dio(BaseOptions(
+      baseUrl: baseUrl ?? <span class="hljs-string">&#x27;&#x27;</span>,
+      connectTimeout: connectTimeout ?? <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>),
+      receiveTimeout: receiveTimeout ?? <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>),
+      sendTimeout: sendTimeout ?? <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>),
+      headers: {
+        <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json; charset=utf-8&#x27;</span>,
+        <span class="hljs-string">&#x27;Accept&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>,
+      },
+    ));
+    
+    _setupInterceptors();
+  }
+  
+  <span class="hljs-keyword">void</span> _setupInterceptors() {
+    <span class="hljs-comment">// 请求/响应拦截器</span>
+    _dio.interceptors.add(RequestInterceptor());
+    _dio.interceptors.add(ResponseInterceptor());
+    
+    <span class="hljs-comment">// 错误处理拦截器</span>
+    _dio.interceptors.add(ErrorInterceptor());
+    
+    <span class="hljs-comment">// 日志拦截器（仅调试模式）</span>
+    <span class="hljs-keyword">if</span> (kDebugMode) {
+      _dio.interceptors.add(PrettyDioLogger(
+        requestHeader: <span class="hljs-keyword">true</span>,
+        requestBody: <span class="hljs-keyword">true</span>,
+        responseBody: <span class="hljs-keyword">true</span>,
+        responseHeader: <span class="hljs-keyword">false</span>,
+        error: <span class="hljs-keyword">true</span>,
+        compact: <span class="hljs-keyword">true</span>,
+      ));
+    }
+  }
+}
+</code></pre>
+<h4 id="统一请求接口">统一请求接口</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 统一的 HTTP 请求接口</span>
+<span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">INetworkService</span> </span>{
+  Future&lt;Result&lt;T&gt;&gt; <span class="hljs-keyword">get</span>&lt;T&gt;({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> path,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span>)? fromJson,
+  });
+  
+  Future&lt;Result&lt;T&gt;&gt; post&lt;T&gt;({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> path,
+    <span class="hljs-built_in">dynamic</span> data,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span>)? fromJson,
+  });
+  
+  Future&lt;Result&lt;T&gt;&gt; put&lt;T&gt;({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> path,
+    <span class="hljs-built_in">dynamic</span> data,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span>)? fromJson,
+  });
+  
+  Future&lt;Result&lt;T&gt;&gt; delete&lt;T&gt;({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> path,
+    <span class="hljs-built_in">dynamic</span> data,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span>)? fromJson,
+  });
+}
+
+<span class="hljs-comment">// 网络服务实现</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkService</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">INetworkService</span> </span>{
+  <span class="hljs-keyword">final</span> NetworkClient _client;
+  
+  NetworkService(<span class="hljs-keyword">this</span>._client);
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;Result&lt;T&gt;&gt; <span class="hljs-keyword">get</span>&lt;T&gt;({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> path,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span>)? fromJson,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> _client._dio.<span class="hljs-keyword">get</span>(
+        path,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      
+      <span class="hljs-keyword">return</span> _handleResponse&lt;T&gt;(response, fromJson);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(_handleError(e));
+    }
+  }
+  
+  Result&lt;T&gt; _handleResponse&lt;T&gt;(
+    Response response,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">dynamic</span>)? fromJson,
+  ) {
+    <span class="hljs-keyword">if</span> (response.statusCode! &gt;= <span class="hljs-number">200</span> &amp;&amp; response.statusCode! &lt; <span class="hljs-number">300</span>) {
+      <span class="hljs-keyword">if</span> (fromJson != <span class="hljs-keyword">null</span>) {
+        <span class="hljs-keyword">try</span> {
+          <span class="hljs-keyword">final</span> data = fromJson(response.data);
+          <span class="hljs-keyword">return</span> Right(data);
+        } <span class="hljs-keyword">catch</span> (e) {
+          <span class="hljs-keyword">return</span> Left(NetworkFailure.parseError(e.toString()));
+        }
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> Right(response.data <span class="hljs-keyword">as</span> T);
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> Left(NetworkFailure.httpError(
+        response.statusCode!,
+        response.statusMessage ?? <span class="hljs-string">&#x27;&#x27;</span>,
+      ));
+    }
+  }
+}
+</code></pre>
+<h3 id="2-请求拦截器系统">2. 请求拦截器系统</h3>
+<h4 id="请求拦截器">请求拦截器</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 请求拦截器</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RequestInterceptor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Interceptor</span> </span>{
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    <span class="hljs-comment">// 添加公共请求头</span>
+    _addCommonHeaders(options);
+    
+    <span class="hljs-comment">// 添加认证信息</span>
+    _addAuthenticationHeaders(options);
+    
+    <span class="hljs-comment">// 添加设备信息</span>
+    _addDeviceInfo(options);
+    
+    <span class="hljs-comment">// 请求签名</span>
+    _signRequest(options);
+    
+    <span class="hljs-keyword">super</span>.onRequest(options, handler);
+  }
+  
+  <span class="hljs-keyword">void</span> _addCommonHeaders(RequestOptions options) {
+    options.headers.addAll({
+      <span class="hljs-string">&#x27;User-Agent&#x27;</span>: _getUserAgent(),
+      <span class="hljs-string">&#x27;Accept-Language&#x27;</span>: _getAcceptLanguage(),
+      <span class="hljs-string">&#x27;X-Request-ID&#x27;</span>: _generateRequestId(),
+      <span class="hljs-string">&#x27;X-Timestamp&#x27;</span>: <span class="hljs-built_in">DateTime</span>.now().millisecondsSinceEpoch.toString(),
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> _addAuthenticationHeaders(RequestOptions options) {
+    <span class="hljs-keyword">final</span> token = AuthManager.instance.accessToken;
+    <span class="hljs-keyword">if</span> (token != <span class="hljs-keyword">null</span>) {
+      options.headers[<span class="hljs-string">&#x27;Authorization&#x27;</span>] = <span class="hljs-string">&#x27;Bearer <span class="hljs-subst">$token</span>&#x27;</span>;
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _addDeviceInfo(RequestOptions options) {
+    options.headers.addAll({
+      <span class="hljs-string">&#x27;X-Device-ID&#x27;</span>: DeviceInfo.instance.deviceId,
+      <span class="hljs-string">&#x27;X-App-Version&#x27;</span>: AppInfo.instance.version,
+      <span class="hljs-string">&#x27;X-Platform&#x27;</span>: Platform.isAndroid ? <span class="hljs-string">&#x27;android&#x27;</span> : <span class="hljs-string">&#x27;ios&#x27;</span>,
+    });
+  }
+}
+</code></pre>
+<h4 id="响应拦截器">响应拦截器</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 响应拦截器</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ResponseInterceptor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Interceptor</span> </span>{
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> onResponse(Response response, ResponseInterceptorHandler handler) {
+    <span class="hljs-comment">// 统一响应格式处理</span>
+    _processCommonResponse(response);
+    
+    <span class="hljs-comment">// 更新认证状态</span>
+    _updateAuthenticationStatus(response);
+    
+    <span class="hljs-comment">// 缓存响应数据</span>
+    _cacheResponseIfNeeded(response);
+    
+    <span class="hljs-keyword">super</span>.onResponse(response, handler);
+  }
+  
+  <span class="hljs-keyword">void</span> _processCommonResponse(Response response) {
+    <span class="hljs-keyword">if</span> (response.data <span class="hljs-keyword">is</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;) {
+      <span class="hljs-keyword">final</span> data = response.data <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;;
+      
+      <span class="hljs-comment">// 检查业务状态码</span>
+      <span class="hljs-keyword">final</span> code = data[<span class="hljs-string">&#x27;code&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int?</span>;
+      <span class="hljs-keyword">final</span> message = data[<span class="hljs-string">&#x27;message&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String?</span>;
+      
+      <span class="hljs-keyword">if</span> (code != <span class="hljs-keyword">null</span> &amp;&amp; code != <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> BusinessException(code, message ?? <span class="hljs-string">&#x27;业务处理失败&#x27;</span>);
+      }
+      
+      <span class="hljs-comment">// 提取实际数据</span>
+      <span class="hljs-keyword">if</span> (data.containsKey(<span class="hljs-string">&#x27;data&#x27;</span>)) {
+        response.data = data[<span class="hljs-string">&#x27;data&#x27;</span>];
+      }
+    }
+  }
+}
+</code></pre>
+<h4 id="错误拦截器">错误拦截器</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 错误拦截器</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErrorInterceptor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Interceptor</span> </span>{
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> onError(DioException err, ErrorInterceptorHandler handler) {
+    <span class="hljs-comment">// 网络错误处理</span>
+    <span class="hljs-keyword">if</span> (_isNetworkError(err)) {
+      _handleNetworkError(err);
+    }
+    
+    <span class="hljs-comment">// 认证错误处理</span>
+    <span class="hljs-keyword">if</span> (_isAuthenticationError(err)) {
+      _handleAuthenticationError(err);
+    }
+    
+    <span class="hljs-comment">// 服务器错误处理</span>
+    <span class="hljs-keyword">if</span> (_isServerError(err)) {
+      _handleServerError(err);
+    }
+    
+    <span class="hljs-comment">// 请求重试机制</span>
+    <span class="hljs-keyword">if</span> (_shouldRetry(err)) {
+      _retryRequest(err, handler);
+      <span class="hljs-keyword">return</span>;
+    }
+    
+    <span class="hljs-keyword">super</span>.onError(err, handler);
+  }
+  
+  <span class="hljs-built_in">bool</span> _shouldRetry(DioException err) {
+    <span class="hljs-comment">// 网络超时重试</span>
+    <span class="hljs-keyword">if</span> (err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout) {
+      <span class="hljs-keyword">return</span> _getRetryCount(err) &lt; <span class="hljs-number">3</span>;
+    }
+    
+    <span class="hljs-comment">// 5xx 服务器错误重试</span>
+    <span class="hljs-keyword">if</span> (err.response?.statusCode != <span class="hljs-keyword">null</span> &amp;&amp;
+        err.response!.statusCode! &gt;= <span class="hljs-number">500</span>) {
+      <span class="hljs-keyword">return</span> _getRetryCount(err) &lt; <span class="hljs-number">2</span>;
+    }
+    
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; _retryRequest(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> retryCount = _getRetryCount(err) + <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">final</span> delay = <span class="hljs-built_in">Duration</span>(seconds: retryCount * <span class="hljs-number">2</span>);
+    
+    <span class="hljs-keyword">await</span> Future.delayed(delay);
+    
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> options = err.requestOptions;
+      options.extra[<span class="hljs-string">&#x27;retry_count&#x27;</span>] = retryCount;
+      
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> Dio().request(
+        options.path,
+        data: options.data,
+        queryParameters: options.queryParameters,
+        options: Options(
+          method: options.method,
+          headers: options.headers,
+          extra: options.extra,
+        ),
+      );
+      
+      handler.resolve(response);
+    } <span class="hljs-keyword">catch</span> (e) {
+      handler.next(err);
+    }
+  }
+}
+</code></pre>
+<h3 id="3-数据传输对象-dtos">3. 数据传输对象 (DTOs)</h3>
+<h4 id="通用响应模型">通用响应模型</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 通用 API 响应模型</span>
+<span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ApiResponse</span>&lt;<span class="hljs-title">T</span>&gt; <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">ApiResponse</span>&lt;<span class="hljs-title">T</span>&gt; </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> ApiResponse({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> code,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> message,
+    T? data,
+    <span class="hljs-meta">@JsonKey</span>(name: <span class="hljs-string">&#x27;request_id&#x27;</span>) <span class="hljs-built_in">String?</span> requestId,
+    <span class="hljs-meta">@JsonKey</span>(name: <span class="hljs-string">&#x27;timestamp&#x27;</span>) <span class="hljs-built_in">int?</span> timestamp,
+  }) = _ApiResponse&lt;T&gt;;
+  
+  <span class="hljs-keyword">factory</span> ApiResponse.fromJson(
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">Object?</span>) fromJsonT,
+  ) =&gt; _$ApiResponseFromJson(json, fromJsonT);
+}
+
+<span class="hljs-comment">// 分页响应模型</span>
+<span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PagedResponse</span>&lt;<span class="hljs-title">T</span>&gt; <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">PagedResponse</span>&lt;<span class="hljs-title">T</span>&gt; </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> PagedResponse({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">List</span>&lt;T&gt; items,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> total,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> page,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> pageSize,
+    <span class="hljs-meta">@JsonKey</span>(name: <span class="hljs-string">&#x27;has_more&#x27;</span>) <span class="hljs-keyword">required</span> <span class="hljs-built_in">bool</span> hasMore,
+  }) = _PagedResponse&lt;T&gt;;
+  
+  <span class="hljs-keyword">factory</span> PagedResponse.fromJson(
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json,
+    T <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">Object?</span>) fromJsonT,
+  ) =&gt; _$PagedResponseFromJson(json, fromJsonT);
+}
+</code></pre>
+<h4 id="请求参数模型">请求参数模型</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 分页请求参数</span>
+<span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PageRequest</span> <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">PageRequest</span> </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> PageRequest({
+    <span class="hljs-meta">@Default</span>(<span class="hljs-number">1</span>) <span class="hljs-built_in">int</span> page,
+    <span class="hljs-meta">@Default</span>(<span class="hljs-number">20</span>) <span class="hljs-built_in">int</span> pageSize,
+    <span class="hljs-built_in">String?</span> sortBy,
+    <span class="hljs-meta">@Default</span>(<span class="hljs-string">&#x27;desc&#x27;</span>) <span class="hljs-built_in">String</span> sortOrder,
+  }) = _PageRequest;
+  
+  <span class="hljs-keyword">factory</span> PageRequest.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$PageRequestFromJson(json);
+}
+
+<span class="hljs-comment">// 搜索请求参数</span>
+<span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SearchRequest</span> <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">SearchRequest</span> </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> SearchRequest({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> keyword,
+    <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;? filters,
+    <span class="hljs-meta">@Default</span>(<span class="hljs-number">1</span>) <span class="hljs-built_in">int</span> page,
+    <span class="hljs-meta">@Default</span>(<span class="hljs-number">20</span>) <span class="hljs-built_in">int</span> pageSize,
+  }) = _SearchRequest;
+  
+  <span class="hljs-keyword">factory</span> SearchRequest.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$SearchRequestFromJson(json);
+}
+</code></pre>
+<h3 id="4-错误处理系统">4. 错误处理系统</h3>
+<h4 id="网络异常定义">网络异常定义</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 网络异常基类</span>
+<span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkFailure</span> <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">NetworkFailure</span> </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> NetworkFailure.connectionError(<span class="hljs-built_in">String</span> message) = ConnectionError;
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> NetworkFailure.timeoutError(<span class="hljs-built_in">String</span> message) = TimeoutError;
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> NetworkFailure.httpError(<span class="hljs-built_in">int</span> statusCode, <span class="hljs-built_in">String</span> message) = HttpError;
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> NetworkFailure.parseError(<span class="hljs-built_in">String</span> message) = ParseError;
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> NetworkFailure.businessError(<span class="hljs-built_in">int</span> code, <span class="hljs-built_in">String</span> message) = BusinessError;
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> NetworkFailure.unknownError(<span class="hljs-built_in">String</span> message) = UnknownError;
+}
+
+<span class="hljs-comment">// 业务异常</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BusinessException</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Exception</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> code;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> message;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">dynamic</span> data;
+  
+  <span class="hljs-keyword">const</span> BusinessException(<span class="hljs-keyword">this</span>.code, <span class="hljs-keyword">this</span>.message, [<span class="hljs-keyword">this</span>.data]);
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-built_in">String</span> toString() =&gt; <span class="hljs-string">&#x27;BusinessException(<span class="hljs-subst">$code</span>, <span class="hljs-subst">$message</span>)&#x27;</span>;
+}
+
+<span class="hljs-comment">// 网络异常处理器</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkErrorHandler</span> </span>{
+  <span class="hljs-keyword">static</span> NetworkFailure handleError(<span class="hljs-built_in">dynamic</span> error) {
+    <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">is</span> DioException) {
+      <span class="hljs-keyword">return</span> _handleDioError(error);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">is</span> BusinessException) {
+      <span class="hljs-keyword">return</span> NetworkFailure.businessError(error.code, error.message);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">is</span> FormatException) {
+      <span class="hljs-keyword">return</span> NetworkFailure.parseError(<span class="hljs-string">&#x27;数据解析失败: <span class="hljs-subst">${error.message}</span>&#x27;</span>);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> NetworkFailure.unknownError(error.toString());
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> NetworkFailure _handleDioError(DioException error) {
+    <span class="hljs-keyword">switch</span> (error.type) {
+      <span class="hljs-keyword">case</span> DioExceptionType.connectionTimeout:
+      <span class="hljs-keyword">case</span> DioExceptionType.sendTimeout:
+      <span class="hljs-keyword">case</span> DioExceptionType.receiveTimeout:
+        <span class="hljs-keyword">return</span> NetworkFailure.timeoutError(<span class="hljs-string">&#x27;请求超时，请检查网络连接&#x27;</span>);
+      
+      <span class="hljs-keyword">case</span> DioExceptionType.connectionError:
+        <span class="hljs-keyword">return</span> NetworkFailure.connectionError(<span class="hljs-string">&#x27;网络连接失败，请检查网络设置&#x27;</span>);
+      
+      <span class="hljs-keyword">case</span> DioExceptionType.badResponse:
+        <span class="hljs-keyword">final</span> statusCode = error.response?.statusCode ?? <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">final</span> message = _getHttpErrorMessage(statusCode);
+        <span class="hljs-keyword">return</span> NetworkFailure.httpError(statusCode, message);
+      
+      <span class="hljs-keyword">case</span> DioExceptionType.cancel:
+        <span class="hljs-keyword">return</span> NetworkFailure.unknownError(<span class="hljs-string">&#x27;请求已取消&#x27;</span>);
+      
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">return</span> NetworkFailure.unknownError(<span class="hljs-string">&#x27;网络请求失败: <span class="hljs-subst">${error.message}</span>&#x27;</span>);
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">String</span> _getHttpErrorMessage(<span class="hljs-built_in">int</span> statusCode) {
+    <span class="hljs-keyword">switch</span> (statusCode) {
+      <span class="hljs-keyword">case</span> <span class="hljs-number">400</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;请求参数错误&#x27;</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">401</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;未授权，请重新登录&#x27;</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">403</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;禁止访问&#x27;</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">404</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;请求的资源不存在&#x27;</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">500</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;服务器内部错误&#x27;</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">502</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;网关错误&#x27;</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-number">503</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;服务暂时不可用&#x27;</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;HTTP错误: <span class="hljs-subst">$statusCode</span>&#x27;</span>;
+    }
+  }
+}
+</code></pre>
+<h3 id="5-缓存机制">5. 缓存机制</h3>
+<h4 id="请求缓存管理">请求缓存管理</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 网络缓存管理器</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkCacheManager</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, CacheItem&gt; _cache = {};
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span> defaultCacheDuration = <span class="hljs-built_in">Duration</span>(minutes: <span class="hljs-number">5</span>);
+  
+  <span class="hljs-comment">// 设置缓存</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> setCache(
+    <span class="hljs-built_in">String</span> key,
+    <span class="hljs-built_in">dynamic</span> data, {
+    <span class="hljs-built_in">Duration?</span> duration,
+  }) {
+    _cache[key] = CacheItem(
+      data: data,
+      timestamp: <span class="hljs-built_in">DateTime</span>.now(),
+      duration: duration ?? defaultCacheDuration,
+    );
+  }
+  
+  <span class="hljs-comment">// 获取缓存</span>
+  <span class="hljs-keyword">static</span> T? getCache&lt;T&gt;(<span class="hljs-built_in">String</span> key) {
+    <span class="hljs-keyword">final</span> item = _cache[key];
+    <span class="hljs-keyword">if</span> (item == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    
+    <span class="hljs-keyword">if</span> (item.isExpired) {
+      _cache.remove(key);
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+    
+    <span class="hljs-keyword">return</span> item.data <span class="hljs-keyword">as</span> T?;
+  }
+  
+  <span class="hljs-comment">// 清除缓存</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> clearCache([<span class="hljs-built_in">String?</span> key]) {
+    <span class="hljs-keyword">if</span> (key != <span class="hljs-keyword">null</span>) {
+      _cache.remove(key);
+    } <span class="hljs-keyword">else</span> {
+      _cache.clear();
+    }
+  }
+  
+  <span class="hljs-comment">// 生成缓存键</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">String</span> generateCacheKey(
+    <span class="hljs-built_in">String</span> path,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? queryParameters,
+  ) {
+    <span class="hljs-keyword">final</span> uri = <span class="hljs-built_in">Uri</span>(path: path, queryParameters: queryParameters);
+    <span class="hljs-keyword">return</span> uri.toString();
+  }
+}
+
+<span class="hljs-comment">// 缓存项</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CacheItem</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">dynamic</span> data;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> duration;
+  
+  CacheItem({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.data,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.timestamp,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.duration,
+  });
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isExpired =&gt; <span class="hljs-built_in">DateTime</span>.now().difference(timestamp) &gt; duration;
+}
+</code></pre>
+<h3 id="6-请求配置管理">6. 请求配置管理</h3>
+<h4 id="环境配置">环境配置</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 网络环境配置</span>
+<span class="hljs-keyword">enum</span> NetworkEnvironment {
+  development,
+  testing,
+  staging,
+  production,
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> baseUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> connectTimeout;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> receiveTimeout;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> sendTimeout;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableLogging;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableCache;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> maxRetries;
+  
+  <span class="hljs-keyword">const</span> NetworkConfig({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.baseUrl,
+    <span class="hljs-keyword">this</span>.connectTimeout = <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>),
+    <span class="hljs-keyword">this</span>.receiveTimeout = <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>),
+    <span class="hljs-keyword">this</span>.sendTimeout = <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>),
+    <span class="hljs-keyword">this</span>.enableLogging = <span class="hljs-keyword">false</span>,
+    <span class="hljs-keyword">this</span>.enableCache = <span class="hljs-keyword">true</span>,
+    <span class="hljs-keyword">this</span>.maxRetries = <span class="hljs-number">3</span>,
+  });
+  
+  <span class="hljs-comment">// 开发环境配置</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> NetworkConfig development = NetworkConfig(
+    baseUrl: <span class="hljs-string">&#x27;https://dev-api.oneapp.com&#x27;</span>,
+    enableLogging: <span class="hljs-keyword">true</span>,
+    enableCache: <span class="hljs-keyword">false</span>,
+  );
+  
+  <span class="hljs-comment">// 测试环境配置</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> NetworkConfig testing = NetworkConfig(
+    baseUrl: <span class="hljs-string">&#x27;https://test-api.oneapp.com&#x27;</span>,
+    enableLogging: <span class="hljs-keyword">true</span>,
+  );
+  
+  <span class="hljs-comment">// 生产环境配置</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> NetworkConfig production = NetworkConfig(
+    baseUrl: <span class="hljs-string">&#x27;https://api.oneapp.com&#x27;</span>,
+    enableLogging: <span class="hljs-keyword">false</span>,
+  );
+  
+  <span class="hljs-keyword">static</span> NetworkConfig forEnvironment(NetworkEnvironment env) {
+    <span class="hljs-keyword">switch</span> (env) {
+      <span class="hljs-keyword">case</span> NetworkEnvironment.development:
+        <span class="hljs-keyword">return</span> development;
+      <span class="hljs-keyword">case</span> NetworkEnvironment.testing:
+        <span class="hljs-keyword">return</span> testing;
+      <span class="hljs-keyword">case</span> NetworkEnvironment.staging:
+        <span class="hljs-keyword">return</span> testing; <span class="hljs-comment">// 使用测试环境配置</span>
+      <span class="hljs-keyword">case</span> NetworkEnvironment.production:
+        <span class="hljs-keyword">return</span> production;
+    }
+  }
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="基本用法">基本用法</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化网络服务</span>
+<span class="hljs-keyword">final</span> config = NetworkConfig.forEnvironment(NetworkEnvironment.production);
+<span class="hljs-keyword">final</span> client = NetworkClient(
+  baseUrl: config.baseUrl,
+  connectTimeout: config.connectTimeout,
+  receiveTimeout: config.receiveTimeout,
+);
+<span class="hljs-keyword">final</span> networkService = NetworkService(client);
+
+<span class="hljs-comment">// GET 请求</span>
+<span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> networkService.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">List</span>&lt;User&gt;&gt;(
+  path: <span class="hljs-string">&#x27;/users&#x27;</span>,
+  queryParameters: {<span class="hljs-string">&#x27;page&#x27;</span>: <span class="hljs-number">1</span>, <span class="hljs-string">&#x27;limit&#x27;</span>: <span class="hljs-number">20</span>},
+  fromJson: (data) =&gt; (data <span class="hljs-keyword">as</span> <span class="hljs-built_in">List</span>)
+      .map((item) =&gt; User.fromJson(item))
+      .toList(),
+);
+
+result.fold(
+  (failure) =&gt; <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;请求失败: <span class="hljs-subst">${failure.toString()}</span>&#x27;</span>),
+  (users) =&gt; <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;获取到 <span class="hljs-subst">${users.length}</span> 个用户&#x27;</span>),
+);
+
+<span class="hljs-comment">// POST 请求</span>
+<span class="hljs-keyword">final</span> createResult = <span class="hljs-keyword">await</span> networkService.post&lt;User&gt;(
+  path: <span class="hljs-string">&#x27;/users&#x27;</span>,
+  data: {
+    <span class="hljs-string">&#x27;name&#x27;</span>: <span class="hljs-string">&#x27;John Doe&#x27;</span>,
+    <span class="hljs-string">&#x27;email&#x27;</span>: <span class="hljs-string">&#x27;john@example.com&#x27;</span>,
+  },
+  fromJson: (data) =&gt; User.fromJson(data),
+);
+</code></pre>
+<h3 id="高级用法">高级用法</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 带缓存的请求</span>
+<span class="hljs-keyword">final</span> cachedResult = <span class="hljs-keyword">await</span> networkService.getWithCache&lt;<span class="hljs-built_in">List</span>&lt;Article&gt;&gt;(
+  path: <span class="hljs-string">&#x27;/articles&#x27;</span>,
+  cacheKey: <span class="hljs-string">&#x27;articles_list&#x27;</span>,
+  cacheDuration: <span class="hljs-built_in">Duration</span>(minutes: <span class="hljs-number">10</span>),
+  fromJson: (data) =&gt; (data <span class="hljs-keyword">as</span> <span class="hljs-built_in">List</span>)
+      .map((item) =&gt; Article.fromJson(item))
+      .toList(),
+);
+
+<span class="hljs-comment">// 文件上传</span>
+<span class="hljs-keyword">final</span> uploadResult = <span class="hljs-keyword">await</span> networkService.upload&lt;UploadResponse&gt;(
+  path: <span class="hljs-string">&#x27;/upload&#x27;</span>,
+  file: File(<span class="hljs-string">&#x27;path/to/file.jpg&#x27;</span>),
+  fileName: <span class="hljs-string">&#x27;avatar.jpg&#x27;</span>,
+  fromJson: (data) =&gt; UploadResponse.fromJson(data),
+);
+
+<span class="hljs-comment">// 批量请求</span>
+<span class="hljs-keyword">final</span> batchResults = <span class="hljs-keyword">await</span> Future.wait([
+  networkService.<span class="hljs-keyword">get</span>&lt;UserProfile&gt;(path: <span class="hljs-string">&#x27;/profile&#x27;</span>),
+  networkService.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">List</span>&lt;Notification&gt;&gt;(path: <span class="hljs-string">&#x27;/notifications&#x27;</span>),
+  networkService.<span class="hljs-keyword">get</span>&lt;AppConfig&gt;(path: <span class="hljs-string">&#x27;/config&#x27;</span>),
+]);
+</code></pre>
+<h2 id="依赖管理">依赖管理</h2>
+<h3 id="核心依赖">核心依赖</h3>
+<ul>
+<li><strong>dio</strong>: HTTP 客户端库</li>
+<li><strong>http_parser</strong>: HTTP 解析工具</li>
+<li><strong>pretty_dio_logger</strong>: 美化的请求日志</li>
+</ul>
+<h3 id="代码生成依赖">代码生成依赖</h3>
+<ul>
+<li><strong>freezed</strong>: 不可变类生成</li>
+<li><strong>json_annotation</strong>: JSON 序列化注解</li>
+<li><strong>json_serializable</strong>: JSON 序列化生成器</li>
+</ul>
+<h3 id="开发依赖">开发依赖</h3>
+<ul>
+<li><strong>build_runner</strong>: 代码生成引擎</li>
+<li><strong>test</strong>: 单元测试框架</li>
+<li><strong>coverage</strong>: 测试覆盖率工具</li>
+</ul>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="网络性能优化">网络性能优化</h3>
+<ul>
+<li>连接池复用</li>
+<li>HTTP/2 支持</li>
+<li>请求合并和批处理</li>
+<li>智能重试机制</li>
+</ul>
+<h3 id="缓存优化">缓存优化</h3>
+<ul>
+<li>多级缓存策略</li>
+<li>缓存过期管理</li>
+<li>条件请求支持</li>
+<li>离线缓存机制</li>
+</ul>
+<h3 id="内存优化">内存优化</h3>
+<ul>
+<li>流式数据处理</li>
+<li>大文件分块传输</li>
+<li>及时释放响应数据</li>
+<li>内存泄漏检测</li>
+</ul>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="单元测试">单元测试</h3>
+<ul>
+<li>网络服务接口测试</li>
+<li>拦截器功能测试</li>
+<li>错误处理测试</li>
+<li>缓存机制测试</li>
+</ul>
+<h3 id="集成测试">集成测试</h3>
+<ul>
+<li>端到端请求测试</li>
+<li>网络环境切换测试</li>
+<li>错误恢复测试</li>
+</ul>
+<h3 id="mock-测试">Mock 测试</h3>
+<ul>
+<li>网络请求 Mock</li>
+<li>错误场景模拟</li>
+<li>性能测试</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>basic_network</code> 模块为 OneApp 提供了强大而灵活的网络通信能力。通过统一的接口抽象、完善的错误处理、智能的缓存机制和丰富的拦截器功能，大大简化了网络请求的开发工作，提高了应用的稳定性和用户体验。模块的设计充分考虑了可扩展性和可维护性，为大型应用的网络通信提供了坚实的基础。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

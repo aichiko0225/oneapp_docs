@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Basic Utils &#x57fa;&#x7840;&#x5de5;&#x5177;&#x6a21;&#x5757;&#x7fa4;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="basic-utils-基础工具模块群">Basic Utils 基础工具模块群</h1>
+<h2 id="模块群概述">模块群概述</h2>
+<p>Basic Utils 模块群是 OneApp 的基础工具集合，提供了应用开发中必需的底层工具和通用组件。该模块群包含了网络通信、日志系统、配置管理、平台适配、推送服务等核心基础设施。</p>
+<h2 id="子模块列表">子模块列表</h2>
+<h3 id="核心基础模块">核心基础模块</h3>
+<ol>
+<li><strong><a href="./basic_network.html">basic_network</a></strong> - 网络通信模块</li>
+<li><strong><a href="./basic_logger.html">basic_logger</a></strong> - 日志系统模块</li>
+<li><strong><a href="./basic_config.html">basic_config</a></strong> - 配置管理模块</li>
+<li><strong><a href="./basic_platform.html">basic_platform</a></strong> - 平台适配模块</li>
+<li><strong><a href="./basic_push.html">basic_push</a></strong> - 推送服务模块</li>
+<li><strong><a href="./basic_utils.html">basic_utils</a></strong> - 基础工具模块</li>
+</ol>
+<h3 id="架构框架模块">架构框架模块</h3>
+<ol start="7">
+<li><strong><a href="./base_mvvm.html">base_mvvm</a></strong> - MVVM架构模块</li>
+</ol>
+<h3 id="下载和监控模块">下载和监控模块</h3>
+<ol start="8">
+<li><strong><a href="./flutter_downloader.html">flutter_downloader</a></strong> - 文件下载器模块</li>
+<li><strong><a href="./kit_app_monitor.html">kit_app_monitor</a></strong> - 应用监控工具包</li>
+</ol>
+<h3 id="第三方集成模块">第三方集成模块</h3>
+<ol start="10">
+<li><strong><a href="./flutter_plugin_mtpush_private.html">flutter_plugin_mtpush_private</a></strong> - 美团云推送插件</li>
+</ol>
+<h2 id="使用指南">使用指南</h2>
+<h3 id="基础依赖配置">基础依赖配置</h3>
+<pre><code class="language-yaml"><span class="hljs-attr">dependencies:</span>
+  <span class="hljs-attr">basic_utils:</span>
+    <span class="hljs-attr">path:</span> <span class="hljs-string">../oneapp_basic_utils/basic_utils</span>
+  <span class="hljs-attr">basic_config:</span>
+    <span class="hljs-attr">path:</span> <span class="hljs-string">../oneapp_basic_utils/basic_config</span>
+  <span class="hljs-attr">basic_logger:</span>
+    <span class="hljs-attr">path:</span> <span class="hljs-string">../oneapp_basic_utils/basic_logger</span>
+  <span class="hljs-attr">basic_network:</span>
+    <span class="hljs-attr">path:</span> <span class="hljs-string">../oneapp_basic_utils/basic_network</span>
+  <span class="hljs-attr">basic_platform:</span>
+    <span class="hljs-attr">path:</span> <span class="hljs-string">../oneapp_basic_utils/basic_platform</span>
+</code></pre>
+<h3 id="初始化配置">初始化配置</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 应用初始化时配置基础模块</span>
+<span class="hljs-keyword">await</span> BasicUtils.initialize();
+<span class="hljs-keyword">await</span> BasicConfig.initialize();
+<span class="hljs-keyword">await</span> BasicLogger.initialize();
+<span class="hljs-keyword">await</span> BasicNetwork.initialize();
+<span class="hljs-keyword">await</span> BasicPlatform.initialize();
+</code></pre>
+<h2 id="开发规范">开发规范</h2>
+<h3 id="模块设计原则">模块设计原则</h3>
+<ol>
+<li><strong>单一职责</strong>: 每个模块只负责特定的功能领域</li>
+<li><strong>接口抽象</strong>: 提供清晰的接口定义，隐藏实现细节</li>
+<li><strong>配置驱动</strong>: 通过配置控制模块行为，提高灵活性</li>
+<li><strong>错误处理</strong>: 统一的错误处理和日志记录机制</li>
+</ol>
+<h3 id="代码规范">代码规范</h3>
+<ul>
+<li>遵循 Dart 官方编码规范</li>
+<li>使用静态分析工具检查代码质量</li>
+<li>编写完整的单元测试和文档</li>
+<li>版本化管理和变更日志</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>oneapp_basic_utils</code> 模块群为 OneApp 提供了坚实的技术基础，通过模块化设计和统一抽象，实现了基础功能的复用和标准化。这些模块不仅支撑了当前的业务需求，也为未来的功能扩展提供了良好的基础架构。</p>
+
+            
+            
+        </body>
+        </html>

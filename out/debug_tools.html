@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Debug Tools - &#x8c03;&#x8bd5;&#x5de5;&#x5177;&#x96c6;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="debug-tools---调试工具集">Debug Tools - 调试工具集</h1>
+<h2 id="工具集概述">工具集概述</h2>
+<p>Debug Tools 是 OneApp 开发阶段使用的调试工具集合，提供了全面的开发调试、性能监控、问题诊断等功能。这些工具仅在开发环境中使用，帮助开发团队快速定位问题、优化性能、监控应用状态。</p>
+<h2 id="工具列表">工具列表</h2>
+<h3 id="1-kit_debugtools-v0241">1. kit_debugtools (v0.2.4+1)</h3>
+<p><strong>核心调试工具包</strong></p>
+<ul>
+<li>调试面板管理</li>
+<li>开发者选项控制</li>
+<li>调试信息展示</li>
+<li>工具集成管理</li>
+</ul>
+<h3 id="2-kit_tool_dio-v024">2. kit_tool_dio (v0.2.4)</h3>
+<p><strong>网络请求调试工具</strong></p>
+<ul>
+<li>HTTP请求拦截和查看</li>
+<li>请求/响应日志记录</li>
+<li>网络性能分析</li>
+<li>API调试界面</li>
+</ul>
+<h3 id="3-kit_tool_console-v022">3. kit_tool_console (v0.2.2)</h3>
+<p><strong>控制台日志工具</strong></p>
+<ul>
+<li>实时日志查看</li>
+<li>日志级别过滤</li>
+<li>日志搜索功能</li>
+<li>日志导出功能</li>
+</ul>
+<h3 id="4-kit_tool_channel_monitor-v022">4. kit_tool_channel_monitor (v0.2.2)</h3>
+<p><strong>原生通道监控工具</strong></p>
+<ul>
+<li>Flutter与原生代码通信监控</li>
+<li>Method Channel调用跟踪</li>
+<li>参数和返回值查看</li>
+<li>通信性能分析</li>
+</ul>
+<h3 id="5-kit_tool_device_info-v022">5. kit_tool_device_info (v0.2.2)</h3>
+<p><strong>设备信息查看工具</strong></p>
+<ul>
+<li>设备硬件信息展示</li>
+<li>系统版本信息</li>
+<li>应用安装信息</li>
+<li>运行环境状态</li>
+</ul>
+<h3 id="6-kit_tool_memory-v023">6. kit_tool_memory (v0.2.3)</h3>
+<p><strong>内存监控工具</strong></p>
+<ul>
+<li>实时内存使用监控</li>
+<li>内存泄漏检测</li>
+<li>垃圾回收分析</li>
+<li>内存使用趋势图</li>
+</ul>
+<h3 id="7-kit_tool_ui-v023">7. kit_tool_ui (v0.2.3)</h3>
+<p><strong>UI调试工具</strong></p>
+<ul>
+<li>Widget树结构查看</li>
+<li>布局边界显示</li>
+<li>性能叠加层</li>
+<li>UI渲染分析</li>
+</ul>
+<h3 id="8-kit_tool_show_code-v023">8. kit_tool_show_code (v0.2.3)</h3>
+<p><strong>代码查看工具</strong></p>
+<ul>
+<li>源码快速查看</li>
+<li>代码搜索功能</li>
+<li>文件结构浏览</li>
+<li>代码片段分享</li>
+</ul>
+<h2 id="主要功能">主要功能</h2>
+<h3 id="开发调试">开发调试</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 启用调试工具</span>
+<span class="hljs-keyword">if</span> (kDebugMode) {
+  DebugTools.init();
+  DebugTools.showDebugPanel();
+}
+
+<span class="hljs-comment">// 网络请求调试</span>
+DioDebugTool.enableNetworkMonitoring();
+
+<span class="hljs-comment">// UI调试</span>
+UIDebugTool.showWidgetInspector();
+</code></pre>
+<h3 id="性能监控">性能监控</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 内存监控</span>
+MemoryTool.startMonitoring();
+
+<span class="hljs-comment">// 渲染性能</span>
+UITool.enablePerformanceOverlay();
+
+<span class="hljs-comment">// 通道监控</span>
+ChannelMonitor.startMonitoring();
+</code></pre>
+<h3 id="日志管理">日志管理</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 查看控制台日志</span>
+ConsoleTool.showLogs();
+
+<span class="hljs-comment">// 过滤错误日志</span>
+ConsoleTool.filterByLevel(LogLevel.error);
+
+<span class="hljs-comment">// 导出日志文件</span>
+ConsoleTool.exportLogs();
+</code></pre>
+<h2 id="使用场景">使用场景</h2>
+<h3 id="开发阶段">开发阶段</h3>
+<ul>
+<li><strong>问题诊断</strong>：快速定位和分析问题</li>
+<li><strong>性能优化</strong>：监控性能指标，识别瓶颈</li>
+<li><strong>功能测试</strong>：验证新功能的正确性</li>
+<li><strong>兼容性测试</strong>：测试不同设备的兼容性</li>
+</ul>
+<h3 id="测试阶段">测试阶段</h3>
+<ul>
+<li><strong>回归测试</strong>：确保新版本没有引入问题</li>
+<li><strong>压力测试</strong>：监控高负载下的应用表现</li>
+<li><strong>用户体验测试</strong>：分析用户交互流程</li>
+<li><strong>稳定性测试</strong>：长时间运行监控</li>
+</ul>
+<h3 id="生产前验证">生产前验证</h3>
+<ul>
+<li><strong>最终检查</strong>：上线前的最后检查</li>
+<li><strong>性能基准</strong>：建立性能基准数据</li>
+<li><strong>监控配置</strong>：配置生产环境监控</li>
+<li><strong>问题预防</strong>：预防潜在问题</li>
+</ul>
+<h2 id="集成方式">集成方式</h2>
+<h3 id="开发依赖配置">开发依赖配置</h3>
+<pre><code class="language-yaml"><span class="hljs-attr">dev_dependencies:</span>
+  <span class="hljs-comment"># 调试工具集</span>
+  <span class="hljs-attr">kit_debugtools:</span> <span class="hljs-string">^0.2.4+1</span>
+  <span class="hljs-attr">kit_tool_dio:</span> <span class="hljs-string">^0.2.4</span>
+  <span class="hljs-attr">kit_tool_console:</span> <span class="hljs-string">^0.2.2</span>
+  <span class="hljs-attr">kit_tool_channel_monitor:</span> <span class="hljs-string">^0.2.2</span>
+  <span class="hljs-attr">kit_tool_device_info:</span> <span class="hljs-string">^0.2.2</span>
+  <span class="hljs-attr">kit_tool_memory:</span> <span class="hljs-string">^0.2.3</span>
+  <span class="hljs-attr">kit_tool_ui:</span> <span class="hljs-string">^0.2.3</span>
+  <span class="hljs-attr">kit_tool_show_code:</span> <span class="hljs-string">^0.2.3</span>
+</code></pre>
+<h3 id="初始化配置">初始化配置</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">void</span> main() {
+  <span class="hljs-comment">// 仅在调试模式下启用调试工具</span>
+  <span class="hljs-keyword">if</span> (kDebugMode) {
+    _initDebugTools();
+  }
+  
+  runApp(MyApp());
+}
+
+<span class="hljs-keyword">void</span> _initDebugTools() {
+  <span class="hljs-comment">// 初始化调试工具包</span>
+  DebugTools.init(
+    enableNetworkMonitoring: <span class="hljs-keyword">true</span>,
+    enableMemoryMonitoring: <span class="hljs-keyword">true</span>,
+    enableUIDebugging: <span class="hljs-keyword">true</span>,
+    enableConsoleLogging: <span class="hljs-keyword">true</span>,
+  );
+}
+</code></pre>
+<h2 id="注意事项">注意事项</h2>
+<h3 id="使用限制">使用限制</h3>
+<ul>
+<li><strong>开发环境专用</strong>：仅在开发和测试环境使用</li>
+<li><strong>性能影响</strong>：调试工具会影响应用性能</li>
+<li><strong>内存占用</strong>：会增加应用的内存使用</li>
+<li><strong>安全考虑</strong>：不应在生产环境中包含</li>
+</ul>
+<h3 id="最佳实践">最佳实践</h3>
+<ul>
+<li><strong>按需启用</strong>：只启用需要的调试功能</li>
+<li><strong>及时关闭</strong>：测试完成后及时关闭调试工具</li>
+<li><strong>版本控制</strong>：确保生产版本不包含调试代码</li>
+<li><strong>文档记录</strong>：记录调试过程和发现的问题</li>
+</ul>
+<h2 id="工具特色">工具特色</h2>
+<h3 id="易用性">易用性</h3>
+<ul>
+<li><strong>一键启用</strong>：简单的配置即可启用所有工具</li>
+<li><strong>直观界面</strong>：清晰的调试界面和信息展示</li>
+<li><strong>快速操作</strong>：快捷键和手势支持</li>
+<li><strong>智能提示</strong>：自动识别和提示潜在问题</li>
+</ul>
+<h3 id="功能完整性">功能完整性</h3>
+<ul>
+<li><strong>全面覆盖</strong>：覆盖网络、内存、UI、日志等各个方面</li>
+<li><strong>深度分析</strong>：提供详细的分析数据和报告</li>
+<li><strong>实时监控</strong>：实时监控应用运行状态</li>
+<li><strong>历史记录</strong>：保存历史数据便于对比分析</li>
+</ul>
+<h3 id="扩展性">扩展性</h3>
+<ul>
+<li><strong>插件化设计</strong>：支持自定义调试插件</li>
+<li><strong>API开放</strong>：提供开放的调试API</li>
+<li><strong>配置灵活</strong>：支持灵活的配置选项</li>
+<li><strong>集成简单</strong>：容易集成到现有项目中</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>Debug Tools 调试工具集为 OneApp 的开发和测试提供了强大的支持。通过这套完整的调试工具，开发团队能够更高效地进行问题诊断、性能优化和质量保证，确保应用的稳定性和用户体验。</p>
+<p>这些工具的设计原则是简单易用、功能全面、性能友好，帮助开发者在开发过程中快速定位问题，提升开发效率，保证代码质量。</p>
+
+            
+            
+        </body>
+        </html>

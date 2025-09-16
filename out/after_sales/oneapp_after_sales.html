@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>OneApp After Sales &#x552e;&#x540e;&#x670d;&#x52a1;&#x4e3b;&#x6a21;&#x5757;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="oneapp-after-sales-售后服务主模块">OneApp After Sales 售后服务主模块</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>oneapp_after_sales</code> 是 OneApp 售后服务模块群中的主应用模块，负责为用户提供完整的汽车售后服务功能。该模块包含维修预约、服务跟踪、客户服务、支付结算等核心功能，为车主提供便捷的售后服务体验。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: oneapp_after_sales</li>
+<li><strong>版本</strong>: 0.0.1</li>
+<li><strong>描述</strong>: 售后服务主应用模块</li>
+<li><strong>Flutter 版本</strong>: &gt;=1.17.0</li>
+<li><strong>Dart 版本</strong>: &gt;=3.0.0 &lt;4.0.0</li>
+</ul>
+<h2 id="功能特性">功能特性</h2>
+<h3 id="核心功能">核心功能</h3>
+<ol>
+<li>
+<p><strong>维修预约管理</strong></p>
+<ul>
+<li>在线预约维修服务</li>
+<li>预约时间智能调度</li>
+<li>服务门店选择和导航</li>
+<li>预约状态实时跟踪</li>
+</ul>
+</li>
+<li>
+<p><strong>服务流程跟踪</strong></p>
+<ul>
+<li>维修进度实时更新</li>
+<li>服务照片和视频记录</li>
+<li>技师服务过程展示</li>
+<li>完工通知和验收</li>
+</ul>
+</li>
+<li>
+<p><strong>客户服务中心</strong></p>
+<ul>
+<li>在线客服聊天</li>
+<li>投诉建议提交</li>
+<li>服务评价反馈</li>
+<li>FAQ常见问题</li>
+</ul>
+</li>
+<li>
+<p><strong>支付和结算</strong></p>
+<ul>
+<li>多种支付方式支持</li>
+<li>费用明细透明展示</li>
+<li>电子发票生成</li>
+<li>会员优惠计算</li>
+</ul>
+</li>
+</ol>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="目录结构">目录结构</h3>
+<pre><code>lib/
+├── oneapp_after_sales.dart    # 模块入口文件
+├── src/                        # 源代码目录
+│   ├── appointment/            # 预约管理
+│   ├── service/                # 服务跟踪
+│   ├── customer/               # 客户服务
+│   ├── payment/                # 支付结算
+│   ├── store/                  # 门店管理
+│   ├── pages/                  # 页面组件
+│   ├── widgets/                # 自定义组件
+│   ├── models/                 # 数据模型
+│   └── utils/                  # 工具类
+├── assets/                     # 资源文件
+└── l10n/                       # 国际化文件
+</code></pre>
+<h3 id="依赖关系">依赖关系</h3>
+<h4 id="基础框架依赖">基础框架依赖</h4>
+<ul>
+<li><code>basic_modular: ^0.2.3</code> - 模块化框架</li>
+<li><code>basic_modular_route: ^0.2.1</code> - 路由管理</li>
+<li><code>basic_intl: ^0.2.0</code> - 国际化支持</li>
+<li><code>basic_webview: ^0.2.4+4</code> - WebView组件</li>
+</ul>
+<h4 id="地图和位置服务">地图和位置服务</h4>
+<ul>
+<li><code>ui_mapview: ^0.2.18</code> - 地图视图组件</li>
+<li><code>amap_flutter_location: ^3.0.3</code> - 高德地图定位</li>
+<li><code>clr_geo: ^0.2.16+1</code> - 地理位置服务</li>
+<li><code>location_service_check: ^1.0.1</code> - 位置服务检查</li>
+</ul>
+<h4 id="支付服务">支付服务</h4>
+<ul>
+<li><code>kit_alipay: ^0.2.0</code> - 支付宝支付</li>
+<li><code>fluwx: ^4.4.3</code> - 微信支付</li>
+</ul>
+<h4 id="媒体和文件处理">媒体和文件处理</h4>
+<ul>
+<li><code>photo_view: ^0.14.0</code> - 图片预览</li>
+<li><code>photo_gallery: 2.2.1+1</code> - 相册选择</li>
+<li><code>signature: ^5.4.0</code> - 电子签名</li>
+</ul>
+<h4 id="工具依赖">工具依赖</h4>
+<ul>
+<li><code>permission_handler: ^10.3.0</code> - 权限管理</li>
+<li><code>url_launcher: ^6.1.14</code> - URL启动</li>
+<li><code>dio: any</code> - 网络请求</li>
+<li><code>common_utils: ^2.1.0</code> - 通用工具</li>
+<li><code>flutter_color_plugin: ^1.1.0</code> - 颜色工具</li>
+</ul>
+<h2 id="核心模块分析">核心模块分析</h2>
+<h3 id="1-预约管理-srcappointment">1. 预约管理 (<code>src/appointment/</code>)</h3>
+<h4 id="预约创建流程">预约创建流程</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppointmentBookingPage</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  _AppointmentBookingPageState createState() =&gt; _AppointmentBookingPageState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_AppointmentBookingPageState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">AppointmentBookingPage</span>&gt; </span>{
+  <span class="hljs-keyword">final</span> AppointmentBookingController _controller = AppointmentBookingController();
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Scaffold(
+      appBar: AppBar(title: Text(<span class="hljs-string">&#x27;维修预约&#x27;</span>)),
+      body: Stepper(
+        currentStep: _controller.currentStep,
+        onStepTapped: _controller.onStepTapped,
+        controlsBuilder: _buildStepControls,
+        steps: [
+          Step(
+            title: Text(<span class="hljs-string">&#x27;选择服务&#x27;</span>),
+            content: ServiceTypeSelector(
+              selectedType: _controller.selectedServiceType,
+              onTypeSelected: _controller.onServiceTypeSelected,
+            ),
+            isActive: _controller.currentStep &gt;= <span class="hljs-number">0</span>,
+          ),
+          Step(
+            title: Text(<span class="hljs-string">&#x27;选择门店&#x27;</span>),
+            content: StoreSelector(
+              location: _controller.userLocation,
+              selectedStore: _controller.selectedStore,
+              onStoreSelected: _controller.onStoreSelected,
+            ),
+            isActive: _controller.currentStep &gt;= <span class="hljs-number">1</span>,
+          ),
+          Step(
+            title: Text(<span class="hljs-string">&#x27;预约时间&#x27;</span>),
+            content: TimeSlotSelector(
+              availableSlots: _controller.availableTimeSlots,
+              selectedSlot: _controller.selectedTimeSlot,
+              onSlotSelected: _controller.onTimeSlotSelected,
+            ),
+            isActive: _controller.currentStep &gt;= <span class="hljs-number">2</span>,
+          ),
+          Step(
+            title: Text(<span class="hljs-string">&#x27;车辆信息&#x27;</span>),
+            content: VehicleInfoForm(
+              vehicleInfo: _controller.vehicleInfo,
+              onInfoChanged: _controller.onVehicleInfoChanged,
+            ),
+            isActive: _controller.currentStep &gt;= <span class="hljs-number">3</span>,
+          ),
+          Step(
+            title: Text(<span class="hljs-string">&#x27;确认预约&#x27;</span>),
+            content: AppointmentSummary(
+              appointment: _controller.appointmentSummary,
+            ),
+            isActive: _controller.currentStep &gt;= <span class="hljs-number">4</span>,
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h4 id="预约管理器">预约管理器</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppointmentManager</span> </span>{
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">List</span>&lt;Appointment&gt;&gt; getUserAppointments() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> AfterSalesAPI.getUserAppointments();
+      <span class="hljs-keyword">return</span> response.data.map((json) =&gt; Appointment.fromJson(json)).toList();
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> AppointmentException(<span class="hljs-string">&#x27;获取预约列表失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;Appointment&gt; createAppointment(AppointmentRequest request) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> AfterSalesAPI.createAppointment(request.toJson());
+      <span class="hljs-keyword">return</span> Appointment.fromJson(response.data);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> AppointmentException(<span class="hljs-string">&#x27;创建预约失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; cancelAppointment(<span class="hljs-built_in">String</span> appointmentId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">await</span> AfterSalesAPI.cancelAppointment(appointmentId);
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> AppointmentException(<span class="hljs-string">&#x27;取消预约失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+  }
+}
+</code></pre>
+<h3 id="2-服务跟踪-srcservice">2. 服务跟踪 (<code>src/service/</code>)</h3>
+<h4 id="服务进度展示">服务进度展示</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServiceProgressPage</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> appointmentId;
+  
+  <span class="hljs-keyword">const</span> ServiceProgressPage({Key? key, <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.appointmentId}) : <span class="hljs-keyword">super</span>(key: key);
+  
+  <span class="hljs-meta">@override</span>
+  _ServiceProgressPageState createState() =&gt; _ServiceProgressPageState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_ServiceProgressPageState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">ServiceProgressPage</span>&gt; </span>{
+  ServiceProgress? _progress;
+  Timer? _progressTimer;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _loadServiceProgress();
+    _startProgressPolling();
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">if</span> (_progress == <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">return</span> Scaffold(
+        appBar: AppBar(title: Text(<span class="hljs-string">&#x27;服务进度&#x27;</span>)),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    
+    <span class="hljs-keyword">return</span> Scaffold(
+      appBar: AppBar(title: Text(<span class="hljs-string">&#x27;服务进度&#x27;</span>)),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(<span class="hljs-number">16</span>),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ServiceStatusCard(progress: _progress!),
+            SizedBox(height: <span class="hljs-number">16</span>),
+            ServiceTimelineWidget(steps: _progress!.steps),
+            SizedBox(height: <span class="hljs-number">16</span>),
+            <span class="hljs-keyword">if</span> (_progress!.photos.isNotEmpty) ...[
+              ServicePhotosSection(photos: _progress!.photos),
+              SizedBox(height: <span class="hljs-number">16</span>),
+            ],
+            TechnicianInfoCard(technician: _progress!.technician),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  <span class="hljs-keyword">void</span> _startProgressPolling() {
+    _progressTimer = Timer.periodic(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>), (timer) {
+      _loadServiceProgress();
+    });
+  }
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> dispose() {
+    _progressTimer?.cancel();
+    <span class="hljs-keyword">super</span>.dispose();
+  }
+}
+</code></pre>
+<h4 id="服务时间轴组件">服务时间轴组件</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServiceTimelineWidget</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;ServiceStep&gt; steps;
+  
+  <span class="hljs-keyword">const</span> ServiceTimelineWidget({Key? key, <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.steps}) : <span class="hljs-keyword">super</span>(key: key);
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          <span class="hljs-string">&#x27;服务进度&#x27;</span>,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        SizedBox(height: <span class="hljs-number">16</span>),
+        Timeline.tileBuilder(
+          shrinkWrap: <span class="hljs-keyword">true</span>,
+          physics: NeverScrollableScrollPhysics(),
+          builder: TimelineTileBuilder.connected(
+            itemCount: steps.length,
+            connectionDirection: ConnectionDirection.before,
+            itemExtentBuilder: (_, __) =&gt; <span class="hljs-number">80.0</span>,
+            contentsBuilder: (context, index) {
+              <span class="hljs-keyword">final</span> step = steps[index];
+              <span class="hljs-keyword">return</span> Padding(
+                padding: EdgeInsets.all(<span class="hljs-number">8.0</span>),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      step.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: step.isCompleted ? Colors.green : Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      step.description,
+                      style: TextStyle(fontSize: <span class="hljs-number">12</span>),
+                    ),
+                    <span class="hljs-keyword">if</span> (step.completedAt != <span class="hljs-keyword">null</span>)
+                      Text(
+                        DateFormat(<span class="hljs-string">&#x27;MM-dd HH:mm&#x27;</span>).format(step.completedAt!),
+                        style: TextStyle(fontSize: <span class="hljs-number">10</span>, color: Colors.grey),
+                      ),
+                  ],
+                ),
+              );
+            },
+            indicatorBuilder: (context, index) {
+              <span class="hljs-keyword">final</span> step = steps[index];
+              <span class="hljs-keyword">return</span> DotIndicator(
+                color: step.isCompleted ? Colors.green : Colors.grey,
+                child: Icon(
+                  step.isCompleted ? Icons.check : Icons.schedule,
+                  color: Colors.white,
+                  size: <span class="hljs-number">16</span>,
+                ),
+              );
+            },
+            connectorBuilder: (context, index, type) {
+              <span class="hljs-keyword">return</span> SolidLineConnector(
+                color: steps[index].isCompleted ? Colors.green : Colors.grey,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="3-客户服务-srccustomer">3. 客户服务 (<code>src/customer/</code>)</h3>
+<h4 id="在线客服聊天">在线客服聊天</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CustomerServiceChatPage</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  _CustomerServiceChatPageState createState() =&gt; _CustomerServiceChatPageState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_CustomerServiceChatPageState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">CustomerServiceChatPage</span>&gt; </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;ChatMessage&gt; _messages = [];
+  <span class="hljs-keyword">final</span> TextEditingController _textController = TextEditingController();
+  <span class="hljs-keyword">final</span> ScrollController _scrollController = ScrollController();
+  <span class="hljs-keyword">late</span> WebSocketChannel _channel;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _connectToCustomerService();
+    _loadChatHistory();
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Scaffold(
+      appBar: AppBar(
+        title: Text(<span class="hljs-string">&#x27;在线客服&#x27;</span>),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.phone),
+            onPressed: _makePhoneCall,
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.all(<span class="hljs-number">16</span>),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                <span class="hljs-keyword">return</span> ChatMessageBubble(message: _messages[index]);
+              },
+            ),
+          ),
+          _buildMessageInput(),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildMessageInput() {
+    <span class="hljs-keyword">return</span> Container(
+      padding: EdgeInsets.symmetric(horizontal: <span class="hljs-number">16</span>, vertical: <span class="hljs-number">8</span>),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey[<span class="hljs-number">300</span>]!)),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _showAttachmentOptions,
+          ),
+          Expanded(
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: <span class="hljs-string">&#x27;请输入消息...&#x27;</span>,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(<span class="hljs-number">20</span>),
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: <span class="hljs-number">16</span>, vertical: <span class="hljs-number">8</span>),
+              ),
+              onSubmitted: _sendMessage,
+            ),
+          ),
+          SizedBox(width: <span class="hljs-number">8</span>),
+          IconButton(
+            icon: Icon(Icons.send, color: Theme.of(context).primaryColor),
+            onPressed: () =&gt; _sendMessage(_textController.text),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="4-支付结算-srcpayment">4. 支付结算 (<code>src/payment/</code>)</h3>
+<h4 id="支付管理器">支付管理器</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PaymentManager</span> </span>{
+  <span class="hljs-keyword">static</span> Future&lt;PaymentResult&gt; processPayment({
+    <span class="hljs-keyword">required</span> PaymentMethod method,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">double</span> amount,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> orderId,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? extras,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">switch</span> (method) {
+        <span class="hljs-keyword">case</span> PaymentMethod.alipay:
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _processAlipayPayment(amount, orderId, extras);
+        <span class="hljs-keyword">case</span> PaymentMethod.wechat:
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _processWechatPayment(amount, orderId, extras);
+        <span class="hljs-keyword">case</span> PaymentMethod.card:
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _processBankCardPayment(amount, orderId, extras);
+        <span class="hljs-keyword">default</span>:
+          <span class="hljs-keyword">throw</span> PaymentException(<span class="hljs-string">&#x27;不支持的支付方式&#x27;</span>);
+      }
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> PaymentResult.failure(error: e.toString());
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;PaymentResult&gt; _processAlipayPayment(
+    <span class="hljs-built_in">double</span> amount,
+    <span class="hljs-built_in">String</span> orderId,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? extras,
+  ) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 获取支付宝支付参数</span>
+    <span class="hljs-keyword">final</span> paymentParams = <span class="hljs-keyword">await</span> AfterSalesAPI.getAlipayParams(
+      amount: amount,
+      orderId: orderId,
+      extras: extras,
+    );
+    
+    <span class="hljs-comment">// 调用支付宝SDK</span>
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> AlipayKit.pay(paymentParams.orderString);
+    
+    <span class="hljs-keyword">if</span> (result.resultStatus == <span class="hljs-string">&#x27;9000&#x27;</span>) {
+      <span class="hljs-keyword">return</span> PaymentResult.success(
+        transactionId: result.result,
+        method: PaymentMethod.alipay,
+      );
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> PaymentResult.failure(error: result.memo);
+    }
+  }
+}
+</code></pre>
+<h2 id="数据模型">数据模型</h2>
+<h3 id="预约模型">预约模型</h3>
+<pre><code class="language-dart"><span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Appointment</span> <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">Appointment</span> </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> Appointment({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> id,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> userId,
+    <span class="hljs-keyword">required</span> ServiceType serviceType,
+    <span class="hljs-keyword">required</span> Store store,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">DateTime</span> appointmentTime,
+    <span class="hljs-keyword">required</span> VehicleInfo vehicleInfo,
+    <span class="hljs-keyword">required</span> AppointmentStatus status,
+    <span class="hljs-built_in">String?</span> description,
+    <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;? attachments,
+    <span class="hljs-built_in">DateTime?</span> createdAt,
+    <span class="hljs-built_in">DateTime?</span> updatedAt,
+  }) = _Appointment;
+
+  <span class="hljs-keyword">factory</span> Appointment.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$AppointmentFromJson(json);
+}
+
+<span class="hljs-keyword">enum</span> AppointmentStatus {
+  pending,    <span class="hljs-comment">// 待确认</span>
+  confirmed,  <span class="hljs-comment">// 已确认</span>
+  inProgress, <span class="hljs-comment">// 进行中</span>
+  completed,  <span class="hljs-comment">// 已完成</span>
+  cancelled,  <span class="hljs-comment">// 已取消</span>
+}
+
+<span class="hljs-keyword">enum</span> ServiceType {
+  maintenance,     <span class="hljs-comment">// 保养</span>
+  repair,          <span class="hljs-comment">// 维修</span>
+  inspection,      <span class="hljs-comment">// 检测</span>
+  bodywork,        <span class="hljs-comment">// 钣喷</span>
+  insurance,       <span class="hljs-comment">// 保险</span>
+  emergency,       <span class="hljs-comment">// 紧急救援</span>
+}
+</code></pre>
+<h3 id="服务进度模型">服务进度模型</h3>
+<pre><code class="language-dart"><span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServiceProgress</span> <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">ServiceProgress</span> </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> ServiceProgress({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> appointmentId,
+    <span class="hljs-keyword">required</span> ServiceStatus status,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">List</span>&lt;ServiceStep&gt; steps,
+    <span class="hljs-keyword">required</span> Technician technician,
+    <span class="hljs-keyword">required</span> Store store,
+    <span class="hljs-meta">@Default</span>([]) <span class="hljs-built_in">List</span>&lt;ServicePhoto&gt; photos,
+    <span class="hljs-built_in">String?</span> currentStepDescription,
+    <span class="hljs-built_in">DateTime?</span> estimatedCompletion,
+    <span class="hljs-built_in">double?</span> totalCost,
+  }) = _ServiceProgress;
+
+  <span class="hljs-keyword">factory</span> ServiceProgress.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$ServiceProgressFromJson(json);
+}
+
+<span class="hljs-meta">@freezed</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ServiceStep</span> <span class="hljs-title">with</span> <span class="hljs-title">_</span>$<span class="hljs-title">ServiceStep</span> </span>{
+  <span class="hljs-keyword">const</span> <span class="hljs-keyword">factory</span> ServiceStep({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> id,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> title,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> description,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">bool</span> isCompleted,
+    <span class="hljs-built_in">DateTime?</span> completedAt,
+    <span class="hljs-built_in">String?</span> note,
+  }) = _ServiceStep;
+
+  <span class="hljs-keyword">factory</span> ServiceStep.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$ServiceStepFromJson(json);
+}
+</code></pre>
+<h2 id="业务流程实现">业务流程实现</h2>
+<h3 id="预约流程管理">预约流程管理</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppointmentWorkflow</span> </span>{
+  <span class="hljs-keyword">static</span> Future&lt;AppointmentResult&gt; executeBookingWorkflow(
+    AppointmentRequest request,
+  ) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-comment">// 1. 验证预约时间可用性</span>
+      <span class="hljs-keyword">final</span> availability = <span class="hljs-keyword">await</span> _checkTimeAvailability(
+        request.storeId,
+        request.appointmentTime,
+      );
+      
+      <span class="hljs-keyword">if</span> (!availability.isAvailable) {
+        <span class="hljs-keyword">return</span> AppointmentResult.failure(
+          error: <span class="hljs-string">&#x27;所选时间不可用，建议时间：<span class="hljs-subst">${availability.suggestedTimes}</span>&#x27;</span>,
+        );
+      }
+      
+      <span class="hljs-comment">// 2. 创建预约记录</span>
+      <span class="hljs-keyword">final</span> appointment = <span class="hljs-keyword">await</span> AppointmentManager.createAppointment(request);
+      
+      <span class="hljs-comment">// 3. 发送确认通知</span>
+      <span class="hljs-keyword">await</span> NotificationService.sendAppointmentConfirmation(appointment);
+      
+      <span class="hljs-comment">// 4. 更新门店排班</span>
+      <span class="hljs-keyword">await</span> StoreScheduleService.updateSchedule(
+        appointment.store.id,
+        appointment.appointmentTime,
+      );
+      
+      <span class="hljs-keyword">return</span> AppointmentResult.success(appointment: appointment);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> AppointmentResult.failure(error: e.toString());
+    }
+  }
+}
+</code></pre>
+<h2 id="集成和测试">集成和测试</h2>
+<h3 id="api集成">API集成</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AfterSalesAPI</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">String</span> baseUrl = <span class="hljs-string">&#x27;https://api.oneapp.com/after-sales&#x27;</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Dio _dio = Dio();
+  
+  <span class="hljs-keyword">static</span> Future&lt;ApiResponse&gt; createAppointment(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; data) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> _dio.post(<span class="hljs-string">&#x27;<span class="hljs-subst">$baseUrl</span>/appointments&#x27;</span>, data: data);
+    <span class="hljs-keyword">return</span> ApiResponse.fromJson(response.data);
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;ApiResponse&gt; getServiceProgress(<span class="hljs-built_in">String</span> appointmentId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> _dio.<span class="hljs-keyword">get</span>(<span class="hljs-string">&#x27;<span class="hljs-subst">$baseUrl</span>/appointments/<span class="hljs-subst">$appointmentId</span>/progress&#x27;</span>);
+    <span class="hljs-keyword">return</span> ApiResponse.fromJson(response.data);
+  }
+}
+</code></pre>
+<h3 id="单元测试">单元测试</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">void</span> main() {
+  group(<span class="hljs-string">&#x27;AppointmentManager&#x27;</span>, () {
+    test(<span class="hljs-string">&#x27;should create appointment successfully&#x27;</span>, () <span class="hljs-keyword">async</span> {
+      <span class="hljs-keyword">final</span> request = AppointmentRequest(
+        serviceType: ServiceType.maintenance,
+        storeId: <span class="hljs-string">&#x27;store_123&#x27;</span>,
+        appointmentTime: <span class="hljs-built_in">DateTime</span>.now().add(<span class="hljs-built_in">Duration</span>(days: <span class="hljs-number">1</span>)),
+        vehicleInfo: VehicleInfo(vin: <span class="hljs-string">&#x27;TEST123&#x27;</span>),
+      );
+      
+      <span class="hljs-keyword">final</span> appointment = <span class="hljs-keyword">await</span> AppointmentManager.createAppointment(request);
+      
+      expect(appointment.id, isNotEmpty);
+      expect(appointment.serviceType, ServiceType.maintenance);
+      expect(appointment.status, AppointmentStatus.pending);
+    });
+  });
+}
+</code></pre>
+<h2 id="最佳实践">最佳实践</h2>
+<h3 id="用户体验优化">用户体验优化</h3>
+<ol>
+<li><strong>流程简化</strong>: 减少预约步骤，提供智能推荐</li>
+<li><strong>实时反馈</strong>: 及时更新服务进度和状态</li>
+<li><strong>多渠道沟通</strong>: 提供电话、在线客服等多种联系方式</li>
+<li><strong>透明计费</strong>: 清晰展示费用明细和计算过程</li>
+</ol>
+<h3 id="性能优化">性能优化</h3>
+<ol>
+<li><strong>数据缓存</strong>: 缓存门店信息和服务数据</li>
+<li><strong>图片优化</strong>: 压缩和缓存服务照片</li>
+<li><strong>网络优化</strong>: 使用CDN加速资源加载</li>
+<li><strong>离线支持</strong>: 关键信息支持离线查看</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p><code>oneapp_after_sales</code> 模块作为售后服务的主要入口，通过完整的业务流程设计和用户友好的界面实现，为车主提供了便捷高效的售后服务体验。模块具有良好的扩展性和可维护性，能够适应不断变化的售后服务需求。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

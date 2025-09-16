@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Basic UIs &#x57fa;&#x7840;UI&#x7ec4;&#x4ef6;&#x6a21;&#x5757;&#x7fa4;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="basic-uis-基础ui组件模块群">Basic UIs 基础UI组件模块群</h1>
+<h2 id="模块群概述">模块群概述</h2>
+<p>Basic UIs 模块群是 OneApp 的用户界面基础设施，提供了完整的UI组件生态系统。该模块群包含了基础UI组件、业务UI组件和通用UI组件，为整个应用提供统一的设计语言和用户体验。</p>
+<h2 id="子模块列表">子模块列表</h2>
+<h3 id="核心ui组件">核心UI组件</h3>
+<ol>
+<li>
+<p><strong><a href="./ui_basic.html">ui_basic</a></strong> - 基础UI组件库</p>
+<ul>
+<li>按钮、输入框、卡片等基础组件</li>
+<li>布局容器和交互组件</li>
+<li>主题系统和响应式设计</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="./ui_business.html">ui_business</a></strong> - 业务UI组件库</p>
+<ul>
+<li>车辆状态展示组件</li>
+<li>消息中心组件</li>
+<li>地理位置组件</li>
+<li>用户同意组件</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="./basic_uis.html">basic_uis</a></strong> - 通用UI组件集合</p>
+<ul>
+<li>组件库整合和统一导出</li>
+<li>跨模块UI组件管理</li>
+<li>全局UI配置和工具</li>
+</ul>
+</li>
+<li>
+<p><strong><a href="./general_ui_component.html">general_ui_component</a></strong> - 通用UI组件</p>
+<ul>
+<li>可复用的通用组件</li>
+<li>跨业务场景组件</li>
+<li>第三方组件封装</li>
+</ul>
+</li>
+</ol>
+<h2 id="模块架构">模块架构</h2>
+<h3 id="分层设计">分层设计</h3>
+<pre><code>应用层 UI 组件
+    ↓
+业务层 UI 组件 (ui_business)
+    ↓
+基础层 UI 组件 (ui_basic)
+    ↓
+Flutter Framework
+</code></pre>
+<h3 id="组件分类">组件分类</h3>
+<h4 id="1-基础组件层-ui_basic">1. 基础组件层 (ui_basic)</h4>
+<ul>
+<li><strong>原子组件</strong>: Button, TextField, Icon, Text</li>
+<li><strong>分子组件</strong>: Card, ListTile, AppBar, Dialog</li>
+<li><strong>布局组件</strong>: Container, Row, Column, Stack</li>
+<li><strong>交互组件</strong>: GestureDetector, InkWell, RefreshIndicator</li>
+</ul>
+<h4 id="2-业务组件层-ui_business">2. 业务组件层 (ui_business)</h4>
+<ul>
+<li><strong>车辆组件</strong>: VehicleStatusCard, VehicleControlPanel</li>
+<li><strong>消息组件</strong>: MessageListView, MessageTile</li>
+<li><strong>位置组件</strong>: LocationPicker, MapView</li>
+<li><strong>表单组件</strong>: BusinessForm, ConsentDialog</li>
+</ul>
+<h4 id="3-通用组件层-basic_uis--general_ui_component">3. 通用组件层 (basic_uis &amp; general_ui_component)</h4>
+<ul>
+<li><strong>复合组件</strong>: SearchBar, NavigationDrawer</li>
+<li><strong>特效组件</strong>: AnimatedWidget, TransitionWidget</li>
+<li><strong>工具组件</strong>: LoadingOverlay, ErrorBoundary</li>
+</ul>
+<h2 id="设计原则">设计原则</h2>
+<h3 id="1-一致性原则">1. 一致性原则</h3>
+<ul>
+<li><strong>视觉一致性</strong>: 统一的颜色、字体、间距规范</li>
+<li><strong>交互一致性</strong>: 统一的交互模式和反馈机制</li>
+<li><strong>行为一致性</strong>: 相同功能组件的行为保持一致</li>
+</ul>
+<h3 id="2-可访问性原则">2. 可访问性原则</h3>
+<ul>
+<li><strong>语义标签</strong>: 为屏幕阅读器提供清晰的语义</li>
+<li><strong>键盘导航</strong>: 支持键盘和辅助设备导航</li>
+<li><strong>对比度</strong>: 满足无障碍对比度要求</li>
+<li><strong>字体缩放</strong>: 支持系统字体缩放设置</li>
+</ul>
+<h3 id="3-响应式原则">3. 响应式原则</h3>
+<ul>
+<li><strong>屏幕适配</strong>: 适应不同屏幕尺寸和密度</li>
+<li><strong>方向适配</strong>: 支持横竖屏切换</li>
+<li><strong>设备适配</strong>: 针对手机、平板的优化</li>
+<li><strong>性能适配</strong>: 根据设备性能调整渲染策略</li>
+</ul>
+<h3 id="4-可扩展性原则">4. 可扩展性原则</h3>
+<ul>
+<li><strong>插件化</strong>: 支持组件插件化扩展</li>
+<li><strong>主题化</strong>: 支持多主题和自定义主题</li>
+<li><strong>国际化</strong>: 支持多语言和本地化</li>
+<li><strong>配置化</strong>: 通过配置控制组件行为</li>
+</ul>
+<h2 id="主题系统">主题系统</h2>
+<h3 id="主题架构">主题架构</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">OneAppTheme</span> </span>{
+  <span class="hljs-comment">// 颜色系统</span>
+  <span class="hljs-keyword">static</span> ColorScheme <span class="hljs-keyword">get</span> colorScheme =&gt; ColorScheme.fromSeed(
+    seedColor: <span class="hljs-keyword">const</span> Color(<span class="hljs-number">0xFF1976D2</span>),
+  );
+  
+  <span class="hljs-comment">// 字体系统</span>
+  <span class="hljs-keyword">static</span> TextTheme <span class="hljs-keyword">get</span> textTheme =&gt; <span class="hljs-keyword">const</span> TextTheme(
+    displayLarge: TextStyle(fontSize: <span class="hljs-number">32</span>, fontWeight: FontWeight.bold),
+    titleLarge: TextStyle(fontSize: <span class="hljs-number">20</span>, fontWeight: FontWeight.w600),
+    bodyLarge: TextStyle(fontSize: <span class="hljs-number">16</span>, fontWeight: FontWeight.normal),
+  );
+  
+  <span class="hljs-comment">// 组件主题</span>
+  <span class="hljs-keyword">static</span> ThemeData <span class="hljs-keyword">get</span> lightTheme =&gt; ThemeData(
+    useMaterial3: <span class="hljs-keyword">true</span>,
+    colorScheme: colorScheme,
+    textTheme: textTheme,
+    appBarTheme: <span class="hljs-keyword">const</span> AppBarTheme(<span class="hljs-comment">/* ... */</span>),
+    elevatedButtonTheme: ElevatedButtonThemeData(<span class="hljs-comment">/* ... */</span>),
+  );
+}
+</code></pre>
+<h3 id="设计令牌-design-tokens">设计令牌 (Design Tokens)</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DesignTokens</span> </span>{
+  <span class="hljs-comment">// 间距系统</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> spacingXs = <span class="hljs-number">4.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> spacingSm = <span class="hljs-number">8.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> spacingMd = <span class="hljs-number">16.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> spacingLg = <span class="hljs-number">24.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> spacingXl = <span class="hljs-number">32.0</span>;
+  
+  <span class="hljs-comment">// 圆角系统</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> radiusXs = <span class="hljs-number">4.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> radiusSm = <span class="hljs-number">8.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> radiusMd = <span class="hljs-number">12.0</span>;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">double</span> radiusLg = <span class="hljs-number">16.0</span>;
+  
+  <span class="hljs-comment">// 阴影系统</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">List</span>&lt;BoxShadow&gt; shadowSm = [
+    BoxShadow(
+      color: Color(<span class="hljs-number">0x0D000000</span>),
+      blurRadius: <span class="hljs-number">2</span>,
+      offset: Offset(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>),
+    ),
+  ];
+}
+</code></pre>
+<h2 id="组件开发规范">组件开发规范</h2>
+<h3 id="1-组件结构">1. 组件结构</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExampleComponent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-comment">// 1. 必需参数</span>
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> title;
+  
+  <span class="hljs-comment">// 2. 可选参数</span>
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> subtitle;
+  <span class="hljs-keyword">final</span> VoidCallback? onTap;
+  
+  <span class="hljs-comment">// 3. 样式参数</span>
+  <span class="hljs-keyword">final</span> TextStyle? titleStyle;
+  <span class="hljs-keyword">final</span> EdgeInsets? padding;
+  
+  <span class="hljs-comment">// 4. 构造函数</span>
+  <span class="hljs-keyword">const</span> ExampleComponent({
+    Key? key,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.title,
+    <span class="hljs-keyword">this</span>.subtitle,
+    <span class="hljs-keyword">this</span>.onTap,
+    <span class="hljs-keyword">this</span>.titleStyle,
+    <span class="hljs-keyword">this</span>.padding,
+  }) : <span class="hljs-keyword">super</span>(key: key);
+
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Container(<span class="hljs-comment">/* 实现 */</span>);
+  }
+}
+</code></pre>
+<h3 id="2-命名规范">2. 命名规范</h3>
+<ul>
+<li><strong>组件名称</strong>: 使用PascalCase，如 <code>VehicleStatusCard</code></li>
+<li><strong>参数名称</strong>: 使用camelCase，如 <code>onPressed</code></li>
+<li><strong>常量名称</strong>: 使用camelCase，如 <code>defaultPadding</code></li>
+<li><strong>枚举名称</strong>: 使用PascalCase，如 <code>ButtonType</code></li>
+</ul>
+<h3 id="3-文档规范">3. 文档规范</h3>
+<pre><code class="language-dart"><span class="hljs-comment">/// <span class="language-markdown">车辆状态卡片组件</span></span>
+<span class="hljs-comment">/// </span>
+<span class="hljs-comment">/// <span class="language-markdown">用于展示车辆的基本状态信息，包括电量、里程、锁定状态等。</span></span>
+<span class="hljs-comment">/// <span class="language-markdown">支持点击交互和自定义样式。</span></span>
+<span class="hljs-comment">/// </span>
+<span class="hljs-comment">/// <span class="language-markdown">示例用法：</span></span>
+<span class="hljs-comment">/// <span class="language-markdown"><span class="hljs-code">```dart</span></span></span>
+<span class="hljs-comment">/// <span class="language-markdown"><span class="hljs-code">VehicleStatusCard(</span></span></span>
+<span class="hljs-comment">/// <span class="language-markdown"><span class="hljs-code">  status: vehicleStatus,</span></span></span>
+<span class="hljs-comment">/// <span class="language-markdown"><span class="hljs-code">  onTap: () =&gt; Navigator.push(...),</span></span></span>
+<span class="hljs-comment">/// <span class="language-markdown"><span class="hljs-code">)</span></span></span>
+<span class="hljs-comment">/// <span class="language-markdown"><span class="hljs-code">```</span></span></span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VehicleStatusCard</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-comment">/// <span class="language-markdown">车辆状态数据</span></span>
+  <span class="hljs-keyword">final</span> VehicleStatus status;
+  
+  <span class="hljs-comment">/// <span class="language-markdown">点击回调函数</span></span>
+  <span class="hljs-keyword">final</span> VoidCallback? onTap;
+}
+</code></pre>
+<h2 id="性能优化策略">性能优化策略</h2>
+<h3 id="1-渲染优化">1. 渲染优化</h3>
+<ul>
+<li><strong>Widget缓存</strong>: 缓存不变的Widget实例</li>
+<li><strong>RepaintBoundary</strong>: 隔离重绘区域</li>
+<li><strong>Const构造</strong>: 使用const构造函数</li>
+<li><strong>Build优化</strong>: 避免在build方法中创建对象</li>
+</ul>
+<h3 id="2-内存优化">2. 内存优化</h3>
+<ul>
+<li><strong>资源释放</strong>: 及时释放Controller和Stream</li>
+<li><strong>图片缓存</strong>: 合理使用图片缓存策略</li>
+<li><strong>对象池</strong>: 复用频繁创建的对象</li>
+<li><strong>弱引用</strong>: 避免内存泄漏</li>
+</ul>
+<h3 id="3-加载优化">3. 加载优化</h3>
+<ul>
+<li><strong>懒加载</strong>: 按需加载组件和资源</li>
+<li><strong>预加载</strong>: 预测性加载关键资源</li>
+<li><strong>分包加载</strong>: 大型组件分包异步加载</li>
+<li><strong>缓存策略</strong>: 智能缓存机制</li>
+</ul>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="1-单元测试">1. 单元测试</h3>
+<pre><code class="language-dart">testWidgets(<span class="hljs-string">&#x27;VehicleStatusCard displays correct information&#x27;</span>, (tester) <span class="hljs-keyword">async</span> {
+  <span class="hljs-keyword">const</span> status = VehicleStatus(
+    vehicleName: <span class="hljs-string">&#x27;Test Vehicle&#x27;</span>,
+    batteryLevel: <span class="hljs-number">80</span>,
+    isLocked: <span class="hljs-keyword">true</span>,
+  );
+
+  <span class="hljs-keyword">await</span> tester.pumpWidget(
+    MaterialApp(
+      home: VehicleStatusCard(status: status),
+    ),
+  );
+
+  expect(find.text(<span class="hljs-string">&#x27;Test Vehicle&#x27;</span>), findsOneWidget);
+  expect(find.text(<span class="hljs-string">&#x27;80%&#x27;</span>), findsOneWidget);
+  expect(find.byIcon(Icons.lock), findsOneWidget);
+});
+</code></pre>
+<h3 id="2-widget测试">2. Widget测试</h3>
+<ul>
+<li><strong>渲染测试</strong>: 验证组件正确渲染</li>
+<li><strong>交互测试</strong>: 测试用户交互响应</li>
+<li><strong>状态测试</strong>: 测试状态变化</li>
+<li><strong>样式测试</strong>: 验证样式正确应用</li>
+</ul>
+<h3 id="3-集成测试">3. 集成测试</h3>
+<ul>
+<li><strong>页面流程测试</strong>: 测试完整用户流程</li>
+<li><strong>性能测试</strong>: 测试组件性能表现</li>
+<li><strong>兼容性测试</strong>: 测试不同设备兼容性</li>
+<li><strong>可访问性测试</strong>: 测试无障碍功能</li>
+</ul>
+<h2 id="构建和发布">构建和发布</h2>
+<h3 id="1-版本管理">1. 版本管理</h3>
+<ul>
+<li><strong>语义化版本</strong>: 遵循 semver 规范</li>
+<li><strong>变更日志</strong>: 详细的变更记录</li>
+<li><strong>向后兼容</strong>: 保证API向后兼容</li>
+<li><strong>废弃通知</strong>: 提前通知API废弃</li>
+</ul>
+<h3 id="2-发布流程">2. 发布流程</h3>
+<pre><code class="language-bash"><span class="hljs-comment"># 1. 运行测试</span>
+flutter <span class="hljs-built_in">test</span>
+
+<span class="hljs-comment"># 2. 更新版本号</span>
+<span class="hljs-comment"># 编辑 pubspec.yaml</span>
+
+<span class="hljs-comment"># 3. 更新变更日志</span>
+<span class="hljs-comment"># 编辑 CHANGELOG.md</span>
+
+<span class="hljs-comment"># 4. 发布包</span>
+flutter pub publish
+</code></pre>
+<h2 id="使用指南">使用指南</h2>
+<h3 id="1-快速开始">1. 快速开始</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:ui_basic/ui_basic.dart&#x27;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:ui_business/ui_business.dart&#x27;</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyApp</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> MaterialApp(
+      theme: OneAppTheme.lightTheme,
+      home: MyHomePage(),
+    );
+  }
+}
+</code></pre>
+<h3 id="2-组件使用">2. 组件使用</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 基础组件使用</span>
+BasicButton(
+  text: <span class="hljs-string">&#x27;确定&#x27;</span>,
+  type: ButtonType.primary,
+  onPressed: () {},
+)
+
+<span class="hljs-comment">// 业务组件使用</span>
+VehicleStatusCard(
+  status: vehicleStatus,
+  onTap: () {},
+)
+</code></pre>
+<h3 id="3-主题定制">3. 主题定制</h3>
+<pre><code class="language-dart">MaterialApp(
+  theme: OneAppTheme.lightTheme.copyWith(
+    primarySwatch: Colors.green,
+    <span class="hljs-comment">// 其他自定义配置</span>
+  ),
+)
+</code></pre>
+<h2 id="最佳实践">最佳实践</h2>
+<h3 id="1-组件设计">1. 组件设计</h3>
+<ul>
+<li><strong>单一职责</strong>: 每个组件功能单一明确</li>
+<li><strong>可组合性</strong>: 支持组件组合使用</li>
+<li><strong>可配置性</strong>: 提供丰富的配置选项</li>
+<li><strong>可预测性</strong>: 相同输入产生相同输出</li>
+</ul>
+<h3 id="2-api设计">2. API设计</h3>
+<ul>
+<li><strong>直观性</strong>: API命名直观易理解</li>
+<li><strong>一致性</strong>: 相似功能API保持一致</li>
+<li><strong>扩展性</strong>: 预留扩展空间</li>
+<li><strong>文档化</strong>: 提供完整文档和示例</li>
+</ul>
+<h3 id="3-性能考虑">3. 性能考虑</h3>
+<ul>
+<li><strong>懒加载</strong>: 按需加载减少初始化开销</li>
+<li><strong>缓存策略</strong>: 合理使用缓存提升性能</li>
+<li><strong>异步处理</strong>: 避免阻塞UI线程</li>
+<li><strong>资源管理</strong>: 及时释放不需要的资源</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>Basic UIs 模块群为 OneApp 提供了完整的UI基础设施，通过分层设计、统一规范和完善的工具链，实现了高效的UI开发和一致的用户体验。模块群具有良好的可扩展性和可维护性，能够支撑大型应用的UI需求，并为未来的功能扩展提供了坚实的基础。</p>
+
+            
+            
+        </body>
+        </html>

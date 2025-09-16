@@ -1,0 +1,2760 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Ingeek-JSSDK v1&period;0&period;0</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <p><a name="top"></a></p>
+<h1 id="ingeek-jssdk-v100">Ingeek-JSSDK v1.0.0</h1>
+<p>Ingeek JS SDK接口文档</p>
+<ul>
+<li><a href="#ingeekJSApi">ingeekJSApi</a>
+<ul>
+<li><a href="#error">error</a></li>
+<li><a href="#info">info</a></li>
+<li><a href="#log">log</a></li>
+<li><a href="#ready">ready</a></li>
+<li><a href="#registerHandler">registerHandler</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.common">ingeekJSApi.common</a>
+<ul>
+<li><a href="#closeWindow">closeWindow</a></li>
+<li><a href="#login">login</a></li>
+<li><a href="#scanCode">scanCode</a></li>
+<li><a href="#sendTransferSMS">sendTransferSMS</a></li>
+<li><a href="#sendUnbindSMS">sendUnbindSMS</a></li>
+<li><a href="#submitIssue">submitIssue</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.vehicle">ingeekJSApi.vehicle</a>
+<ul>
+<li><a href="#bindVehicle">bindVehicle</a></li>
+<li><a href="#connectVehicle">connectVehicle</a></li>
+<li><a href="#deleteVehicle">deleteVehicle</a></li>
+<li><a href="#disconnectVehicle">disconnectVehicle</a></li>
+<li><a href="#getVehicleRemoteConnectStatus">getVehicleRemoteConnectStatus</a></li>
+<li><a href="#getVehicleRemoteStatus">getVehicleRemoteStatus</a></li>
+<li><a href="#smsCode,-callback">smsCode, callback) unbindVehicle</a>-unbindVehicle)</li>
+<li><a href="#transferVehicle">transferVehicle</a></li>
+<li><a href="#vehicleDetail">vehicleDetail</a></li>
+<li><a href="#vehicleList">vehicleList</a></li>
+<li><a href="#vehicleModelList">vehicleModelList</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.key">ingeekJSApi.key</a>
+<ul>
+<li><a href="#downloadKey">downloadKey</a></li>
+<li><a href="#keyList">keyList</a></li>
+<li><a href="#share">share</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.command">ingeekJSApi.command</a>
+<ul>
+<li><a href="#commandList">commandList</a></li>
+<li><a href="#executeCommand">executeCommand</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.state">ingeekJSApi.state</a>
+<ul>
+<li><a href="#onOtaUpgradeResultChanged">onOtaUpgradeResultChanged</a></li>
+<li><a href="#onOtaUpgradeStatusChanged">onOtaUpgradeStatusChanged</a></li>
+<li><a href="#onReceiveDiTingData">onReceiveDiTingData</a></li>
+<li><a href="#onReceiveSDKLog">onReceiveSDKLog</a></li>
+<li><a href="#onVehicleConnectionStatusChanged">onVehicleConnectionStatusChanged</a></li>
+<li><a href="#onVehicleLocationChanged">onVehicleLocationChanged</a></li>
+<li><a href="#onVehicleStatusChanged">onVehicleStatusChanged</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.ota">ingeekJSApi.ota</a>
+<ul>
+<li><a href="#getOtaRecord">getOtaRecord</a></li>
+<li><a href="#getOtaUpgradeInfo">getOtaUpgradeInfo</a></li>
+<li><a href="#upgrade">upgrade</a></li>
+</ul>
+</li>
+<li><a href="#ingeekJSApi.util">ingeekJSApi.util</a>
+<ul>
+<li><a href="#showActionSheet">showActionSheet</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="-ingeekjsapi"><a name='ingeekJSApi'></a> ingeekJSApi</h1>
+<h2 id="-error"><a name='error'></a> error</h2>
+<p><a href="#top">Back to top</a></p>
+<p>打印日志到console，level：ERROR</p>
+<pre><code>INTERFACE error
+</code></pre>
+<h3 id="parameters---parameter">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>message</td>
+<td><code>String</code></td>
+<td><p>要打印的消息</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-title function_">error</span>(<span class="hljs-string">&quot;test&quot;</span>)
+</code></pre>
+<h2 id="-info"><a name='info'></a> info</h2>
+<p><a href="#top">Back to top</a></p>
+<p>打印日志到console，level：INFO</p>
+<pre><code>INTERFACE info
+</code></pre>
+<h3 id="parameters---parameter-1">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>message</td>
+<td><code>String</code></td>
+<td><p>要打印的消息</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-1">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-title function_">info</span>(<span class="hljs-string">&quot;test&quot;</span>)
+</code></pre>
+<h2 id="-log"><a name='log'></a> log</h2>
+<p><a href="#top">Back to top</a></p>
+<p>打印日志到console，level：LOG</p>
+<pre><code>INTERFACE log
+</code></pre>
+<h3 id="parameters---parameter-2">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>message</td>
+<td><code>String</code></td>
+<td><p>要打印的消息</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-2">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;test&quot;</span>)
+</code></pre>
+<h2 id="-ready"><a name='ready'></a> ready</h2>
+<p><a href="#top">Back to top</a></p>
+<p>初始化IngeekJS SDK</p>
+<pre><code>INTERFACE ready
+</code></pre>
+<h3 id="parameters---parameter-3">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function()</code></td>
+<td><p>初始化结束后回调，IngeekJS所有操作应在该回调中进行操作，如registerHandler等</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-3">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js"><span class="hljs-comment">// &lt;!-- 这段代码固定必须有 --&gt;</span>
+<span class="hljs-comment">// IngeekJS所有操作应在该回调中进行操作，如registerHandler等</span>
+$(<span class="hljs-variable language_">window</span>).<span class="hljs-title function_">load</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) {
+    ingeekJSApi.<span class="hljs-title function_">ready</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) {
+        <span class="hljs-comment">// 注册handler</span>
+        <span class="hljs-comment">// ingeekJSApi.registerHandler(&quot;test&quot;, testCallback);</span>
+    });
+});
+</code></pre>
+<h2 id="-registerhandler"><a name='registerHandler'></a> registerHandler</h2>
+<p><a href="#top">Back to top</a></p>
+<p>web端注册方法让app调用</p>
+<pre><code>INTERFACE registerHandler
+</code></pre>
+<h3 id="parameters---parameter-4">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>function_name</td>
+<td><code>String</code></td>
+<td><p>要注册的本地方法名称</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function()</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-4">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-title function_">registerHandler</span>(<span class="hljs-string">&quot;test&quot;</span>, testCallback);
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">testCallback</span>(<span class="hljs-params">response, responseCallback</span>) {
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> do something</span>
+
+    <span class="hljs-comment">// 回调给native的数据</span>
+    <span class="hljs-keyword">var</span> responseData = {
+        <span class="hljs-string">&#x27;code&#x27;</span>: <span class="hljs-number">200</span>,
+        <span class="hljs-string">&#x27;message&#x27;</span>: <span class="hljs-string">&#x27;addValue result:&#x27;</span> + result,
+        <span class="hljs-string">&#x27;data&#x27;</span>: {}
+    }
+
+    <span class="hljs-title function_">responseCallback</span>(responseData);
+}
+</code></pre>
+<h1 id="-ingeekjsapicommon"><a name='ingeekJSApi.common'></a> ingeekJSApi.common</h1>
+<h2 id="-closewindow"><a name='closeWindow'></a> closeWindow</h2>
+<p><a href="#top">Back to top</a></p>
+<p>关闭当前web view页面</p>
+<pre><code>INTERFACE closeWindow
+</code></pre>
+<h3 id="parameters---parameter-5">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-5">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">common</span>.<span class="hljs-title function_">closeWindow</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example">Success response example</h3>
+<h4 id="success-response-example---callback">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example">Error response example</h3>
+<h4 id="error-response-example---callback">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-login"><a name='login'></a> login</h2>
+<p><a href="#top">Back to top</a></p>
+<p>自动登陆</p>
+<pre><code>INTERFACE login
+</code></pre>
+<h3 id="parameters---parameter-6">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clientToken</td>
+<td><code>String</code></td>
+<td><p>我们系统后的用户id，第三方服务端获取，传给第三方app再传给我们的app</p></td>
+</tr>
+<tr>
+<td>selfUserId</td>
+<td><code>String</code></td>
+<td><p>加密后的token</p></td>
+</tr>
+<tr>
+<td>checkCode</td>
+<td><code>String</code></td>
+<td><p>检查码</p></td>
+</tr>
+<tr>
+<td>clientSign</td>
+<td><code>String</code></td>
+<td><p>签名</p></td>
+</tr>
+<tr>
+<td>appId</td>
+<td><code>String</code></td>
+<td><p>App ID</p></td>
+</tr>
+<tr>
+<td>baseURL</td>
+<td><code>String</code></td>
+<td><p>设置请求URL，e.g: <a href="https://example.com:443/">https://example.com:443/</a></p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-6">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">common</span>.<span class="hljs-title function_">login</span>(<span class="hljs-string">&quot;clientToken&quot;</span>, <span class="hljs-string">&quot;selfUserId&quot;</span>, <span class="hljs-string">&quot;checkCode&quot;</span>, <span class="hljs-string">&quot;clientSign&quot;</span>, <span class="hljs-string">&quot;appId&quot;</span>, <span class="hljs-string">&quot;baseURL&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-1">Success response example</h3>
+<h4 id="success-response-example---callback-1">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-1">Error response example</h3>
+<h4 id="error-response-example---callback-1">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-scancode"><a name='scanCode'></a> scanCode</h2>
+<p><a href="#top">Back to top</a></p>
+<p>QR Code扫码</p>
+<pre><code>INTERFACE scanCode
+</code></pre>
+<h3 id="examples-7">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">common</span>.<span class="hljs-title function_">scanCode</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response">Success response</h3>
+<h4 id="success-response---success-200">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>pin</td>
+<td><code>String</code></td>
+<td><p>PIN</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-2">Success response example</h3>
+<h4 id="success-response-example---callback-2">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-2">Error response example</h3>
+<h4 id="error-response-example---callback-2">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-sendtransfersms"><a name='sendTransferSMS'></a> sendTransferSMS</h2>
+<p><a href="#top">Back to top</a></p>
+<p>发送过户短信验证码</p>
+<pre><code>INTERFACE sendTransferSMS
+</code></pre>
+<h3 id="parameters---parameter-7">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mobile</td>
+<td><code>String</code></td>
+<td><p>手机号码</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-8">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">common</span>.<span class="hljs-title function_">sendTransferSMS</span>(<span class="hljs-string">&quot;mobile&quot;</span> <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-3">Success response example</h3>
+<h4 id="success-response-example---callback-3">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-3">Error response example</h3>
+<h4 id="error-response-example---callback-3">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-sendunbindsms"><a name='sendUnbindSMS'></a> sendUnbindSMS</h2>
+<p><a href="#top">Back to top</a></p>
+<p>发送解绑短信验证码</p>
+<pre><code>INTERFACE sendUnbindSMS
+</code></pre>
+<h3 id="parameters---parameter-8">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mobile</td>
+<td><code>String</code></td>
+<td><p>手机号码</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-9">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">common</span>.<span class="hljs-title function_">sendUnbindSMS</span>(<span class="hljs-string">&quot;mobile&quot;</span> <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-4">Success response example</h3>
+<h4 id="success-response-example---callback-4">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-4">Error response example</h3>
+<h4 id="error-response-example---callback-4">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-submitissue"><a name='submitIssue'></a> submitIssue</h2>
+<p><a href="#top">Back to top</a></p>
+<p>客户服务：提交工单</p>
+<pre><code>INTERFACE submitIssue
+</code></pre>
+<h3 id="parameters---parameter-9">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data</td>
+<td><code>String</code></td>
+<td><p>工单json数据</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-10">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js"><span class="hljs-keyword">let</span> data = {
+     <span class="hljs-string">&quot;attachment&quot;</span>: {
+         <span class="hljs-string">&quot;attachments&quot;</span>: [
+             {
+                 <span class="hljs-string">&quot;fileName&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+                 <span class="hljs-string">&quot;payload&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+             }
+         ]
+     },
+     <span class="hljs-string">&quot;content&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+     <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+ }
+ingeekJSApi.<span class="hljs-property">common</span>.<span class="hljs-title function_">submitIssue</span>(data, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-5">Success response example</h3>
+<h4 id="success-response-example---callback-5">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-5">Error response example</h3>
+<h4 id="error-response-example---callback-5">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h1 id="-ingeekjsapivehicle"><a name='ingeekJSApi.vehicle'></a> ingeekJSApi.vehicle</h1>
+<h2 id="-bindvehicle"><a name='bindVehicle'></a> bindVehicle</h2>
+<p><a href="#top">Back to top</a></p>
+<p>绑定车辆</p>
+<pre><code>INTERFACE bindVehicle
+</code></pre>
+<h3 id="parameters---parameter-10">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>pin</td>
+<td><code>String</code></td>
+<td><p>pin</p></td>
+</tr>
+<tr>
+<td>vehicleModelId</td>
+<td><code>String</code></td>
+<td><p>vehicleModelId</p></td>
+</tr>
+<tr>
+<td>vehicleName</td>
+<td><code>String</code></td>
+<td><p>vehicleName</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-11">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">bindVehicle</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-string">&quot;pin&quot;</span>, <span class="hljs-string">&quot;vehicleModelId&quot;</span>, <span class="hljs-string">&quot;vehicleName&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-6">Success response example</h3>
+<h4 id="success-response-example---callback-6">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-6">Error response example</h3>
+<h4 id="error-response-example---callback-6">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-connectvehicle"><a name='connectVehicle'></a> connectVehicle</h2>
+<p><a href="#top">Back to top</a></p>
+<p>连接车辆</p>
+<pre><code>INTERFACE connectVehicle
+</code></pre>
+<h3 id="parameters---parameter-11">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-12">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">connectVehicle</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-7">Success response example</h3>
+<h4 id="success-response-example---callback-7">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-7">Error response example</h3>
+<h4 id="error-response-example---callback-7">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-deletevehicle"><a name='deleteVehicle'></a> deleteVehicle</h2>
+<p><a href="#top">Back to top</a></p>
+<p>删除车辆</p>
+<pre><code>INTERFACE deleteVehicle
+</code></pre>
+<h3 id="parameters---parameter-12">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-13">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">deleteVehicle</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-8">Success response example</h3>
+<h4 id="success-response-example---callback-8">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-8">Error response example</h3>
+<h4 id="error-response-example---callback-8">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-disconnectvehicle"><a name='disconnectVehicle'></a> disconnectVehicle</h2>
+<p><a href="#top">Back to top</a></p>
+<p>断开与车辆的连接</p>
+<pre><code>INTERFACE disconnectVehicle
+</code></pre>
+<h3 id="parameters---parameter-13">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-14">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">disconnectVehicle</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-9">Success response example</h3>
+<h4 id="success-response-example---callback-9">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-9">Error response example</h3>
+<h4 id="error-response-example---callback-9">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-getvehicleremoteconnectstatus"><a name='getVehicleRemoteConnectStatus'></a> getVehicleRemoteConnectStatus</h2>
+<p><a href="#top">Back to top</a></p>
+<p>获取远程车辆连接状态，使数据同步模块可以接收到当前车辆连接状态</p>
+<pre><code>INTERFACE getVehicleRemoteConnectStatus
+</code></pre>
+<h3 id="parameters---parameter-14">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-15">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">getVehicleRemoteConnectStatus</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-10">Success response example</h3>
+<h4 id="success-response-example---callback-10">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-10">Error response example</h3>
+<h4 id="error-response-example---callback-10">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-getvehicleremotestatus"><a name='getVehicleRemoteStatus'></a> getVehicleRemoteStatus</h2>
+<p><a href="#top">Back to top</a></p>
+<p>获取远程车况，使数据同步模块可以接收到当前车况状态</p>
+<pre><code>INTERFACE getVehicleRemoteStatus
+</code></pre>
+<h3 id="parameters---parameter-15">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-16">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">getVehicleRemoteStatus</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-11">Success response example</h3>
+<h4 id="success-response-example---callback-11">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-11">Error response example</h3>
+<h4 id="error-response-example---callback-11">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-smscode-callback-unbindvehicle"><a name='smsCode,-callback)-unbindVehicle'></a> smsCode, callback) unbindVehicle</h2>
+<p><a href="#top">Back to top</a></p>
+<p>解绑车辆</p>
+<pre><code>INTERFACE ingeekJSApi.vehicle.unbindVehicle(sn,
+</code></pre>
+<h3 id="parameters---parameter-16">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>smsCode</td>
+<td><code>String</code></td>
+<td><p>短信验证码</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-17">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">unbindVehicle</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-string">&quot;smsCode&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-12">Success response example</h3>
+<h4 id="success-response-example---callback-12">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-12">Error response example</h3>
+<h4 id="error-response-example---callback-12">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-transfervehicle"><a name='transferVehicle'></a> transferVehicle</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车型过户</p>
+<pre><code>INTERFACE transferVehicle
+</code></pre>
+<h3 id="parameters---parameter-17">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>mobile</td>
+<td><code>String</code></td>
+<td><p>手机号码</p></td>
+</tr>
+<tr>
+<td>code</td>
+<td><code>String</code></td>
+<td><p>验证码</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-18">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">transferVehicle</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-string">&quot;mobile&quot;</span>, <span class="hljs-string">&quot;code&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-13">Success response example</h3>
+<h4 id="success-response-example---callback-13">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-13">Error response example</h3>
+<h4 id="error-response-example---callback-13">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-vehicledetail"><a name='vehicleDetail'></a> vehicleDetail</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车辆详情</p>
+<pre><code>INTERFACE vehicleDetail
+</code></pre>
+<h3 id="parameters---parameter-18">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>roleId</td>
+<td><code>String</code></td>
+<td><p>roleId</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-19">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">vehicleDetail</span>(<span class="hljs-string">&quot;roleId&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-1">Success response</h3>
+<h4 id="success-response---success-200-1">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vehicleId</td>
+<td><code>String</code></td>
+<td><p>车辆ID</p></td>
+</tr>
+<tr>
+<td>macAddress</td>
+<td><code>String</code></td>
+<td><p>Mac地址</p></td>
+</tr>
+<tr>
+<td>isOwner</td>
+<td><code>Int</code></td>
+<td><p>车主 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>isFreeze</td>
+<td><code>Int</code></td>
+<td><p>冻结 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>vehicleModelName</td>
+<td><code>String</code></td>
+<td><p>车型名称</p></td>
+</tr>
+<tr>
+<td>vehicleModelId</td>
+<td><code>String</code></td>
+<td><p>车型名称</p></td>
+</tr>
+<tr>
+<td>vehicleModeleIcon</td>
+<td><code>String</code></td>
+<td><p>车型Icon：url地址</p></td>
+</tr>
+<tr>
+<td>vehicleName</td>
+<td><code>String</code></td>
+<td><p>车名</p></td>
+</tr>
+<tr>
+<td>startTime</td>
+<td><code>Int</code></td>
+<td><p>开始时间</p></td>
+</tr>
+<tr>
+<td>endTime</td>
+<td><code>Int</code></td>
+<td><p>结束时间</p></td>
+</tr>
+<tr>
+<td>keyStatus</td>
+<td><code>Int</code></td>
+<td><p>钥匙状态: 1-使用中,2-待生效,4-已过期,5-已撤回,11-已解绑,12-已过户</p></td>
+</tr>
+<tr>
+<td>electricCar</td>
+<td><code>Int</code></td>
+<td><p>0-燃油车 1-新能源车</p></td>
+</tr>
+<tr>
+<td>kpre</td>
+<td><code>String</code></td>
+<td><p>车控权限</p></td>
+</tr>
+<tr>
+<td>roleId</td>
+<td><code>String</code></td>
+<td><p>人车关系ID</p></td>
+</tr>
+<tr>
+<td>transferUserMobile</td>
+<td><code>String</code></td>
+<td><p>被过户人手机号</p></td>
+</tr>
+<tr>
+<td>ownerUserMobile</td>
+<td><code>String</code></td>
+<td><p>车主手机号</p></td>
+</tr>
+<tr>
+<td>keyId</td>
+<td><code>String</code></td>
+<td><p>钥匙ID</p></td>
+</tr>
+<tr>
+<td>needUpdateAPP</td>
+<td><code>Int</code></td>
+<td><p>是否需要更新APP版本 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>needUpdateFirmware</td>
+<td><code>Int</code></td>
+<td><p>是否需要升级OTA 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>currentFirmwareVersion</td>
+<td><code>String</code></td>
+<td><p>当前固件版本</p></td>
+</tr>
+<tr>
+<td>latestFirmwareVersion</td>
+<td><code>String</code></td>
+<td><p>最新固件版本</p></td>
+</tr>
+<tr>
+<td>latsetFirmwareContent</td>
+<td><code>String</code></td>
+<td><p>最新固件版本更新内容</p></td>
+</tr>
+<tr>
+<td>taskId</td>
+<td><code>Int</code></td>
+<td><p>升级任务ID</p></td>
+</tr>
+<tr>
+<td>rangeData</td>
+<td><code>String</code></td>
+<td><p>标定数据</p></td>
+</tr>
+<tr>
+<td>vehicleDueDate</td>
+<td><code>Int</code></td>
+<td><p>Vip到期时间</p></td>
+</tr>
+<tr>
+<td>revocationTime</td>
+<td><code>Int</code></td>
+<td><p>被撤回时间</p></td>
+</tr>
+<tr>
+<td>hardwareType</td>
+<td><code>Int</code></td>
+<td><p>硬件设备类型：0-BLE 1-BLE+4G</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-14">Success response example</h3>
+<h4 id="success-response-example---callback-14">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-14">Error response example</h3>
+<h4 id="error-response-example---callback-14">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-vehiclelist"><a name='vehicleList'></a> vehicleList</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车辆列表</p>
+<pre><code>INTERFACE vehicleList
+</code></pre>
+<h3 id="parameters---parameter-19">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-20">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">vehicleList</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-2">Success response</h3>
+<h4 id="success-response---success-200-2">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vehicleId</td>
+<td><code>String</code></td>
+<td><p>车辆ID</p></td>
+</tr>
+<tr>
+<td>macAddress</td>
+<td><code>String</code></td>
+<td><p>Mac地址</p></td>
+</tr>
+<tr>
+<td>isOwner</td>
+<td><code>Int</code></td>
+<td><p>车主 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>isFreeze</td>
+<td><code>Int</code></td>
+<td><p>冻结 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>ownerName</td>
+<td><code>String</code></td>
+<td><p>车主姓名</p></td>
+</tr>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>vehicleModelName</td>
+<td><code>String</code></td>
+<td><p>车型名称</p></td>
+</tr>
+<tr>
+<td>vehicleModelId</td>
+<td><code>String</code></td>
+<td><p>车型名称</p></td>
+</tr>
+<tr>
+<td>vehicleModeleIcon</td>
+<td><code>String</code></td>
+<td><p>车型Icon：url地址</p></td>
+</tr>
+<tr>
+<td>vehicleName</td>
+<td><code>String</code></td>
+<td><p>车名</p></td>
+</tr>
+<tr>
+<td>startTime</td>
+<td><code>Int</code></td>
+<td><p>开始时间</p></td>
+</tr>
+<tr>
+<td>endTime</td>
+<td><code>Int</code></td>
+<td><p>结束时间</p></td>
+</tr>
+<tr>
+<td>keyStatus</td>
+<td><code>Int</code></td>
+<td><p>钥匙状态: 1-使用中,2-待生效,4-已过期,5-已撤回,11-已解绑,12-已过户</p></td>
+</tr>
+<tr>
+<td>electricCar</td>
+<td><code>Int</code></td>
+<td><p>0-燃油车 1-新能源车</p></td>
+</tr>
+<tr>
+<td>kpre</td>
+<td><code>String</code></td>
+<td><p>车控权限</p></td>
+</tr>
+<tr>
+<td>roleId</td>
+<td><code>String</code></td>
+<td><p>人车关系ID</p></td>
+</tr>
+<tr>
+<td>transferUserMobile</td>
+<td><code>String</code></td>
+<td><p>被过户人手机号</p></td>
+</tr>
+<tr>
+<td>ownerUserMobile</td>
+<td><code>String</code></td>
+<td><p>车主手机号</p></td>
+</tr>
+<tr>
+<td>keyId</td>
+<td><code>String</code></td>
+<td><p>钥匙ID</p></td>
+</tr>
+<tr>
+<td>needUpdateAPP</td>
+<td><code>Int</code></td>
+<td><p>是否需要更新APP版本 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>needUpdateFirmware</td>
+<td><code>Int</code></td>
+<td><p>是否需要升级OTA 0-否 1-是</p></td>
+</tr>
+<tr>
+<td>currentFirmwareVersion</td>
+<td><code>String</code></td>
+<td><p>当前固件版本</p></td>
+</tr>
+<tr>
+<td>latestFirmwareVersion</td>
+<td><code>String</code></td>
+<td><p>最新固件版本</p></td>
+</tr>
+<tr>
+<td>latsetFirmwareContent</td>
+<td><code>String</code></td>
+<td><p>最新固件版本更新内容</p></td>
+</tr>
+<tr>
+<td>taskId</td>
+<td><code>Int</code></td>
+<td><p>升级任务ID</p></td>
+</tr>
+<tr>
+<td>rangeData</td>
+<td><code>String</code></td>
+<td><p>标定数据</p></td>
+</tr>
+<tr>
+<td>vehicleDueDate</td>
+<td><code>Int</code></td>
+<td><p>Vip到期时间</p></td>
+</tr>
+<tr>
+<td>revocationTime</td>
+<td><code>Int</code></td>
+<td><p>被撤回时间</p></td>
+</tr>
+<tr>
+<td>hardwareType</td>
+<td><code>Int</code></td>
+<td><p>硬件设备类型：0-BLE 1-BLE+4G</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-15">Success response example</h3>
+<h4 id="success-response-example---callback-15">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-15">Error response example</h3>
+<h4 id="error-response-example---callback-15">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-vehiclemodellist"><a name='vehicleModelList'></a> vehicleModelList</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车型列表</p>
+<pre><code>INTERFACE vehicleModelList
+</code></pre>
+<h3 id="parameters---parameter-20">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-21">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">vehicle</span>.<span class="hljs-title function_">vehicleModelList</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-3">Success response</h3>
+<h4 id="success-response---success-200-3">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vehicleBrandIcon</td>
+<td><code>String</code></td>
+<td><p>品牌logo</p></td>
+</tr>
+<tr>
+<td>vehicleBrandName</td>
+<td><code>String</code></td>
+<td><p>品牌名称</p></td>
+</tr>
+<tr>
+<td>vehicleModelList.vehicleModeName</td>
+<td><code>String</code></td>
+<td><p>车型名称</p></td>
+</tr>
+<tr>
+<td>vehicleModelList.vehicleModeId</td>
+<td><code>String</code></td>
+<td><p>车型ID</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-16">Success response example</h3>
+<h4 id="success-response-example---callback-16">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-16">Error response example</h3>
+<h4 id="error-response-example---callback-16">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h1 id="-ingeekjsapikey"><a name='ingeekJSApi.key'></a> ingeekJSApi.key</h1>
+<h2 id="-downloadkey"><a name='downloadKey'></a> downloadKey</h2>
+<p><a href="#top">Back to top</a></p>
+<p>下载钥匙</p>
+<pre><code>INTERFACE downloadKey
+</code></pre>
+<h3 id="parameters---parameter-21">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-22">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">key</span>.<span class="hljs-title function_">downloadKey</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-17">Success response example</h3>
+<h4 id="success-response-example---callback-17">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-17">Error response example</h3>
+<h4 id="error-response-example---callback-17">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-keylist"><a name='keyList'></a> keyList</h2>
+<p><a href="#top">Back to top</a></p>
+<p>钥匙列表</p>
+<pre><code>INTERFACE keyList
+</code></pre>
+<h3 id="parameters---parameter-22">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-23">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">key</span>.<span class="hljs-title function_">keyList</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-4">Success response</h3>
+<h4 id="success-response---success-200-4">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>startTime</td>
+<td><code>Int</code></td>
+<td><p>开始时间</p></td>
+</tr>
+<tr>
+<td>endTime</td>
+<td><code>Int</code></td>
+<td><p>结束时间</p></td>
+</tr>
+<tr>
+<td>isFreeze</td>
+<td><code>Int</code></td>
+<td><p>是否冻结: 0-否, 1-是</p></td>
+</tr>
+<tr>
+<td>isOwner</td>
+<td><code>Int</code></td>
+<td><p>是否车主：1-车主, 0-非车主</p></td>
+</tr>
+<tr>
+<td>keyStatus</td>
+<td><code>Int</code></td>
+<td><p>1-使用中,2-待生效,4-已过期,5-已撤回</p></td>
+</tr>
+<tr>
+<td>mobile</td>
+<td><code>String</code></td>
+<td><p>手机号码</p></td>
+</tr>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>userNickName</td>
+<td><code>String</code></td>
+<td><p>昵称</p></td>
+</tr>
+<tr>
+<td>vehicleId</td>
+<td><code>String</code></td>
+<td><p>车辆ID</p></td>
+</tr>
+<tr>
+<td>vehicleModelIcon</td>
+<td><code>String</code></td>
+<td><p>车型Icon：url地址</p></td>
+</tr>
+<tr>
+<td>vehicleModelId</td>
+<td><code>String</code></td>
+<td><p>车型ID</p></td>
+</tr>
+<tr>
+<td>vehicleModelName</td>
+<td><code>String</code></td>
+<td><p>车型名称</p></td>
+</tr>
+<tr>
+<td>vehicleName</td>
+<td><code>String</code></td>
+<td><p>车辆昵称</p></td>
+</tr>
+<tr>
+<td>userId</td>
+<td><code>String</code></td>
+<td><p>所属用户ID</p></td>
+</tr>
+<tr>
+<td>shareMobile</td>
+<td><code>String</code></td>
+<td><p>被分享人手机号</p></td>
+</tr>
+<tr>
+<td>shareUserId</td>
+<td><code>String</code></td>
+<td><p>被分享人Id</p></td>
+</tr>
+<tr>
+<td>shareUserNickName</td>
+<td><code>String</code></td>
+<td><p>被分享人昵称</p></td>
+</tr>
+<tr>
+<td>roleId</td>
+<td><code>String</code></td>
+<td><p>roleId</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-18">Success response example</h3>
+<h4 id="success-response-example---callback-18">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-18">Error response example</h3>
+<h4 id="error-response-example---callback-18">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-share"><a name='share'></a> share</h2>
+<p><a href="#top">Back to top</a></p>
+<p>分享钥匙</p>
+<pre><code>INTERFACE share
+</code></pre>
+<h3 id="parameters---parameter-23">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>start</td>
+<td><code>String</code></td>
+<td><p>生效时间</p></td>
+</tr>
+<tr>
+<td>end</td>
+<td><code>String</code></td>
+<td><p>过期时间</p></td>
+</tr>
+<tr>
+<td>vehicleId</td>
+<td><code>String</code></td>
+<td><p>Vehicle Id</p></td>
+</tr>
+<tr>
+<td>mobile</td>
+<td><code>String</code></td>
+<td><p>手机号码</p></td>
+</tr>
+<tr>
+<td>note</td>
+<td><code>String</code></td>
+<td><p>备注</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-24">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">key</span>.<span class="hljs-title function_">share</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-string">&quot;start&quot;</span>, <span class="hljs-string">&quot;end&quot;</span>, <span class="hljs-string">&quot;vehicleId&quot;</span>, <span class="hljs-string">&quot;mobile&quot;</span>, <span class="hljs-string">&quot;note&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-19">Success response example</h3>
+<h4 id="success-response-example---callback-19">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-19">Error response example</h3>
+<h4 id="error-response-example---callback-19">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h1 id="-ingeekjsapicommand"><a name='ingeekJSApi.command'></a> ingeekJSApi.command</h1>
+<h2 id="-commandlist"><a name='commandList'></a> commandList</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车控指令列表</p>
+<pre><code>INTERFACE commandList
+</code></pre>
+<h3 id="parameters---parameter-24">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-25">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">command</span>.<span class="hljs-title function_">commandList</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-5">Success response</h3>
+<h4 id="success-response---success-200-5">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>action</td>
+<td><code>String</code></td>
+<td><p>action</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-20">Success response example</h3>
+<h4 id="success-response-example---callback-20">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-20">Error response example</h3>
+<h4 id="error-response-example---callback-20">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-executecommand"><a name='executeCommand'></a> executeCommand</h2>
+<p><a href="#top">Back to top</a></p>
+<p>执行车控</p>
+<pre><code>INTERFACE executeCommand
+</code></pre>
+<h3 id="parameters---parameter-25">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>action</td>
+<td><code>String</code></td>
+<td><p>action</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-26">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">command</span>.<span class="hljs-title function_">executeCommand</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-string">&quot;action&quot;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-21">Success response example</h3>
+<h4 id="success-response-example---callback-21">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-21">Error response example</h3>
+<h4 id="error-response-example---callback-21">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h1 id="-ingeekjsapistate"><a name='ingeekJSApi.state'></a> ingeekJSApi.state</h1>
+<h2 id="-onotaupgraderesultchanged"><a name='onOtaUpgradeResultChanged'></a> onOtaUpgradeResultChanged</h2>
+<p><a href="#top">Back to top</a></p>
+<p>OTA更新结果监听</p>
+<pre><code>INTERFACE onOtaUpgradeResultChanged
+</code></pre>
+<h3 id="parameters---parameter-26">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-27">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onOtaUpgradeResultChanged</span>(onOtaUpgradeResultChanged);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onOtaUpgradeResultChanged</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-6">Success response</h3>
+<h4 id="success-response---success-200-6">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>result</td>
+<td><code>Int</code></td>
+<td><p>result</p></td>
+</tr>
+<tr>
+<td>errorMessage</td>
+<td><code>String</code></td>
+<td><p>错误信息</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-onotaupgradestatuschanged"><a name='onOtaUpgradeStatusChanged'></a> onOtaUpgradeStatusChanged</h2>
+<p><a href="#top">Back to top</a></p>
+<p>OTA更新状态监听</p>
+<pre><code>INTERFACE onOtaUpgradeStatusChanged
+</code></pre>
+<h3 id="parameters---parameter-27">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-28">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onOtaUpgradeStatusChanged</span>(onOtaUpgradeStatusChanged);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onOtaUpgradeStatusChanged</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-7">Success response</h3>
+<h4 id="success-response---success-200-7">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>status</td>
+<td><code>Int</code></td>
+<td><p>Ota升级状态 0:固件未下载 1:固件下载中 2:固件下载完成 3:待升级 4:升级中 5:升级成功 6:升级失败 7:升级终止</p></td>
+</tr>
+<tr>
+<td>type</td>
+<td><code>Int</code></td>
+<td><p>固件包类型 1:ble 2:rspMain 3:rsp 4:vBox</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-onreceiveditingdata"><a name='onReceiveDiTingData'></a> onReceiveDiTingData</h2>
+<p><a href="#top">Back to top</a></p>
+<p>SDK中DiTing日志监听</p>
+<pre><code>INTERFACE onReceiveDiTingData
+</code></pre>
+<h3 id="parameters---parameter-28">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-29">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onReceiveDiTingData</span>(onReceiveDiTingData);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onReceiveDiTingData</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-8">Success response</h3>
+<h4 id="success-response---success-200-8">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>uri</td>
+<td><code>Int</code></td>
+<td><p>uri</p></td>
+</tr>
+<tr>
+<td>type</td>
+<td><code>Int</code></td>
+<td><p>数据类型 0：Counter 1：Event</p></td>
+</tr>
+<tr>
+<td>data</td>
+<td><code>Array</code></td>
+<td><p>data</p></td>
+</tr>
+<tr>
+<td>errorCode</td>
+<td><code>Int</code></td>
+<td><p>errorCode</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-onreceivesdklog"><a name='onReceiveSDKLog'></a> onReceiveSDKLog</h2>
+<p><a href="#top">Back to top</a></p>
+<p>SDK日志监听</p>
+<pre><code>INTERFACE onReceiveSDKLog
+</code></pre>
+<h3 id="parameters---parameter-29">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-30">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onReceiveSDKLog</span>(onReceiveSDKLog);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onReceiveSDKLog</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-9">Success response</h3>
+<h4 id="success-response---success-200-9">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>log</td>
+<td><code>String</code></td>
+<td><p>log</p></td>
+</tr>
+<tr>
+<td>level</td>
+<td><code>Int</code></td>
+<td><p>0：debug 1：info 2：warn 3：error</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-onvehicleconnectionstatuschanged"><a name='onVehicleConnectionStatusChanged'></a> onVehicleConnectionStatusChanged</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车辆连接状态监听</p>
+<pre><code>INTERFACE onVehicleConnectionStatusChanged
+</code></pre>
+<h3 id="parameters---parameter-30">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-31">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onVehicleConnectionStatusChanged</span>(onVehicleConnectionStatusChanged);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onVehicleConnectionStatusChanged</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-10">Success response</h3>
+<h4 id="success-response---success-200-10">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>bleConnected</td>
+<td><code>Int</code></td>
+<td><p>蓝牙是否连接 0:否 1:是</p></td>
+</tr>
+<tr>
+<td>remoteConnection</td>
+<td><code>Int</code></td>
+<td><p>4G是否连接 0:否 1:是</p></td>
+</tr>
+<tr>
+<td>mqttConnection</td>
+<td><code>Int</code></td>
+<td><p>mqtt连接状态 0:未连接 1:连接中 2:已连接</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-onvehiclelocationchanged"><a name='onVehicleLocationChanged'></a> onVehicleLocationChanged</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车辆定位状态监听</p>
+<pre><code>INTERFACE onVehicleLocationChanged
+</code></pre>
+<h3 id="parameters---parameter-31">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-32">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onVehicleLocationChanged</span>(onVehicleLocationChanged);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onVehicleLocationChanged</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-11">Success response</h3>
+<h4 id="success-response---success-200-11">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>longitude</td>
+<td><code>Double</code></td>
+<td><p>longitude</p></td>
+</tr>
+<tr>
+<td>latitude</td>
+<td><code>Double</code></td>
+<td><p>latitude</p></td>
+</tr>
+<tr>
+<td>address</td>
+<td><code>String</code></td>
+<td><p>address</p></td>
+</tr>
+<tr>
+<td>accuracy</td>
+<td><code>Double</code></td>
+<td><p>accuracy</p></td>
+</tr>
+<tr>
+<td>updateTime</td>
+<td><code>String</code></td>
+<td><p>updateTime</p></td>
+</tr>
+<tr>
+<td>message</td>
+<td><code>String</code></td>
+<td><p>message</p></td>
+</tr>
+<tr>
+<td>angle</td>
+<td><code>Double</code></td>
+<td><p>angle</p></td>
+</tr>
+<tr>
+<td>speed</td>
+<td><code>Double</code></td>
+<td><p>speed</p></td>
+</tr>
+</tbody>
+</table>
+<h2 id="-onvehiclestatuschanged"><a name='onVehicleStatusChanged'></a> onVehicleStatusChanged</h2>
+<p><a href="#top">Back to top</a></p>
+<p>车辆状态监听</p>
+<pre><code>INTERFACE onVehicleStatusChanged
+</code></pre>
+<h3 id="parameters---parameter-32">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-33">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">state</span>.<span class="hljs-title function_">onVehicleStatusChanged</span>(onVehicleStatusChanged);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">onVehicleStatusChanged</span>(<span class="hljs-params">response</span>) {
+
+}
+</code></pre>
+<h3 id="success-response-12">Success response</h3>
+<h4 id="success-response---success-200-12">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>rearRightLock</td>
+<td><code>String</code></td>
+<td><p>rearRightLock</p></td>
+</tr>
+<tr>
+<td>rearLeftLock</td>
+<td><code>String</code></td>
+<td><p>rearLeftLock</p></td>
+</tr>
+</tbody>
+</table>
+<h1 id="-ingeekjsapiota"><a name='ingeekJSApi.ota'></a> ingeekJSApi.ota</h1>
+<h2 id="-getotarecord"><a name='getOtaRecord'></a> getOtaRecord</h2>
+<p><a href="#top">Back to top</a></p>
+<p>OTA更新记录</p>
+<pre><code>INTERFACE getOtaRecord
+</code></pre>
+<h3 id="parameters---parameter-33">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-34">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">ota</span>.<span class="hljs-title function_">getOtaRecord</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-13">Success response</h3>
+<h4 id="success-response---success-200-13">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>completeDate</td>
+<td><code>String</code></td>
+<td><p>升级完成时间</p></td>
+</tr>
+<tr>
+<td>errorMessage</td>
+<td><code>String</code></td>
+<td><p>失败详情信息</p></td>
+</tr>
+<tr>
+<td>firmwareVersion</td>
+<td><code>String</code></td>
+<td><p>固件版本号</p></td>
+</tr>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>SN</p></td>
+</tr>
+<tr>
+<td>upgradeMessage</td>
+<td><code>String</code></td>
+<td><p>版本更新内容</p></td>
+</tr>
+<tr>
+<td>upgradeResult</td>
+<td><code>Int</code></td>
+<td><p>升级结果：0-失败, 1-成功</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-22">Success response example</h3>
+<h4 id="success-response-example---callback-22">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-22">Error response example</h3>
+<h4 id="error-response-example---callback-22">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-getotaupgradeinfo"><a name='getOtaUpgradeInfo'></a> getOtaUpgradeInfo</h2>
+<p><a href="#top">Back to top</a></p>
+<p>获取OTA可更新信息</p>
+<pre><code>INTERFACE getOtaUpgradeInfo
+</code></pre>
+<h3 id="parameters---parameter-34">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-35">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">ota</span>.<span class="hljs-title function_">getOtaUpgradeInfo</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-14">Success response</h3>
+<h4 id="success-response---success-200-14">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>isUpgrade</td>
+<td><code>Int</code></td>
+<td><p>isUpgrade</p></td>
+</tr>
+<tr>
+<td>currentVersion</td>
+<td><code>String</code></td>
+<td><p>currentVersion</p></td>
+</tr>
+<tr>
+<td>targetVersion</td>
+<td><code>String</code></td>
+<td><p>targetVersion</p></td>
+</tr>
+<tr>
+<td>otaStatus</td>
+<td><code>Int</code></td>
+<td><p>otaStatus</p></td>
+</tr>
+<tr>
+<td>taskId</td>
+<td><code>Int</code></td>
+<td><p>taskId</p></td>
+</tr>
+<tr>
+<td>memo</td>
+<td><code>String</code></td>
+<td><p>memo</p></td>
+</tr>
+<tr>
+<td>message</td>
+<td><code>String</code></td>
+<td><p>message</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-23">Success response example</h3>
+<h4 id="success-response-example---callback-23">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-23">Error response example</h3>
+<h4 id="error-response-example---callback-23">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="-upgrade"><a name='upgrade'></a> upgrade</h2>
+<p><a href="#top">Back to top</a></p>
+<p>开始OTA更新</p>
+<pre><code>INTERFACE upgrade
+</code></pre>
+<h3 id="parameters---parameter-35">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sn</td>
+<td><code>String</code></td>
+<td><p>sn</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-36">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">ota</span>.<span class="hljs-title function_">upgrade</span>(<span class="hljs-string">&quot;sn&quot;</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) {
+
+});
+</code></pre>
+<h3 id="success-response-example-24">Success response example</h3>
+<h4 id="success-response-example---callback-24">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-24">Error response example</h3>
+<h4 id="error-response-example---callback-24">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h1 id="-ingeekjsapiutil"><a name='ingeekJSApi.util'></a> ingeekJSApi.util</h1>
+<h2 id="-showactionsheet"><a name='showActionSheet'></a> showActionSheet</h2>
+<p><a href="#top">Back to top</a></p>
+<p>显示ActionSheet</p>
+<pre><code>INTERFACE showActionSheet
+</code></pre>
+<h3 id="parameters---parameter-36">Parameters - <code>Parameter</code></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><code>String</code></td>
+<td><p>title</p></td>
+</tr>
+<tr>
+<td>content</td>
+<td><code>String</code></td>
+<td><p>content</p></td>
+</tr>
+<tr>
+<td>otherButtonTitle</td>
+<td><code>Array</code></td>
+<td><p>otherButtonTitle</p></td>
+</tr>
+<tr>
+<td>callback</td>
+<td><code>function(json)</code></td>
+<td><p>回调</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-37">Examples</h3>
+<p>Example usage:</p>
+<pre><code class="language-js">ingeekJSApi.<span class="hljs-property">util</span>.<span class="hljs-title function_">showActionSheet</span>(<span class="hljs-string">&quot;title&quot;</span>, <span class="hljs-string">&quot;content&quot;</span>, [<span class="hljs-string">&quot;otherButtonTitle&quot;</span>], <span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) {
+ <span class="hljs-keyword">let</span> selectedIndex = response.<span class="hljs-property">selectedIndex</span>
+});
+</code></pre>
+<h3 id="success-response-15">Success response</h3>
+<h4 id="success-response---success-200-15">Success response - <code>Success 200</code></h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>selectedIndex</td>
+<td><code>Int</code></td>
+<td><p>选择按钮的index</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-response-example-25">Success response example</h3>
+<h4 id="success-response-example---callback-25">Success response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">200</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="error-response-example-25">Error response example</h3>
+<h4 id="error-response-example---callback-25">Error response example - <code>callback:</code></h4>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">-1</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Error message&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

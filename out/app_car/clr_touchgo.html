@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>CLR TouchGo - Touch&amp;Go &#x670d;&#x52a1; SDK</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="clr-touchgo---touchgo-服务-sdk">CLR TouchGo - Touch&amp;Go 服务 SDK</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>clr_touchgo</code> 是 OneApp Touch&amp;Go 智能交互功能的核心服务 SDK，提供了免接触式车辆操作和智能感知服务。该模块集成了先进的传感器技术、手势识别、语音控制等多种交互方式，为用户提供更便捷、更智能的车辆控制体验。</p>
+<h2 id="核心功能">核心功能</h2>
+<h3 id="1-手势控制">1. 手势控制</h3>
+<ul>
+<li><strong>手势识别</strong>：支持多种手势的实时识别和响应</li>
+<li><strong>动作映射</strong>：将手势动作映射到具体的车辆控制指令</li>
+<li><strong>精度优化</strong>：高精度的手势识别算法</li>
+<li><strong>自定义手势</strong>：支持用户自定义手势指令</li>
+</ul>
+<h3 id="2-语音交互">2. 语音交互</h3>
+<ul>
+<li><strong>语音识别</strong>：高精度的语音识别引擎</li>
+<li><strong>语义理解</strong>：智能理解用户意图和指令</li>
+<li><strong>语音合成</strong>：自然流畅的语音反馈</li>
+<li><strong>多语言支持</strong>：支持多种语言的语音交互</li>
+</ul>
+<h3 id="3-智能感知">3. 智能感知</h3>
+<ul>
+<li><strong>环境感知</strong>：感知车辆周围环境状态</li>
+<li><strong>用户识别</strong>：识别和认证授权用户</li>
+<li><strong>行为预测</strong>：基于历史数据预测用户行为</li>
+<li><strong>场景适配</strong>：根据不同场景自动调整交互方式</li>
+</ul>
+<h3 id="4-免接触操作">4. 免接触操作</h3>
+<ul>
+<li><strong>远程控制</strong>：支持远距离的车辆控制</li>
+<li><strong>自动执行</strong>：基于条件自动执行预设操作</li>
+<li><strong>安全验证</strong>：多重安全验证确保操作安全</li>
+<li><strong>实时反馈</strong>：操作结果的实时反馈</li>
+</ul>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="架构设计">架构设计</h3>
+<pre><code>┌─────────────────────────────────────┐
+│            应用层                    │
+│      (app_touchgo, app_car)         │
+├─────────────────────────────────────┤
+│         CLR TouchGo SDK             │
+│  ┌──────────┬──────────┬──────────┐ │
+│  │ 手势识别 │ 语音控制 │ 智能感知 │ │
+│  ├──────────┼──────────┼──────────┤ │
+│  │ 传感器   │ AI引擎   │ 安全模块 │ │
+│  └──────────┴──────────┴──────────┘ │
+├─────────────────────────────────────┤
+│           硬件抽象层                 │
+│  ┌──────────┬──────────┬──────────┐ │
+│  │ 摄像头   │ 麦克风   │ 距离传感 │ │
+│  └──────────┴──────────┴──────────┘ │
+├─────────────────────────────────────┤
+│            车载系统                  │
+│       (CAN Bus, ECU, etc.)          │
+└─────────────────────────────────────┘
+</code></pre>
+<h3 id="核心组件">核心组件</h3>
+<h4 id="1-手势识别引擎-gestureengine">1. 手势识别引擎 (GestureEngine)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GestureEngine</span> </span>{
+  <span class="hljs-comment">// 初始化手势识别</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; initialize();
+  
+  <span class="hljs-comment">// 开始手势检测</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; startDetection();
+  
+  <span class="hljs-comment">// 停止手势检测</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; stopDetection();
+  
+  <span class="hljs-comment">// 注册手势处理器</span>
+  <span class="hljs-keyword">void</span> registerGestureHandler(GestureType type, GestureHandler handler);
+  
+  <span class="hljs-comment">// 校准手势识别</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; calibrateGesture(GestureType type);
+}
+</code></pre>
+<h4 id="2-语音控制引擎-voiceengine">2. 语音控制引擎 (VoiceEngine)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceEngine</span> </span>{
+  <span class="hljs-comment">// 初始化语音引擎</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; initialize(VoiceConfig config);
+  
+  <span class="hljs-comment">// 开始语音监听</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; startListening();
+  
+  <span class="hljs-comment">// 停止语音监听</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; stopListening();
+  
+  <span class="hljs-comment">// 语音合成</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; speak(<span class="hljs-built_in">String</span> text, VoiceSettings settings);
+  
+  <span class="hljs-comment">// 设置语音识别语言</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; setLanguage(<span class="hljs-built_in">String</span> languageCode);
+}
+</code></pre>
+<h4 id="3-智能感知管理器-sensingmanager">3. 智能感知管理器 (SensingManager)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SensingManager</span> </span>{
+  <span class="hljs-comment">// 开始环境感知</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; startEnvironmentSensing();
+  
+  <span class="hljs-comment">// 用户身份识别</span>
+  Future&lt;UserIdentity&gt; identifyUser();
+  
+  <span class="hljs-comment">// 获取环境状态</span>
+  Future&lt;EnvironmentState&gt; getEnvironmentState();
+  
+  <span class="hljs-comment">// 预测用户行为</span>
+  Future&lt;<span class="hljs-built_in">List</span>&lt;PredictedAction&gt;&gt; predictUserActions();
+}
+</code></pre>
+<h4 id="4-安全验证模块-securitymodule">4. 安全验证模块 (SecurityModule)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecurityModule</span> </span>{
+  <span class="hljs-comment">// 生物特征验证</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; verifyBiometrics(BiometricData data);
+  
+  <span class="hljs-comment">// 多因子认证</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; multiFactorAuth(<span class="hljs-built_in">List</span>&lt;AuthFactor&gt; factors);
+  
+  <span class="hljs-comment">// 操作权限检查</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; checkPermission(<span class="hljs-built_in">String</span> userId, Operation operation);
+  
+  <span class="hljs-comment">// 安全日志记录</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; logSecurityEvent(SecurityEvent event);
+}
+</code></pre>
+<h2 id="数据模型">数据模型</h2>
+<h3 id="手势模型">手势模型</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">enum</span> GestureType {
+  swipeLeft,      <span class="hljs-comment">// 左滑</span>
+  swipeRight,     <span class="hljs-comment">// 右滑</span>
+  swipeUp,        <span class="hljs-comment">// 上滑</span>
+  swipeDown,      <span class="hljs-comment">// 下滑</span>
+  pinch,          <span class="hljs-comment">// 捏合</span>
+  spread,         <span class="hljs-comment">// 展开</span>
+  tap,            <span class="hljs-comment">// 点击</span>
+  longPress,      <span class="hljs-comment">// 长按</span>
+  circle,         <span class="hljs-comment">// 画圈</span>
+  custom          <span class="hljs-comment">// 自定义</span>
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Gesture</span> </span>{
+  <span class="hljs-keyword">final</span> GestureType type;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;Point&gt; trajectory;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> confidence;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; metadata;
+}
+</code></pre>
+<h3 id="语音模型">语音模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceCommand</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> text;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> intent;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">String</span>&gt; entities;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> confidence;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> languageCode;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceResponse</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> text;
+  <span class="hljs-keyword">final</span> VoiceSettings settings;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> duration;
+  <span class="hljs-keyword">final</span> AudioFormat format;
+}
+</code></pre>
+<h3 id="感知模型">感知模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EnvironmentState</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> lighting;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> noise;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> temperature;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;DetectedObject&gt; objects;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;DetectedPerson&gt; persons;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserIdentity</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> userId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> name;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> confidence;
+  <span class="hljs-keyword">final</span> BiometricData biometrics;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; permissions;
+}
+</code></pre>
+<h2 id="api-接口">API 接口</h2>
+<h3 id="手势控制接口">手势控制接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GestureService</span> </span>{
+  <span class="hljs-comment">// 配置手势识别</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; configureGesture(GestureConfig config);
+  
+  <span class="hljs-comment">// 执行手势指令</span>
+  Future&lt;ApiResponse&lt;CommandResult&gt;&gt; executeGestureCommand(GestureCommand command);
+  
+  <span class="hljs-comment">// 获取支持的手势列表</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">List</span>&lt;GestureType&gt;&gt;&gt; getSupportedGestures();
+  
+  <span class="hljs-comment">// 训练自定义手势</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; trainCustomGesture(CustomGestureData data);
+}
+</code></pre>
+<h3 id="语音控制接口">语音控制接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceService</span> </span>{
+  <span class="hljs-comment">// 处理语音指令</span>
+  Future&lt;ApiResponse&lt;CommandResult&gt;&gt; processVoiceCommand(VoiceCommand command);
+  
+  <span class="hljs-comment">// 获取语音配置</span>
+  Future&lt;ApiResponse&lt;VoiceConfig&gt;&gt; getVoiceConfig();
+  
+  <span class="hljs-comment">// 更新语音设置</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; updateVoiceSettings(VoiceSettings settings);
+  
+  <span class="hljs-comment">// 获取支持的语言</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">List</span>&lt;Language&gt;&gt;&gt; getSupportedLanguages();
+}
+</code></pre>
+<h3 id="智能感知接口">智能感知接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SensingService</span> </span>{
+  <span class="hljs-comment">// 获取环境状态</span>
+  Future&lt;ApiResponse&lt;EnvironmentState&gt;&gt; getEnvironmentState();
+  
+  <span class="hljs-comment">// 识别用户身份</span>
+  Future&lt;ApiResponse&lt;UserIdentity&gt;&gt; identifyUser(BiometricData data);
+  
+  <span class="hljs-comment">// 获取行为预测</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">List</span>&lt;PredictedAction&gt;&gt;&gt; getPredictedActions(<span class="hljs-built_in">String</span> userId);
+  
+  <span class="hljs-comment">// 更新感知配置</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; updateSensingConfig(SensingConfig config);
+}
+</code></pre>
+<h2 id="配置管理">配置管理</h2>
+<h3 id="手势配置">手势配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GestureConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> sensitivity;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> timeoutMs;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableCustomGestures;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;GestureType, GestureSettings&gt; gestureSettings;
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> GestureConfig defaultConfig = GestureConfig(
+    sensitivity: <span class="hljs-number">0.8</span>,
+    timeoutMs: <span class="hljs-number">3000</span>,
+    enableCustomGestures: <span class="hljs-keyword">true</span>,
+    gestureSettings: {
+      GestureType.swipeLeft: GestureSettings(threshold: <span class="hljs-number">50.0</span>),
+      GestureType.swipeRight: GestureSettings(threshold: <span class="hljs-number">50.0</span>),
+      <span class="hljs-comment">// ... other gestures</span>
+    },
+  );
+}
+</code></pre>
+<h3 id="语音配置">语音配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> languageCode;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> noiseReduction;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> continuousListening;
+  <span class="hljs-keyword">final</span> VoiceModel model;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; customSettings;
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> VoiceConfig defaultConfig = VoiceConfig(
+    languageCode: <span class="hljs-string">&#x27;zh-CN&#x27;</span>,
+    noiseReduction: <span class="hljs-number">0.7</span>,
+    continuousListening: <span class="hljs-keyword">false</span>,
+    model: VoiceModel.enhanced,
+    customSettings: {},
+  );
+}
+</code></pre>
+<h2 id="算法和模型">算法和模型</h2>
+<h3 id="手势识别算法">手势识别算法</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GestureRecognitionAlgorithm</span> </span>{
+  <span class="hljs-comment">// 特征提取</span>
+  <span class="hljs-built_in">List</span>&lt;Feature&gt; extractFeatures(<span class="hljs-built_in">List</span>&lt;Point&gt; trajectory);
+  
+  <span class="hljs-comment">// 模式匹配</span>
+  GestureMatch matchPattern(<span class="hljs-built_in">List</span>&lt;Feature&gt; features);
+  
+  <span class="hljs-comment">// 置信度计算</span>
+  <span class="hljs-built_in">double</span> calculateConfidence(GestureMatch match);
+  
+  <span class="hljs-comment">// 模型训练</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; trainModel(<span class="hljs-built_in">List</span>&lt;TrainingData&gt; data);
+}
+</code></pre>
+<h3 id="语音识别模型">语音识别模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceRecognitionModel</span> </span>{
+  <span class="hljs-comment">// 音频预处理</span>
+  AudioFeatures preprocessAudio(AudioData audio);
+  
+  <span class="hljs-comment">// 语音转文本</span>
+  <span class="hljs-built_in">String</span> speechToText(AudioFeatures features);
+  
+  <span class="hljs-comment">// 意图识别</span>
+  Intent recognizeIntent(<span class="hljs-built_in">String</span> text);
+  
+  <span class="hljs-comment">// 实体抽取</span>
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">String</span>&gt; extractEntities(<span class="hljs-built_in">String</span> text);
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="手势控制示例">手势控制示例</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化手势引擎</span>
+<span class="hljs-keyword">final</span> gestureEngine = GestureEngine.instance;
+<span class="hljs-keyword">await</span> gestureEngine.initialize();
+
+<span class="hljs-comment">// 注册手势处理器</span>
+gestureEngine.registerGestureHandler(
+  GestureType.swipeLeft,
+  (gesture) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 执行左滑操作：打开车门</span>
+    <span class="hljs-keyword">await</span> CarController.instance.openDoor(DoorPosition.driver);
+  },
+);
+
+<span class="hljs-comment">// 开始手势检测</span>
+<span class="hljs-keyword">await</span> gestureEngine.startDetection();
+</code></pre>
+<h3 id="语音控制示例">语音控制示例</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化语音引擎</span>
+<span class="hljs-keyword">final</span> voiceEngine = VoiceEngine.instance;
+<span class="hljs-keyword">await</span> voiceEngine.initialize(VoiceConfig.defaultConfig);
+
+<span class="hljs-comment">// 设置语音指令处理器</span>
+voiceEngine.onVoiceCommand.listen((command) <span class="hljs-keyword">async</span> {
+  <span class="hljs-keyword">switch</span> (command.intent) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;start_engine&#x27;</span>:
+      <span class="hljs-keyword">await</span> CarController.instance.startEngine();
+      <span class="hljs-keyword">await</span> voiceEngine.speak(<span class="hljs-string">&#x27;引擎已启动&#x27;</span>);
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;open_window&#x27;</span>:
+      <span class="hljs-keyword">await</span> CarController.instance.openWindow();
+      <span class="hljs-keyword">await</span> voiceEngine.speak(<span class="hljs-string">&#x27;车窗已打开&#x27;</span>);
+      <span class="hljs-keyword">break</span>;
+  }
+});
+
+<span class="hljs-comment">// 开始语音监听</span>
+<span class="hljs-keyword">await</span> voiceEngine.startListening();
+</code></pre>
+<h3 id="智能感知示例">智能感知示例</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化感知管理器</span>
+<span class="hljs-keyword">final</span> sensingManager = SensingManager.instance;
+
+<span class="hljs-comment">// 开始环境感知</span>
+<span class="hljs-keyword">await</span> sensingManager.startEnvironmentSensing();
+
+<span class="hljs-comment">// 监听用户接近事件</span>
+sensingManager.onUserApproaching.listen((user) <span class="hljs-keyword">async</span> {
+  <span class="hljs-comment">// 用户接近时自动解锁车辆</span>
+  <span class="hljs-keyword">if</span> (user.isAuthorized) {
+    <span class="hljs-keyword">await</span> CarController.instance.unlockVehicle();
+    
+    <span class="hljs-comment">// 根据用户偏好调整车内环境</span>
+    <span class="hljs-keyword">final</span> preferences = <span class="hljs-keyword">await</span> getUserPreferences(user.id);
+    <span class="hljs-keyword">await</span> CarController.instance.applyPreferences(preferences);
+  }
+});
+</code></pre>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="单元测试">单元测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;GestureEngine Tests&#x27;</span>, () {
+  test(<span class="hljs-string">&#x27;should recognize swipe left gesture&#x27;</span>, () <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> trajectory = [
+      Point(<span class="hljs-number">100</span>, <span class="hljs-number">50</span>),
+      Point(<span class="hljs-number">80</span>, <span class="hljs-number">50</span>),
+      Point(<span class="hljs-number">60</span>, <span class="hljs-number">50</span>),
+      Point(<span class="hljs-number">40</span>, <span class="hljs-number">50</span>),
+      Point(<span class="hljs-number">20</span>, <span class="hljs-number">50</span>),
+    ];
+    
+    <span class="hljs-comment">// When</span>
+    <span class="hljs-keyword">final</span> gesture = <span class="hljs-keyword">await</span> gestureEngine.recognizeGesture(trajectory);
+    
+    <span class="hljs-comment">// Then</span>
+    expect(gesture.type, GestureType.swipeLeft);
+    expect(gesture.confidence, greaterThan(<span class="hljs-number">0.8</span>));
+  });
+});
+</code></pre>
+<h3 id="集成测试">集成测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;TouchGo Integration Tests&#x27;</span>, () {
+  testWidgets(<span class="hljs-string">&#x27;complete gesture control flow&#x27;</span>, (tester) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 1. 初始化系统</span>
+    <span class="hljs-keyword">await</span> TouchGoService.initialize();
+    
+    <span class="hljs-comment">// 2. 模拟手势输入</span>
+    <span class="hljs-keyword">await</span> tester.simulateGesture(GestureType.swipeLeft);
+    
+    <span class="hljs-comment">// 3. 验证车辆响应</span>
+    verify(mockCarController.openDoor(DoorPosition.driver));
+  });
+});
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="算法优化">算法优化</h3>
+<ul>
+<li><strong>特征缓存</strong>：缓存常用的特征计算结果</li>
+<li><strong>模型压缩</strong>：使用轻量级的识别模型</li>
+<li><strong>并行处理</strong>：多线程处理音视频数据</li>
+<li><strong>增量学习</strong>：在线学习优化识别精度</li>
+</ul>
+<h3 id="资源管理">资源管理</h3>
+<ul>
+<li><strong>内存管理</strong>：及时释放不需要的音视频数据</li>
+<li><strong>CPU调度</strong>：智能调度 AI 计算任务</li>
+<li><strong>电池优化</strong>：根据电量自动调整功能</li>
+<li><strong>热量控制</strong>：防止长时间运行过热</li>
+</ul>
+<h2 id="安全和隐私">安全和隐私</h2>
+<h3 id="数据安全">数据安全</h3>
+<ul>
+<li><strong>本地处理</strong>：敏感数据本地处理，不上传云端</li>
+<li><strong>数据加密</strong>：生物特征数据加密存储</li>
+<li><strong>访问控制</strong>：严格的权限控制机制</li>
+<li><strong>审计日志</strong>：完整的操作审计记录</li>
+</ul>
+<h3 id="隐私保护">隐私保护</h3>
+<ul>
+<li><strong>数据最小化</strong>：只收集必要的数据</li>
+<li><strong>用户授权</strong>：明确的用户授权机制</li>
+<li><strong>数据销毁</strong>：及时删除过期数据</li>
+<li><strong>匿名化</strong>：敏感数据匿名化处理</li>
+</ul>
+<h2 id="监控和诊断">监控和诊断</h2>
+<h3 id="性能监控">性能监控</h3>
+<ul>
+<li><strong>识别精度</strong>：手势和语音识别的准确率</li>
+<li><strong>响应时间</strong>：从输入到执行的延迟</li>
+<li><strong>资源使用</strong>：CPU、内存、电池使用情况</li>
+<li><strong>错误率</strong>：系统错误和异常统计</li>
+</ul>
+<h3 id="用户体验监控">用户体验监控</h3>
+<ul>
+<li><strong>使用频率</strong>：各功能的使用频率统计</li>
+<li><strong>用户满意度</strong>：用户反馈和评分</li>
+<li><strong>学习效果</strong>：个性化学习的改进效果</li>
+<li><strong>场景适配</strong>：不同场景下的表现</li>
+</ul>
+<h2 id="版本历史">版本历史</h2>
+<h3 id="v0267-当前版本">v0.2.6+7 (当前版本)</h3>
+<ul>
+<li>新增多语言语音支持</li>
+<li>优化手势识别算法</li>
+<li>改进低光环境下的识别能力</li>
+<li>修复已知稳定性问题</li>
+</ul>
+<h3 id="v025">v0.2.5</h3>
+<ul>
+<li>支持自定义手势训练</li>
+<li>新增语音情感识别</li>
+<li>优化电池使用效率</li>
+<li>改进安全验证流程</li>
+</ul>
+<h3 id="v024">v0.2.4</h3>
+<ul>
+<li>支持离线语音识别</li>
+<li>新增环境自适应功能</li>
+<li>优化识别精度</li>
+<li>修复兼容性问题</li>
+</ul>
+<h2 id="依赖关系">依赖关系</h2>
+<h3 id="内部依赖">内部依赖</h3>
+<ul>
+<li><code>basic_platform</code>: 平台抽象层</li>
+<li><code>basic_error</code>: 错误处理框架</li>
+<li><code>basic_storage</code>: 本地存储服务</li>
+<li><code>kit_native_uikit</code>: 原生 UI 组件</li>
+</ul>
+<h3 id="外部依赖">外部依赖</h3>
+<ul>
+<li><code>camera</code>: 摄像头访问</li>
+<li><code>microphone</code>: 麦克风访问</li>
+<li><code>sensors_plus</code>: 传感器数据</li>
+<li><code>tflite_flutter</code>: TensorFlow Lite 模型</li>
+</ul>
+<h2 id="硬件要求">硬件要求</h2>
+<h3 id="最低要求">最低要求</h3>
+<ul>
+<li><strong>摄像头</strong>: 前置摄像头，分辨率 ≥ 720p</li>
+<li><strong>麦克风</strong>: 数字麦克风，降噪支持</li>
+<li><strong>处理器</strong>: ARM64 架构，≥ 1.5GHz</li>
+<li><strong>内存</strong>: ≥ 2GB RAM</li>
+<li><strong>存储</strong>: ≥ 500MB 可用空间</li>
+</ul>
+<h3 id="推荐配置">推荐配置</h3>
+<ul>
+<li><strong>摄像头</strong>: 1080p 前置摄像头，红外夜视</li>
+<li><strong>麦克风</strong>: 阵列麦克风，回声消除</li>
+<li><strong>处理器</strong>: ≥ 2.0GHz 多核处理器</li>
+<li><strong>内存</strong>: ≥ 4GB RAM</li>
+<li><strong>传感器</strong>: 距离传感器、环境光传感器</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>clr_touchgo</code> 作为 Touch&amp;Go 智能交互的核心 SDK，通过集成先进的 AI 技术和传感器融合，为用户提供了自然、便捷、安全的车辆交互体验。该模块不仅支持传统的手势和语音控制，还具备智能感知和预测能力，能够主动为用户提供个性化的服务。</p>
+<p>通过持续的算法优化和用户体验改进，TouchGo 技术将继续引领车辆智能交互的发展方向，为 OneApp 用户带来更加智能化的出行体验。</p>
+
+            
+            
+        </body>
+        </html>

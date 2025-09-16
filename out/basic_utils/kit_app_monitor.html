@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Kit App Monitor &#x5e94;&#x7528;&#x76d1;&#x63a7;&#x5de5;&#x5177;&#x5305;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="kit-app-monitor-应用监控工具包">Kit App Monitor 应用监控工具包</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>kit_app_monitor</code> 是 OneApp 基础工具模块群中的应用监控工具包，负责实时监控应用的性能指标、异常情况、用户行为等关键数据。该插件通过原生平台能力，为应用提供全面的监控和分析功能。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: kit_app_monitor</li>
+<li><strong>版本</strong>: 0.0.2+1</li>
+<li><strong>类型</strong>: Flutter Plugin（原生插件）</li>
+<li><strong>描述</strong>: 应用监控工具包</li>
+<li><strong>Flutter 版本</strong>: &gt;=3.0.0</li>
+<li><strong>Dart 版本</strong>: &gt;=3.0.0&lt;4.0.0</li>
+</ul>
+<h2 id="功能特性">功能特性</h2>
+<h3 id="核心功能">核心功能</h3>
+<ol>
+<li>
+<p><strong>性能监控</strong></p>
+<ul>
+<li>CPU使用率监控</li>
+<li>内存使用监控</li>
+<li>网络请求性能</li>
+<li>帧率(FPS)监控</li>
+</ul>
+</li>
+<li>
+<p><strong>异常监控</strong></p>
+<ul>
+<li>Crash崩溃监控</li>
+<li>ANR(应用无响应)检测</li>
+<li>网络异常监控</li>
+<li>自定义异常上报</li>
+</ul>
+</li>
+<li>
+<p><strong>用户行为分析</strong></p>
+<ul>
+<li>页面访问统计</li>
+<li>用户操作轨迹</li>
+<li>功能使用频率</li>
+<li>用户留存分析</li>
+</ul>
+</li>
+<li>
+<p><strong>设备信息收集</strong></p>
+<ul>
+<li>设备硬件信息</li>
+<li>系统版本信息</li>
+<li>应用版本信息</li>
+<li>网络环境信息</li>
+</ul>
+</li>
+</ol>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="目录结构">目录结构</h3>
+<pre><code>kit_app_monitor/
+├── lib/                        # Dart代码
+│   ├── kit_app_monitor.dart    # 插件入口
+│   ├── src/                    # 源代码
+│   │   ├── platform_interface.dart # 平台接口定义
+│   │   ├── method_channel.dart     # 方法通道实现
+│   │   ├── models/                 # 数据模型
+│   │   │   ├── performance_data.dart
+│   │   │   ├── crash_report.dart
+│   │   │   └── user_behavior.dart
+│   │   └── utils/                  # 工具类
+│   └── kit_app_monitor_platform_interface.dart
+├── android/                    # Android原生代码
+│   ├── src/main/kotlin/
+│   │   └── com/cariadcn/kit_app_monitor/
+│   │       ├── KitAppMonitorPlugin.kt
+│   │       ├── PerformanceMonitor.kt
+│   │       ├── CrashHandler.kt
+│   │       └── BehaviorTracker.kt
+│   └── build.gradle
+├── ios/                        # iOS原生代码
+│   ├── Classes/
+│   │   ├── KitAppMonitorPlugin.swift
+│   │   ├── PerformanceMonitor.swift
+│   │   ├── CrashHandler.swift
+│   │   └── BehaviorTracker.swift
+│   └── kit_app_monitor.podspec
+├── example/                    # 示例应用
+└── test/                       # 测试文件
+</code></pre>
+<h3 id="依赖关系">依赖关系</h3>
+<h4 id="核心依赖">核心依赖</h4>
+<ul>
+<li><code>plugin_platform_interface: ^2.0.2</code> - 插件平台接口</li>
+<li><code>json_annotation: ^4.8.1</code> - JSON序列化</li>
+</ul>
+<h4 id="开发依赖">开发依赖</h4>
+<ul>
+<li><code>json_serializable: ^6.7.0</code> - JSON序列化代码生成</li>
+<li><code>build_runner: any</code> - 代码生成引擎</li>
+</ul>
+<h2 id="核心模块分析">核心模块分析</h2>
+<h3 id="1-flutter端实现">1. Flutter端实现</h3>
+<h4 id="插件入口-libkit_app_monitordart">插件入口 (<code>lib/kit_app_monitor.dart</code>)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">KitAppMonitor</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> MethodChannel _channel = MethodChannel(<span class="hljs-string">&#x27;kit_app_monitor&#x27;</span>);
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">bool</span> _isInitialized = <span class="hljs-keyword">false</span>;
+  <span class="hljs-keyword">static</span> StreamController&lt;PerformanceData&gt;? _performanceController;
+  <span class="hljs-keyword">static</span> StreamController&lt;CrashReport&gt;? _crashController;
+  <span class="hljs-keyword">static</span> StreamController&lt;UserBehavior&gt;? _behaviorController;
+  
+  <span class="hljs-comment">/// <span class="language-markdown">初始化监控</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; initialize({
+    <span class="hljs-built_in">bool</span> enablePerformanceMonitoring = <span class="hljs-keyword">true</span>,
+    <span class="hljs-built_in">bool</span> enableCrashReporting = <span class="hljs-keyword">true</span>,
+    <span class="hljs-built_in">bool</span> enableBehaviorTracking = <span class="hljs-keyword">true</span>,
+    <span class="hljs-built_in">String?</span> userId,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? customProperties,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">if</span> (_isInitialized) <span class="hljs-keyword">return</span>;
+    
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;initialize&#x27;</span>, {
+      <span class="hljs-string">&#x27;enablePerformanceMonitoring&#x27;</span>: enablePerformanceMonitoring,
+      <span class="hljs-string">&#x27;enableCrashReporting&#x27;</span>: enableCrashReporting,
+      <span class="hljs-string">&#x27;enableBehaviorTracking&#x27;</span>: enableBehaviorTracking,
+      <span class="hljs-string">&#x27;userId&#x27;</span>: userId,
+      <span class="hljs-string">&#x27;customProperties&#x27;</span>: customProperties,
+    });
+    
+    _setupEventChannels();
+    _isInitialized = <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">设置用户ID</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; setUserId(<span class="hljs-built_in">String</span> userId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;setUserId&#x27;</span>, {<span class="hljs-string">&#x27;userId&#x27;</span>: userId});
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">设置自定义属性</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; setCustomProperty(<span class="hljs-built_in">String</span> key, <span class="hljs-built_in">dynamic</span> value) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;setCustomProperty&#x27;</span>, {
+      <span class="hljs-string">&#x27;key&#x27;</span>: key,
+      <span class="hljs-string">&#x27;value&#x27;</span>: value,
+    });
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">记录自定义事件</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; recordEvent(<span class="hljs-built_in">String</span> eventName, <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? parameters) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;recordEvent&#x27;</span>, {
+      <span class="hljs-string">&#x27;eventName&#x27;</span>: eventName,
+      <span class="hljs-string">&#x27;parameters&#x27;</span>: parameters,
+    });
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">记录页面访问</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; recordPageView(<span class="hljs-built_in">String</span> pageName) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;recordPageView&#x27;</span>, {<span class="hljs-string">&#x27;pageName&#x27;</span>: pageName});
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">记录网络请求</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; recordNetworkRequest({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> url,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> method,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> statusCode,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> responseTime,
+    <span class="hljs-built_in">int?</span> requestSize,
+    <span class="hljs-built_in">int?</span> responseSize,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;recordNetworkRequest&#x27;</span>, {
+      <span class="hljs-string">&#x27;url&#x27;</span>: url,
+      <span class="hljs-string">&#x27;method&#x27;</span>: method,
+      <span class="hljs-string">&#x27;statusCode&#x27;</span>: statusCode,
+      <span class="hljs-string">&#x27;responseTime&#x27;</span>: responseTime,
+      <span class="hljs-string">&#x27;requestSize&#x27;</span>: requestSize,
+      <span class="hljs-string">&#x27;responseSize&#x27;</span>: responseSize,
+    });
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">手动记录异常</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; recordException({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> name,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> reason,
+    <span class="hljs-built_in">String?</span> stackTrace,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? customData,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;recordException&#x27;</span>, {
+      <span class="hljs-string">&#x27;name&#x27;</span>: name,
+      <span class="hljs-string">&#x27;reason&#x27;</span>: reason,
+      <span class="hljs-string">&#x27;stackTrace&#x27;</span>: stackTrace,
+      <span class="hljs-string">&#x27;customData&#x27;</span>: customData,
+    });
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">获取性能数据流</span></span>
+  <span class="hljs-keyword">static</span> Stream&lt;PerformanceData&gt; <span class="hljs-keyword">get</span> performanceStream {
+    _performanceController ??= StreamController&lt;PerformanceData&gt;.broadcast();
+    <span class="hljs-keyword">return</span> _performanceController!.stream;
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">获取崩溃报告流</span></span>
+  <span class="hljs-keyword">static</span> Stream&lt;CrashReport&gt; <span class="hljs-keyword">get</span> crashStream {
+    _crashController ??= StreamController&lt;CrashReport&gt;.broadcast();
+    <span class="hljs-keyword">return</span> _crashController!.stream;
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">获取用户行为流</span></span>
+  <span class="hljs-keyword">static</span> Stream&lt;UserBehavior&gt; <span class="hljs-keyword">get</span> behaviorStream {
+    _behaviorController ??= StreamController&lt;UserBehavior&gt;.broadcast();
+    <span class="hljs-keyword">return</span> _behaviorController!.stream;
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">强制上报数据</span></span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; flush() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;flush&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">设置事件通道</span></span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> _setupEventChannels() {
+    <span class="hljs-keyword">const</span> performanceChannel = EventChannel(<span class="hljs-string">&#x27;kit_app_monitor/performance&#x27;</span>);
+    <span class="hljs-keyword">const</span> crashChannel = EventChannel(<span class="hljs-string">&#x27;kit_app_monitor/crash&#x27;</span>);
+    <span class="hljs-keyword">const</span> behaviorChannel = EventChannel(<span class="hljs-string">&#x27;kit_app_monitor/behavior&#x27;</span>);
+    
+    performanceChannel.receiveBroadcastStream().listen((data) {
+      <span class="hljs-keyword">final</span> performanceData = PerformanceData.fromJson(data);
+      _performanceController?.add(performanceData);
+    });
+    
+    crashChannel.receiveBroadcastStream().listen((data) {
+      <span class="hljs-keyword">final</span> crashReport = CrashReport.fromJson(data);
+      _crashController?.add(crashReport);
+    });
+    
+    behaviorChannel.receiveBroadcastStream().listen((data) {
+      <span class="hljs-keyword">final</span> userBehavior = UserBehavior.fromJson(data);
+      _behaviorController?.add(userBehavior);
+    });
+  }
+  
+  <span class="hljs-comment">/// <span class="language-markdown">清理资源</span></span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> dispose() {
+    _performanceController?.close();
+    _crashController?.close();
+    _behaviorController?.close();
+    _isInitialized = <span class="hljs-keyword">false</span>;
+  }
+}
+</code></pre>
+<h4 id="数据模型-srcmodels">数据模型 (<code>src/models/</code>)</h4>
+<h5 id="性能数据模型">性能数据模型</h5>
+<pre><code class="language-dart"><span class="hljs-meta">@JsonSerializable</span>()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PerformanceData</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> cpuUsage;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> memoryUsage;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> totalMemory;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> fps;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> networkLatency;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> pageName;
+  
+  <span class="hljs-keyword">const</span> PerformanceData({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.cpuUsage,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.memoryUsage,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.totalMemory,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.fps,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.networkLatency,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.timestamp,
+    <span class="hljs-keyword">this</span>.pageName,
+  });
+  
+  <span class="hljs-keyword">factory</span> PerformanceData.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$PerformanceDataFromJson(json);
+  
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; toJson() =&gt; _$PerformanceDataToJson(<span class="hljs-keyword">this</span>);
+  
+  <span class="hljs-built_in">double</span> <span class="hljs-keyword">get</span> memoryUsagePercentage =&gt; (memoryUsage / totalMemory) * <span class="hljs-number">100</span>;
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isHighCpuUsage =&gt; cpuUsage &gt; <span class="hljs-number">80.0</span>;
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isHighMemoryUsage =&gt; memoryUsagePercentage &gt; <span class="hljs-number">90.0</span>;
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isLowFps =&gt; fps &lt; <span class="hljs-number">30.0</span>;
+}
+</code></pre>
+<h5 id="崩溃报告模型">崩溃报告模型</h5>
+<pre><code class="language-dart"><span class="hljs-meta">@JsonSerializable</span>()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CrashReport</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> crashId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> type;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> message;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> stackTrace;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> appVersion;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> deviceModel;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> osVersion;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; customData;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> userId;
+  
+  <span class="hljs-keyword">const</span> CrashReport({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.crashId,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.type,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.message,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.stackTrace,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.timestamp,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.appVersion,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.deviceModel,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.osVersion,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.customData,
+    <span class="hljs-keyword">this</span>.userId,
+  });
+  
+  <span class="hljs-keyword">factory</span> CrashReport.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$CrashReportFromJson(json);
+  
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; toJson() =&gt; _$CrashReportToJson(<span class="hljs-keyword">this</span>);
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isFatal =&gt; type.toLowerCase().contains(<span class="hljs-string">&#x27;fatal&#x27;</span>);
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isNativeCrash =&gt; type.toLowerCase().contains(<span class="hljs-string">&#x27;native&#x27;</span>);
+}
+</code></pre>
+<h5 id="用户行为模型">用户行为模型</h5>
+<pre><code class="language-dart"><span class="hljs-meta">@JsonSerializable</span>()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserBehavior</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> eventType;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> pageName;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> elementName;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; parameters;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> userId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> sessionId;
+  
+  <span class="hljs-keyword">const</span> UserBehavior({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.eventType,
+    <span class="hljs-keyword">this</span>.pageName,
+    <span class="hljs-keyword">this</span>.elementName,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.parameters,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.timestamp,
+    <span class="hljs-keyword">this</span>.userId,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.sessionId,
+  });
+  
+  <span class="hljs-keyword">factory</span> UserBehavior.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) =&gt;
+      _$UserBehaviorFromJson(json);
+  
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; toJson() =&gt; _$UserBehaviorToJson(<span class="hljs-keyword">this</span>);
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isPageView =&gt; eventType == <span class="hljs-string">&#x27;page_view&#x27;</span>;
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isButtonClick =&gt; eventType == <span class="hljs-string">&#x27;button_click&#x27;</span>;
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isUserAction =&gt; [<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-string">&#x27;tap&#x27;</span>, <span class="hljs-string">&#x27;swipe&#x27;</span>, <span class="hljs-string">&#x27;scroll&#x27;</span>].contains(eventType);
+}
+</code></pre>
+<h3 id="2-android端实现">2. Android端实现</h3>
+<h4 id="主插件类-kitappmonitorpluginkt">主插件类 (<code>KitAppMonitorPlugin.kt</code>)</h4>
+<pre><code class="language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">KitAppMonitorPlugin</span>: <span class="hljs-type">FlutterPlugin</span>, <span class="hljs-type">MethodCallHandler</span>, <span class="hljs-type">ActivityAware {</span></span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> channel: MethodChannel
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> context: Context
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> activity: Activity? = <span class="hljs-literal">null</span>
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> performanceMonitor: PerformanceMonitor? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> crashHandler: CrashHandler? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> behaviorTracker: BehaviorTracker? = <span class="hljs-literal">null</span>
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> performanceEventChannel: EventChannel? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> crashEventChannel: EventChannel? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> behaviorEventChannel: EventChannel? = <span class="hljs-literal">null</span>
+
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onAttachedToEngine</span><span class="hljs-params">(binding: <span class="hljs-type">FlutterPlugin</span>.<span class="hljs-type">FlutterPluginBinding</span>)</span></span> {
+        channel = MethodChannel(binding.binaryMessenger, <span class="hljs-string">&quot;kit_app_monitor&quot;</span>)
+        context = binding.applicationContext
+        channel.setMethodCallHandler(<span class="hljs-keyword">this</span>)
+        
+        <span class="hljs-comment">// 设置事件通道</span>
+        setupEventChannels(binding.binaryMessenger)
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setupEventChannels</span><span class="hljs-params">(messenger: <span class="hljs-type">BinaryMessenger</span>)</span></span> {
+        performanceEventChannel = EventChannel(messenger, <span class="hljs-string">&quot;kit_app_monitor/performance&quot;</span>)
+        crashEventChannel = EventChannel(messenger, <span class="hljs-string">&quot;kit_app_monitor/crash&quot;</span>)
+        behaviorEventChannel = EventChannel(messenger, <span class="hljs-string">&quot;kit_app_monitor/behavior&quot;</span>)
+    }
+
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onMethodCall</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">when</span> (call.method) {
+            <span class="hljs-string">&quot;initialize&quot;</span> -&gt; initialize(call, result)
+            <span class="hljs-string">&quot;setUserId&quot;</span> -&gt; setUserId(call, result)
+            <span class="hljs-string">&quot;setCustomProperty&quot;</span> -&gt; setCustomProperty(call, result)
+            <span class="hljs-string">&quot;recordEvent&quot;</span> -&gt; recordEvent(call, result)
+            <span class="hljs-string">&quot;recordPageView&quot;</span> -&gt; recordPageView(call, result)
+            <span class="hljs-string">&quot;recordNetworkRequest&quot;</span> -&gt; recordNetworkRequest(call, result)
+            <span class="hljs-string">&quot;recordException&quot;</span> -&gt; recordException(call, result)
+            <span class="hljs-string">&quot;flush&quot;</span> -&gt; flush(result)
+            <span class="hljs-keyword">else</span> -&gt; result.notImplemented()
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">initialize</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> enablePerformanceMonitoring = call.argument&lt;<span class="hljs-built_in">Boolean</span>&gt;(<span class="hljs-string">&quot;enablePerformanceMonitoring&quot;</span>) ?: <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">val</span> enableCrashReporting = call.argument&lt;<span class="hljs-built_in">Boolean</span>&gt;(<span class="hljs-string">&quot;enableCrashReporting&quot;</span>) ?: <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">val</span> enableBehaviorTracking = call.argument&lt;<span class="hljs-built_in">Boolean</span>&gt;(<span class="hljs-string">&quot;enableBehaviorTracking&quot;</span>) ?: <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">val</span> userId = call.argument&lt;String&gt;(<span class="hljs-string">&quot;userId&quot;</span>)
+        <span class="hljs-keyword">val</span> customProperties = call.argument&lt;Map&lt;String, Any&gt;&gt;(<span class="hljs-string">&quot;customProperties&quot;</span>)
+        
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">if</span> (enablePerformanceMonitoring) {
+                performanceMonitor = PerformanceMonitor(context)
+                performanceMonitor?.initialize(performanceEventChannel)
+            }
+            
+            <span class="hljs-keyword">if</span> (enableCrashReporting) {
+                crashHandler = CrashHandler(context)
+                crashHandler?.initialize(crashEventChannel)
+            }
+            
+            <span class="hljs-keyword">if</span> (enableBehaviorTracking) {
+                behaviorTracker = BehaviorTracker(context)
+                behaviorTracker?.initialize(behaviorEventChannel)
+            }
+            
+            userId?.let { setUserId(it) }
+            customProperties?.forEach { (key, value) -&gt;
+                setCustomProperty(key, value)
+            }
+            
+            result.success(<span class="hljs-literal">true</span>)
+        } <span class="hljs-keyword">catch</span> (e: Exception) {
+            result.error(<span class="hljs-string">&quot;INITIALIZATION_FAILED&quot;</span>, e.message, <span class="hljs-literal">null</span>)
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">recordEvent</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> eventName = call.argument&lt;String&gt;(<span class="hljs-string">&quot;eventName&quot;</span>)
+        <span class="hljs-keyword">val</span> parameters = call.argument&lt;Map&lt;String, Any&gt;&gt;(<span class="hljs-string">&quot;parameters&quot;</span>)
+        
+        behaviorTracker?.recordEvent(eventName ?: <span class="hljs-string">&quot;&quot;</span>, parameters ?: emptyMap())
+        result.success(<span class="hljs-literal">true</span>)
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">recordPageView</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> pageName = call.argument&lt;String&gt;(<span class="hljs-string">&quot;pageName&quot;</span>)
+        behaviorTracker?.recordPageView(pageName ?: <span class="hljs-string">&quot;&quot;</span>)
+        result.success(<span class="hljs-literal">true</span>)
+    }
+    
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onAttachedToActivity</span><span class="hljs-params">(binding: <span class="hljs-type">ActivityPluginBinding</span>)</span></span> {
+        activity = binding.activity
+        performanceMonitor?.setActivity(activity)
+        behaviorTracker?.setActivity(activity)
+    }
+    
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onDetachedFromActivity</span><span class="hljs-params">()</span></span> {
+        activity = <span class="hljs-literal">null</span>
+        performanceMonitor?.setActivity(<span class="hljs-literal">null</span>)
+        behaviorTracker?.setActivity(<span class="hljs-literal">null</span>)
+    }
+}
+</code></pre>
+<h4 id="性能监控器-performancemonitorkt">性能监控器 (<code>PerformanceMonitor.kt</code>)</h4>
+<pre><code class="language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PerformanceMonitor</span></span>(<span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> context: Context) {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> eventSink: EventChannel.EventSink? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> monitoringHandler: Handler? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> activity: Activity? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> updateInterval = <span class="hljs-number">5000L</span> <span class="hljs-comment">// 5秒更新一次</span>
+    
+    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">initialize</span><span class="hljs-params">(eventChannel: <span class="hljs-type">EventChannel</span>?)</span></span> {
+        eventChannel?.setStreamHandler(<span class="hljs-keyword">object</span> : EventChannel.StreamHandler {
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onListen</span><span class="hljs-params">(arguments: <span class="hljs-type">Any</span>?, events: <span class="hljs-type">EventChannel</span>.<span class="hljs-type">EventSink</span>?)</span></span> {
+                eventSink = events
+                startMonitoring()
+            }
+            
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onCancel</span><span class="hljs-params">(arguments: <span class="hljs-type">Any</span>?)</span></span> {
+                eventSink = <span class="hljs-literal">null</span>
+                stopMonitoring()
+            }
+        })
+    }
+    
+    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setActivity</span><span class="hljs-params">(activity: <span class="hljs-type">Activity</span>?)</span></span> {
+        <span class="hljs-keyword">this</span>.activity = activity
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">startMonitoring</span><span class="hljs-params">()</span></span> {
+        monitoringHandler = Handler(Looper.getMainLooper())
+        monitoringHandler?.post(monitoringRunnable)
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">stopMonitoring</span><span class="hljs-params">()</span></span> {
+        monitoringHandler?.removeCallbacks(monitoringRunnable)
+        monitoringHandler = <span class="hljs-literal">null</span>
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> monitoringRunnable = <span class="hljs-keyword">object</span> : Runnable {
+        <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">run</span><span class="hljs-params">()</span></span> {
+            collectPerformanceData()
+            monitoringHandler?.postDelayed(<span class="hljs-keyword">this</span>, updateInterval)
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">collectPerformanceData</span><span class="hljs-params">()</span></span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">val</span> cpuUsage = getCpuUsage()
+            <span class="hljs-keyword">val</span> memoryInfo = getMemoryInfo()
+            <span class="hljs-keyword">val</span> fps = getFps()
+            <span class="hljs-keyword">val</span> networkLatency = getNetworkLatency()
+            
+            <span class="hljs-keyword">val</span> performanceData = mapOf(
+                <span class="hljs-string">&quot;cpuUsage&quot;</span> to cpuUsage,
+                <span class="hljs-string">&quot;memoryUsage&quot;</span> to memoryInfo.first,
+                <span class="hljs-string">&quot;totalMemory&quot;</span> to memoryInfo.second,
+                <span class="hljs-string">&quot;fps&quot;</span> to fps,
+                <span class="hljs-string">&quot;networkLatency&quot;</span> to networkLatency,
+                <span class="hljs-string">&quot;timestamp&quot;</span> to System.currentTimeMillis(),
+                <span class="hljs-string">&quot;pageName&quot;</span> to getCurrentPageName()
+            )
+            
+            eventSink?.success(performanceData)
+        } <span class="hljs-keyword">catch</span> (e: Exception) {
+            eventSink?.error(<span class="hljs-string">&quot;PERFORMANCE_ERROR&quot;</span>, e.message, <span class="hljs-literal">null</span>)
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getCpuUsage</span><span class="hljs-params">()</span></span>: <span class="hljs-built_in">Double</span> {
+        <span class="hljs-comment">// 获取CPU使用率的实现</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">val</span> runtime = Runtime.getRuntime()
+            <span class="hljs-keyword">val</span> usedMemory = runtime.totalMemory() - runtime.freeMemory()
+            <span class="hljs-keyword">val</span> maxMemory = runtime.maxMemory()
+            (usedMemory.toDouble() / maxMemory.toDouble()) * <span class="hljs-number">100</span>
+        } <span class="hljs-keyword">catch</span> (e: Exception) {
+            <span class="hljs-number">0.0</span>
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getMemoryInfo</span><span class="hljs-params">()</span></span>: Pair&lt;<span class="hljs-built_in">Long</span>, <span class="hljs-built_in">Long</span>&gt; {
+        <span class="hljs-keyword">val</span> activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) <span class="hljs-keyword">as</span> ActivityManager
+        <span class="hljs-keyword">val</span> memoryInfo = ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+        
+        <span class="hljs-keyword">val</span> usedMemory = memoryInfo.totalMem - memoryInfo.availMem
+        <span class="hljs-keyword">return</span> Pair(usedMemory, memoryInfo.totalMem)
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getFps</span><span class="hljs-params">()</span></span>: <span class="hljs-built_in">Double</span> {
+        <span class="hljs-comment">// 获取FPS的实现</span>
+        <span class="hljs-keyword">return</span> activity?.let {
+            <span class="hljs-comment">// 使用Choreographer或其他方式计算FPS</span>
+            <span class="hljs-number">60.0</span> <span class="hljs-comment">// 默认返回60FPS</span>
+        } ?: <span class="hljs-number">0.0</span>
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getNetworkLatency</span><span class="hljs-params">()</span></span>: <span class="hljs-built_in">Int</span> {
+        <span class="hljs-comment">// 获取网络延迟的实现</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> <span class="hljs-comment">// 默认返回0</span>
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getCurrentPageName</span><span class="hljs-params">()</span></span>: String? {
+        <span class="hljs-keyword">return</span> activity?.let { 
+            it.javaClass.simpleName
+        }
+    }
+}
+</code></pre>
+<h4 id="崩溃处理器-crashhandlerkt">崩溃处理器 (<code>CrashHandler.kt</code>)</h4>
+<pre><code class="language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CrashHandler</span></span>(<span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> context: Context) : Thread.UncaughtExceptionHandler {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> eventSink: EventChannel.EventSink? = <span class="hljs-literal">null</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> defaultExceptionHandler: Thread.UncaughtExceptionHandler? = <span class="hljs-literal">null</span>
+    
+    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">initialize</span><span class="hljs-params">(eventChannel: <span class="hljs-type">EventChannel</span>?)</span></span> {
+        eventChannel?.setStreamHandler(<span class="hljs-keyword">object</span> : EventChannel.StreamHandler {
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onListen</span><span class="hljs-params">(arguments: <span class="hljs-type">Any</span>?, events: <span class="hljs-type">EventChannel</span>.<span class="hljs-type">EventSink</span>?)</span></span> {
+                eventSink = events
+                setupCrashHandler()
+            }
+            
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onCancel</span><span class="hljs-params">(arguments: <span class="hljs-type">Any</span>?)</span></span> {
+                eventSink = <span class="hljs-literal">null</span>
+                restoreDefaultHandler()
+            }
+        })
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setupCrashHandler</span><span class="hljs-params">()</span></span> {
+        defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler(<span class="hljs-keyword">this</span>)
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">restoreDefaultHandler</span><span class="hljs-params">()</span></span> {
+        defaultExceptionHandler?.let {
+            Thread.setDefaultUncaughtExceptionHandler(it)
+        }
+    }
+    
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">uncaughtException</span><span class="hljs-params">(thread: <span class="hljs-type">Thread</span>, exception: <span class="hljs-type">Throwable</span>)</span></span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">val</span> crashReport = createCrashReport(exception)
+            eventSink?.success(crashReport)
+            
+            <span class="hljs-comment">// 保存崩溃信息到本地</span>
+            saveCrashToLocal(crashReport)
+        } <span class="hljs-keyword">catch</span> (e: Exception) {
+            <span class="hljs-comment">// 处理崩溃报告生成失败的情况</span>
+        } <span class="hljs-keyword">finally</span> {
+            <span class="hljs-comment">// 调用默认的异常处理器</span>
+            defaultExceptionHandler?.uncaughtException(thread, exception)
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">createCrashReport</span><span class="hljs-params">(exception: <span class="hljs-type">Throwable</span>)</span></span>: Map&lt;String, Any&gt; {
+        <span class="hljs-keyword">return</span> mapOf(
+            <span class="hljs-string">&quot;crashId&quot;</span> to UUID.randomUUID().toString(),
+            <span class="hljs-string">&quot;type&quot;</span> to exception.javaClass.simpleName,
+            <span class="hljs-string">&quot;message&quot;</span> to (exception.message ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;stackTrace&quot;</span> to getStackTraceString(exception),
+            <span class="hljs-string">&quot;timestamp&quot;</span> to System.currentTimeMillis(),
+            <span class="hljs-string">&quot;appVersion&quot;</span> to getAppVersion(),
+            <span class="hljs-string">&quot;deviceModel&quot;</span> to Build.MODEL,
+            <span class="hljs-string">&quot;osVersion&quot;</span> to Build.VERSION.RELEASE,
+            <span class="hljs-string">&quot;customData&quot;</span> to getCustomData()
+        )
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getStackTraceString</span><span class="hljs-params">(exception: <span class="hljs-type">Throwable</span>)</span></span>: String {
+        <span class="hljs-keyword">val</span> stringWriter = StringWriter()
+        <span class="hljs-keyword">val</span> printWriter = PrintWriter(stringWriter)
+        exception.printStackTrace(printWriter)
+        <span class="hljs-keyword">return</span> stringWriter.toString()
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getAppVersion</span><span class="hljs-params">()</span></span>: String {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">val</span> packageInfo = context.packageManager.getPackageInfo(context.packageName, <span class="hljs-number">0</span>)
+            packageInfo.versionName ?: <span class="hljs-string">&quot;unknown&quot;</span>
+        } <span class="hljs-keyword">catch</span> (e: Exception) {
+            <span class="hljs-string">&quot;unknown&quot;</span>
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getCustomData</span><span class="hljs-params">()</span></span>: Map&lt;String, Any&gt; {
+        <span class="hljs-keyword">return</span> mapOf(
+            <span class="hljs-string">&quot;freeMemory&quot;</span> to Runtime.getRuntime().freeMemory(),
+            <span class="hljs-string">&quot;totalMemory&quot;</span> to Runtime.getRuntime().totalMemory(),
+            <span class="hljs-string">&quot;maxMemory&quot;</span> to Runtime.getRuntime().maxMemory()
+        )
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">saveCrashToLocal</span><span class="hljs-params">(crashReport: <span class="hljs-type">Map</span>&lt;<span class="hljs-type">String</span>, Any&gt;)</span></span> {
+        <span class="hljs-comment">// 将崩溃信息保存到本地文件</span>
+        <span class="hljs-comment">// 用于离线上报</span>
+    }
+}
+</code></pre>
+<h3 id="3-ios端实现">3. iOS端实现</h3>
+<h4 id="主插件类-kitappmonitorpluginswift">主插件类 (<code>KitAppMonitorPlugin.swift</code>)</h4>
+<pre><code class="language-swift"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">KitAppMonitorPlugin</span>: <span class="hljs-title class_">NSObject</span>, <span class="hljs-title class_">FlutterPlugin</span> {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> performanceMonitor: <span class="hljs-type">PerformanceMonitor</span>?
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> crashHandler: <span class="hljs-type">CrashHandler</span>?
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> behaviorTracker: <span class="hljs-type">BehaviorTracker</span>?
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">register</span>(<span class="hljs-params">with</span> <span class="hljs-params">registrar</span>: <span class="hljs-type">FlutterPluginRegistrar</span>) {
+        <span class="hljs-keyword">let</span> channel <span class="hljs-operator">=</span> <span class="hljs-type">FlutterMethodChannel</span>(name: <span class="hljs-string">&quot;kit_app_monitor&quot;</span>, 
+                                         binaryMessenger: registrar.messenger())
+        <span class="hljs-keyword">let</span> instance <span class="hljs-operator">=</span> <span class="hljs-type">KitAppMonitorPlugin</span>()
+        registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        instance.setupEventChannels(with: registrar.messenger())
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">setupEventChannels</span>(<span class="hljs-params">with</span> <span class="hljs-params">messenger</span>: <span class="hljs-type">FlutterBinaryMessenger</span>) {
+        <span class="hljs-keyword">let</span> performanceChannel <span class="hljs-operator">=</span> <span class="hljs-type">FlutterEventChannel</span>(name: <span class="hljs-string">&quot;kit_app_monitor/performance&quot;</span>, 
+                                                   binaryMessenger: messenger)
+        <span class="hljs-keyword">let</span> crashChannel <span class="hljs-operator">=</span> <span class="hljs-type">FlutterEventChannel</span>(name: <span class="hljs-string">&quot;kit_app_monitor/crash&quot;</span>, 
+                                             binaryMessenger: messenger)
+        <span class="hljs-keyword">let</span> behaviorChannel <span class="hljs-operator">=</span> <span class="hljs-type">FlutterEventChannel</span>(name: <span class="hljs-string">&quot;kit_app_monitor/behavior&quot;</span>, 
+                                                binaryMessenger: messenger)
+        
+        performanceMonitor <span class="hljs-operator">=</span> <span class="hljs-type">PerformanceMonitor</span>()
+        crashHandler <span class="hljs-operator">=</span> <span class="hljs-type">CrashHandler</span>()
+        behaviorTracker <span class="hljs-operator">=</span> <span class="hljs-type">BehaviorTracker</span>()
+        
+        performanceChannel.setStreamHandler(performanceMonitor)
+        crashChannel.setStreamHandler(crashHandler)
+        behaviorChannel.setStreamHandler(behaviorTracker)
+    }
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-keyword">_</span> <span class="hljs-params">call</span>: <span class="hljs-type">FlutterMethodCall</span>, <span class="hljs-params">result</span>: <span class="hljs-keyword">@escaping</span> <span class="hljs-type">FlutterResult</span>) {
+        <span class="hljs-keyword">switch</span> call.method {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;initialize&quot;</span>:
+            initialize(call: call, result: result)
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;setUserId&quot;</span>:
+            setUserId(call: call, result: result)
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;recordEvent&quot;</span>:
+            recordEvent(call: call, result: result)
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;recordPageView&quot;</span>:
+            recordPageView(call: call, result: result)
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&quot;flush&quot;</span>:
+            flush(result: result)
+        <span class="hljs-keyword">default</span>:
+            result(<span class="hljs-type">FlutterMethodNotImplemented</span>)
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">initialize</span>(<span class="hljs-params">call</span>: <span class="hljs-type">FlutterMethodCall</span>, <span class="hljs-params">result</span>: <span class="hljs-keyword">@escaping</span> <span class="hljs-type">FlutterResult</span>) {
+        <span class="hljs-keyword">guard</span> <span class="hljs-keyword">let</span> args <span class="hljs-operator">=</span> call.arguments <span class="hljs-keyword">as?</span> [<span class="hljs-type">String</span>: <span class="hljs-keyword">Any</span>] <span class="hljs-keyword">else</span> {
+            result(<span class="hljs-type">FlutterError</span>(code: <span class="hljs-string">&quot;INVALID_ARGUMENTS&quot;</span>, 
+                               message: <span class="hljs-string">&quot;Invalid arguments&quot;</span>, 
+                               details: <span class="hljs-literal">nil</span>))
+            <span class="hljs-keyword">return</span>
+        }
+        
+        <span class="hljs-keyword">let</span> enablePerformanceMonitoring <span class="hljs-operator">=</span> args[<span class="hljs-string">&quot;enablePerformanceMonitoring&quot;</span>] <span class="hljs-keyword">as?</span> <span class="hljs-type">Bool</span> <span class="hljs-operator">??</span> <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">let</span> enableCrashReporting <span class="hljs-operator">=</span> args[<span class="hljs-string">&quot;enableCrashReporting&quot;</span>] <span class="hljs-keyword">as?</span> <span class="hljs-type">Bool</span> <span class="hljs-operator">??</span> <span class="hljs-literal">true</span>
+        <span class="hljs-keyword">let</span> enableBehaviorTracking <span class="hljs-operator">=</span> args[<span class="hljs-string">&quot;enableBehaviorTracking&quot;</span>] <span class="hljs-keyword">as?</span> <span class="hljs-type">Bool</span> <span class="hljs-operator">??</span> <span class="hljs-literal">true</span>
+        
+        <span class="hljs-keyword">if</span> enablePerformanceMonitoring {
+            performanceMonitor<span class="hljs-operator">?</span>.startMonitoring()
+        }
+        
+        <span class="hljs-keyword">if</span> enableCrashReporting {
+            crashHandler<span class="hljs-operator">?</span>.setupCrashHandler()
+        }
+        
+        <span class="hljs-keyword">if</span> enableBehaviorTracking {
+            behaviorTracker<span class="hljs-operator">?</span>.startTracking()
+        }
+        
+        result(<span class="hljs-literal">true</span>)
+    }
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="基础使用">基础使用</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MonitorExample</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  _MonitorExampleState createState() =&gt; _MonitorExampleState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_MonitorExampleState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">MonitorExample</span>&gt; </span>{
+  StreamSubscription&lt;PerformanceData&gt;? _performanceSubscription;
+  StreamSubscription&lt;CrashReport&gt;? _crashSubscription;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _initializeMonitoring();
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; _initializeMonitoring() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 初始化监控</span>
+    <span class="hljs-keyword">await</span> KitAppMonitor.initialize(
+      enablePerformanceMonitoring: <span class="hljs-keyword">true</span>,
+      enableCrashReporting: <span class="hljs-keyword">true</span>,
+      enableBehaviorTracking: <span class="hljs-keyword">true</span>,
+      userId: <span class="hljs-string">&#x27;user_123&#x27;</span>,
+      customProperties: {
+        <span class="hljs-string">&#x27;app_version&#x27;</span>: <span class="hljs-string">&#x27;1.0.0&#x27;</span>,
+        <span class="hljs-string">&#x27;build_number&#x27;</span>: <span class="hljs-string">&#x27;100&#x27;</span>,
+      },
+    );
+    
+    <span class="hljs-comment">// 监听性能数据</span>
+    _performanceSubscription = KitAppMonitor.performanceStream.listen((data) {
+      <span class="hljs-keyword">if</span> (data.isHighCpuUsage || data.isHighMemoryUsage || data.isLowFps) {
+        _handlePerformanceIssue(data);
+      }
+    });
+    
+    <span class="hljs-comment">// 监听崩溃报告</span>
+    _crashSubscription = KitAppMonitor.crashStream.listen((crash) {
+      _handleCrashReport(crash);
+    });
+    
+    <span class="hljs-comment">// 记录应用启动事件</span>
+    <span class="hljs-keyword">await</span> KitAppMonitor.recordEvent(<span class="hljs-string">&#x27;app_start&#x27;</span>, {
+      <span class="hljs-string">&#x27;launch_time&#x27;</span>: <span class="hljs-built_in">DateTime</span>.now().millisecondsSinceEpoch,
+      <span class="hljs-string">&#x27;is_cold_start&#x27;</span>: <span class="hljs-keyword">true</span>,
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> _handlePerformanceIssue(PerformanceData data) {
+    <span class="hljs-comment">// 处理性能问题</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Performance issue detected: &#x27;</span>
+          <span class="hljs-string">&#x27;CPU: <span class="hljs-subst">${data.cpuUsage}</span>%, &#x27;</span>
+          <span class="hljs-string">&#x27;Memory: <span class="hljs-subst">${data.memoryUsagePercentage}</span>%, &#x27;</span>
+          <span class="hljs-string">&#x27;FPS: <span class="hljs-subst">${data.fps}</span>&#x27;</span>);
+    
+    <span class="hljs-comment">// 记录性能问题事件</span>
+    KitAppMonitor.recordEvent(<span class="hljs-string">&#x27;performance_issue&#x27;</span>, {
+      <span class="hljs-string">&#x27;cpu_usage&#x27;</span>: data.cpuUsage,
+      <span class="hljs-string">&#x27;memory_usage&#x27;</span>: data.memoryUsagePercentage,
+      <span class="hljs-string">&#x27;fps&#x27;</span>: data.fps,
+      <span class="hljs-string">&#x27;page_name&#x27;</span>: data.pageName,
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> _handleCrashReport(CrashReport crash) {
+    <span class="hljs-comment">// 处理崩溃报告</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Crash detected: <span class="hljs-subst">${crash.type}</span> - <span class="hljs-subst">${crash.message}</span>&#x27;</span>);
+    
+    <span class="hljs-comment">// 可以在这里实现自定义的崩溃处理逻辑</span>
+    <span class="hljs-comment">// 例如发送到自定义的崩溃收集服务</span>
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Scaffold(
+      appBar: AppBar(title: Text(<span class="hljs-string">&#x27;Monitor Example&#x27;</span>)),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () =&gt; _simulateHighCpuUsage(),
+            child: Text(<span class="hljs-string">&#x27;Simulate High CPU&#x27;</span>),
+          ),
+          ElevatedButton(
+            onPressed: () =&gt; _simulateMemoryLeak(),
+            child: Text(<span class="hljs-string">&#x27;Simulate Memory Issue&#x27;</span>),
+          ),
+          ElevatedButton(
+            onPressed: () =&gt; _simulateCrash(),
+            child: Text(<span class="hljs-string">&#x27;Simulate Crash&#x27;</span>),
+          ),
+          ElevatedButton(
+            onPressed: () =&gt; _recordCustomEvent(),
+            child: Text(<span class="hljs-string">&#x27;Record Custom Event&#x27;</span>),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  <span class="hljs-keyword">void</span> _simulateHighCpuUsage() {
+    <span class="hljs-comment">// 模拟高CPU使用</span>
+    Timer.periodic(<span class="hljs-built_in">Duration</span>(milliseconds: <span class="hljs-number">1</span>), (timer) {
+      <span class="hljs-comment">// 执行密集计算</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000000</span>; i++) {
+        math.sqrt(i);
+      }
+      
+      <span class="hljs-keyword">if</span> (timer.tick &gt; <span class="hljs-number">1000</span>) {
+        timer.cancel();
+      }
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> _simulateMemoryLeak() {
+    <span class="hljs-comment">// 模拟内存泄漏</span>
+    <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">int</span>&gt;&gt; memoryHog = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000</span>; i++) {
+      memoryHog.add(<span class="hljs-built_in">List</span>.filled(<span class="hljs-number">1000000</span>, i));
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _simulateCrash() {
+    <span class="hljs-comment">// 模拟崩溃</span>
+    <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;Simulated crash for testing&#x27;</span>);
+  }
+  
+  <span class="hljs-keyword">void</span> _recordCustomEvent() {
+    KitAppMonitor.recordEvent(<span class="hljs-string">&#x27;button_clicked&#x27;</span>, {
+      <span class="hljs-string">&#x27;button_name&#x27;</span>: <span class="hljs-string">&#x27;custom_event_button&#x27;</span>,
+      <span class="hljs-string">&#x27;timestamp&#x27;</span>: <span class="hljs-built_in">DateTime</span>.now().millisecondsSinceEpoch,
+      <span class="hljs-string">&#x27;user_action&#x27;</span>: <span class="hljs-string">&#x27;tap&#x27;</span>,
+    });
+  }
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> dispose() {
+    _performanceSubscription?.cancel();
+    _crashSubscription?.cancel();
+    <span class="hljs-keyword">super</span>.dispose();
+  }
+}
+</code></pre>
+<h3 id="高级监控配置">高级监控配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AdvancedMonitorConfig</span> </span>{
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; setupAdvancedMonitoring() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 初始化高级监控配置</span>
+    <span class="hljs-keyword">await</span> KitAppMonitor.initialize(
+      enablePerformanceMonitoring: <span class="hljs-keyword">true</span>,
+      enableCrashReporting: <span class="hljs-keyword">true</span>,
+      enableBehaviorTracking: <span class="hljs-keyword">true</span>,
+      userId: <span class="hljs-keyword">await</span> _getUserId(),
+      customProperties: <span class="hljs-keyword">await</span> _getCustomProperties(),
+    );
+    
+    <span class="hljs-comment">// 设置性能监控阈值</span>
+    _setupPerformanceThresholds();
+    
+    <span class="hljs-comment">// 设置自动页面跟踪</span>
+    _setupAutomaticPageTracking();
+    
+    <span class="hljs-comment">// 设置网络监控</span>
+    _setupNetworkMonitoring();
+  }
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> _setupPerformanceThresholds() {
+    KitAppMonitor.performanceStream.listen((data) {
+      <span class="hljs-comment">// CPU使用率过高</span>
+      <span class="hljs-keyword">if</span> (data.cpuUsage &gt; <span class="hljs-number">80</span>) {
+        KitAppMonitor.recordEvent(<span class="hljs-string">&#x27;high_cpu_usage&#x27;</span>, {
+          <span class="hljs-string">&#x27;cpu_usage&#x27;</span>: data.cpuUsage,
+          <span class="hljs-string">&#x27;page_name&#x27;</span>: data.pageName,
+          <span class="hljs-string">&#x27;severity&#x27;</span>: <span class="hljs-string">&#x27;warning&#x27;</span>,
+        });
+      }
+      
+      <span class="hljs-comment">// 内存使用率过高</span>
+      <span class="hljs-keyword">if</span> (data.memoryUsagePercentage &gt; <span class="hljs-number">90</span>) {
+        KitAppMonitor.recordEvent(<span class="hljs-string">&#x27;high_memory_usage&#x27;</span>, {
+          <span class="hljs-string">&#x27;memory_usage&#x27;</span>: data.memoryUsagePercentage,
+          <span class="hljs-string">&#x27;total_memory&#x27;</span>: data.totalMemory,
+          <span class="hljs-string">&#x27;severity&#x27;</span>: <span class="hljs-string">&#x27;critical&#x27;</span>,
+        });
+      }
+      
+      <span class="hljs-comment">// FPS过低</span>
+      <span class="hljs-keyword">if</span> (data.fps &lt; <span class="hljs-number">30</span>) {
+        KitAppMonitor.recordEvent(<span class="hljs-string">&#x27;low_fps&#x27;</span>, {
+          <span class="hljs-string">&#x27;fps&#x27;</span>: data.fps,
+          <span class="hljs-string">&#x27;page_name&#x27;</span>: data.pageName,
+          <span class="hljs-string">&#x27;severity&#x27;</span>: <span class="hljs-string">&#x27;warning&#x27;</span>,
+        });
+      }
+    });
+  }
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> _setupAutomaticPageTracking() {
+    <span class="hljs-comment">// 可以与路由系统集成，自动记录页面访问</span>
+    <span class="hljs-comment">// 这里是一个简化的示例</span>
+    NavigatorObserver observer = RouteObserver&lt;PageRoute&lt;<span class="hljs-built_in">dynamic</span>&gt;&gt;();
+    <span class="hljs-comment">// 实现路由监听，自动调用 KitAppMonitor.recordPageView</span>
+  }
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> _setupNetworkMonitoring() {
+    <span class="hljs-comment">// 可以与网络请求库集成，自动记录网络请求</span>
+    <span class="hljs-comment">// 例如与 Dio 集成</span>
+    <span class="hljs-comment">// dio.interceptors.add(MonitoringInterceptor());</span>
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">String</span>&gt; _getUserId() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 获取用户ID的逻辑</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;user_123&#x27;</span>;
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt; _getCustomProperties() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-string">&#x27;app_version&#x27;</span>: <span class="hljs-keyword">await</span> _getAppVersion(),
+      <span class="hljs-string">&#x27;device_model&#x27;</span>: <span class="hljs-keyword">await</span> _getDeviceModel(),
+      <span class="hljs-string">&#x27;os_version&#x27;</span>: <span class="hljs-keyword">await</span> _getOSVersion(),
+      <span class="hljs-string">&#x27;network_type&#x27;</span>: <span class="hljs-keyword">await</span> _getNetworkType(),
+    };
+  }
+}
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="数据采集优化">数据采集优化</h3>
+<ul>
+<li><strong>采样策略</strong>: 根据性能影响调整数据采集频率</li>
+<li><strong>批量上报</strong>: 批量发送监控数据减少网络请求</li>
+<li><strong>本地缓存</strong>: 离线时缓存数据，联网后上报</li>
+<li><strong>数据压缩</strong>: 压缩监控数据减少传输量</li>
+</ul>
+<h3 id="内存管理">内存管理</h3>
+<ul>
+<li><strong>及时清理</strong>: 及时清理监控数据和临时对象</li>
+<li><strong>内存监控</strong>: 监控自身内存使用避免影响应用</li>
+<li><strong>弱引用</strong>: 使用弱引用避免内存泄漏</li>
+<li><strong>资源复用</strong>: 复用监控相关对象</li>
+</ul>
+<h2 id="安全和隐私">安全和隐私</h2>
+<h3 id="数据安全">数据安全</h3>
+<ul>
+<li><strong>敏感信息过滤</strong>: 过滤用户敏感信息</li>
+<li><strong>数据加密</strong>: 加密存储和传输监控数据</li>
+<li><strong>访问控制</strong>: 严格的数据访问权限控制</li>
+<li><strong>数据脱敏</strong>: 对敏感数据进行脱敏处理</li>
+</ul>
+<h3 id="隐私合规">隐私合规</h3>
+<ul>
+<li><strong>用户同意</strong>: 明确的数据收集用户同意</li>
+<li><strong>数据最小化</strong>: 仅收集必要的监控数据</li>
+<li><strong>透明度</strong>: 清晰的隐私政策说明</li>
+<li><strong>用户控制</strong>: 用户可控制监控功能开关</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>kit_app_monitor</code> 模块作为 OneApp 的应用监控工具包，提供了全面的应用性能监控、异常检测和用户行为分析能力。通过原生平台的深度集成，实现了高效、准确的应用监控功能。模块具有良好的性能优化和隐私保护机制，能够帮助开发团队及时发现和解决应用问题，提升用户体验。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

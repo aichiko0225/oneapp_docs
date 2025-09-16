@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>App Configuration - &#x5e94;&#x7528;&#x914d;&#x7f6e;&#x7ba1;&#x7406;&#x6a21;&#x5757;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="app-configuration---应用配置管理模块">App Configuration - 应用配置管理模块</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>app_configuration</code> 是 OneApp 的应用配置管理模块，提供了完整的配置管理解决方案。该模块支持远程配置下发、本地配置缓存、配置热更新和多环境配置切换等功能，为应用的配置管理提供了统一的接口和可靠的实现。</p>
+<h2 id="核心功能">核心功能</h2>
+<h3 id="1-远程配置管理">1. 远程配置管理</h3>
+<ul>
+<li><strong>配置下发</strong>：从服务端动态下发配置信息</li>
+<li><strong>版本控制</strong>：配置版本管理和回滚机制</li>
+<li><strong>灰度发布</strong>：支持配置的灰度发布策略</li>
+<li><strong>实时同步</strong>：配置变更的实时同步</li>
+</ul>
+<h3 id="2-本地配置缓存">2. 本地配置缓存</h3>
+<ul>
+<li><strong>离线支持</strong>：配置本地缓存确保离线可用</li>
+<li><strong>持久化存储</strong>：配置数据持久化存储</li>
+<li><strong>缓存策略</strong>：智能缓存策略优化性能</li>
+<li><strong>数据压缩</strong>：配置数据压缩存储</li>
+</ul>
+<h3 id="3-配置热更新">3. 配置热更新</h3>
+<ul>
+<li><strong>实时更新</strong>：配置变更无需重启应用</li>
+<li><strong>增量更新</strong>：只更新变化的配置项</li>
+<li><strong>更新通知</strong>：配置更新事件通知机制</li>
+<li><strong>回滚机制</strong>：配置更新失败自动回滚</li>
+</ul>
+<h3 id="4-环境配置切换">4. 环境配置切换</h3>
+<ul>
+<li><strong>多环境支持</strong>：开发、测试、生产环境配置</li>
+<li><strong>环境隔离</strong>：不同环境配置完全隔离</li>
+<li><strong>动态切换</strong>：运行时动态切换配置环境</li>
+<li><strong>配置验证</strong>：配置有效性验证机制</li>
+</ul>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="架构设计">架构设计</h3>
+<pre><code>┌─────────────────────────────────────┐
+│            应用层                    │
+│         (UI Components)             │
+├─────────────────────────────────────┤
+│       App Configuration             │
+│  ┌──────────┬──────────┬──────────┐ │
+│  │ 配置管理 │ 缓存服务 │ 更新服务 │ │
+│  ├──────────┼──────────┼──────────┤ │
+│  │ 环境切换 │ 数据同步 │ 事件通知 │ │
+│  └──────────┴──────────┴──────────┘ │
+├─────────────────────────────────────┤
+│         CLR Configuration           │
+│           (配置服务SDK)              │
+├─────────────────────────────────────┤
+│           网络服务层                 │
+│      (HTTP/WebSocket/GraphQL)       │
+└─────────────────────────────────────┘
+</code></pre>
+<h3 id="核心组件">核心组件</h3>
+<h4 id="1-配置管理器-configurationmanager">1. 配置管理器 (ConfigurationManager)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigurationManager</span> </span>{
+  <span class="hljs-comment">// 初始化配置管理器</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; initialize(ConfigurationConfig config);
+  
+  <span class="hljs-comment">// 获取配置值</span>
+  T? getValue&lt;T&gt;(<span class="hljs-built_in">String</span> key, {T? defaultValue});
+  
+  <span class="hljs-comment">// 设置配置值</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; setValue&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value);
+  
+  <span class="hljs-comment">// 删除配置</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; removeValue(<span class="hljs-built_in">String</span> key);
+  
+  <span class="hljs-comment">// 获取所有配置</span>
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; getAllConfigurations();
+}
+</code></pre>
+<h4 id="2-远程配置服务-remoteconfigservice">2. 远程配置服务 (RemoteConfigService)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RemoteConfigService</span> </span>{
+  <span class="hljs-comment">// 从服务端获取配置</span>
+  Future&lt;ConfigurationResult&gt; fetchRemoteConfig();
+  
+  <span class="hljs-comment">// 检查配置更新</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; checkForUpdates();
+  
+  <span class="hljs-comment">// 应用远程配置</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; applyRemoteConfig(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; config);
+  
+  <span class="hljs-comment">// 获取配置版本信息</span>
+  Future&lt;ConfigVersion&gt; getConfigVersion();
+}
+</code></pre>
+<h4 id="3-本地缓存管理器-localcachemanager">3. 本地缓存管理器 (LocalCacheManager)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LocalCacheManager</span> </span>{
+  <span class="hljs-comment">// 缓存配置到本地</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; cacheConfiguration(<span class="hljs-built_in">String</span> key, <span class="hljs-built_in">dynamic</span> value);
+  
+  <span class="hljs-comment">// 从缓存获取配置</span>
+  T? getCachedConfiguration&lt;T&gt;(<span class="hljs-built_in">String</span> key);
+  
+  <span class="hljs-comment">// 清除缓存</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; clearCache([<span class="hljs-built_in">String?</span> key]);
+  
+  <span class="hljs-comment">// 获取缓存大小</span>
+  Future&lt;<span class="hljs-built_in">int</span>&gt; getCacheSize();
+  
+  <span class="hljs-comment">// 压缩缓存数据</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; compressCache();
+}
+</code></pre>
+<h4 id="4-环境管理器-environmentmanager">4. 环境管理器 (EnvironmentManager)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EnvironmentManager</span> </span>{
+  <span class="hljs-comment">// 设置当前环境</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; setCurrentEnvironment(Environment environment);
+  
+  <span class="hljs-comment">// 获取当前环境</span>
+  Environment getCurrentEnvironment();
+  
+  <span class="hljs-comment">// 获取环境配置</span>
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; getEnvironmentConfig(Environment environment);
+  
+  <span class="hljs-comment">// 验证环境配置</span>
+  Future&lt;<span class="hljs-built_in">bool</span>&gt; validateEnvironmentConfig(Environment environment);
+}
+</code></pre>
+<h2 id="数据模型">数据模型</h2>
+<h3 id="配置模型">配置模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Configuration</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> key;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">dynamic</span> value;
+  <span class="hljs-keyword">final</span> ConfigurationType type;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> createdAt;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> updatedAt;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> version;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; metadata;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> isRemote;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> isEncrypted;
+}
+
+<span class="hljs-keyword">enum</span> ConfigurationType {
+  string,
+  integer,
+  <span class="hljs-built_in">double</span>,
+  boolean,
+  json,
+  list
+}
+</code></pre>
+<h3 id="环境模型">环境模型</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">enum</span> Environment {
+  development,
+  testing,
+  staging,
+  production
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EnvironmentConfig</span> </span>{
+  <span class="hljs-keyword">final</span> Environment environment;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> baseUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> apiKey;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">String</span>&gt; headers;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> timeout;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableLogging;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; features;
+}
+</code></pre>
+<h3 id="配置版本模型">配置版本模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigVersion</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> version;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> publishTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> description;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; changedKeys;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; changeset;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> isForced;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> expireTime;
+}
+</code></pre>
+<h2 id="api-接口">API 接口</h2>
+<h3 id="配置管理接口">配置管理接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigurationService</span> </span>{
+  <span class="hljs-comment">// 初始化配置服务</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; initialize(InitConfigRequest request);
+  
+  <span class="hljs-comment">// 获取配置</span>
+  Future&lt;ApiResponse&lt;ConfigurationResult&gt;&gt; getConfiguration(GetConfigRequest request);
+  
+  <span class="hljs-comment">// 批量获取配置</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt;&gt; getBatchConfiguration(BatchConfigRequest request);
+  
+  <span class="hljs-comment">// 更新配置</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; updateConfiguration(UpdateConfigRequest request);
+}
+</code></pre>
+<h3 id="远程配置接口">远程配置接口</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RemoteConfigurationService</span> </span>{
+  <span class="hljs-comment">// 获取远程配置</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt;&gt; fetchRemoteConfiguration(FetchConfigRequest request);
+  
+  <span class="hljs-comment">// 检查配置更新</span>
+  Future&lt;ApiResponse&lt;UpdateCheckResult&gt;&gt; checkConfigurationUpdate(CheckUpdateRequest request);
+  
+  <span class="hljs-comment">// 上报配置使用情况</span>
+  Future&lt;ApiResponse&lt;<span class="hljs-built_in">bool</span>&gt;&gt; reportConfigurationUsage(UsageReportRequest request);
+}
+</code></pre>
+<h2 id="配置管理">配置管理</h2>
+<h3 id="默认配置">默认配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DefaultConfiguration</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; defaultConfig = {
+    <span class="hljs-string">&#x27;app&#x27;</span>: {
+      <span class="hljs-string">&#x27;name&#x27;</span>: <span class="hljs-string">&#x27;OneApp&#x27;</span>,
+      <span class="hljs-string">&#x27;version&#x27;</span>: <span class="hljs-string">&#x27;1.0.0&#x27;</span>,
+      <span class="hljs-string">&#x27;debug&#x27;</span>: <span class="hljs-keyword">false</span>,
+    },
+    <span class="hljs-string">&#x27;network&#x27;</span>: {
+      <span class="hljs-string">&#x27;timeout&#x27;</span>: <span class="hljs-number">30000</span>,
+      <span class="hljs-string">&#x27;retryCount&#x27;</span>: <span class="hljs-number">3</span>,
+      <span class="hljs-string">&#x27;enableCache&#x27;</span>: <span class="hljs-keyword">true</span>,
+    },
+    <span class="hljs-string">&#x27;ui&#x27;</span>: {
+      <span class="hljs-string">&#x27;theme&#x27;</span>: <span class="hljs-string">&#x27;auto&#x27;</span>,
+      <span class="hljs-string">&#x27;language&#x27;</span>: <span class="hljs-string">&#x27;auto&#x27;</span>,
+      <span class="hljs-string">&#x27;animations&#x27;</span>: <span class="hljs-keyword">true</span>,
+    },
+    <span class="hljs-string">&#x27;features&#x27;</span>: {
+      <span class="hljs-string">&#x27;enableAnalytics&#x27;</span>: <span class="hljs-keyword">true</span>,
+      <span class="hljs-string">&#x27;enablePush&#x27;</span>: <span class="hljs-keyword">true</span>,
+      <span class="hljs-string">&#x27;enableLocation&#x27;</span>: <span class="hljs-keyword">false</span>,
+    },
+  };
+}
+</code></pre>
+<h3 id="环境配置">环境配置</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EnvironmentConfiguration</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">Map</span>&lt;Environment, EnvironmentConfig&gt; environments = {
+    Environment.development: EnvironmentConfig(
+      environment: Environment.development,
+      baseUrl: <span class="hljs-string">&#x27;https://dev-api.oneapp.com&#x27;</span>,
+      apiKey: <span class="hljs-string">&#x27;dev_api_key&#x27;</span>,
+      enableLogging: <span class="hljs-keyword">true</span>,
+    ),
+    Environment.production: EnvironmentConfig(
+      environment: Environment.production,
+      baseUrl: <span class="hljs-string">&#x27;https://api.oneapp.com&#x27;</span>,
+      apiKey: <span class="hljs-string">&#x27;prod_api_key&#x27;</span>,
+      enableLogging: <span class="hljs-keyword">false</span>,
+    ),
+  };
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="基本配置管理">基本配置管理</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化配置管理器</span>
+<span class="hljs-keyword">final</span> configManager = ConfigurationManager.instance;
+<span class="hljs-keyword">await</span> configManager.initialize(ConfigurationConfig.defaultConfig);
+
+<span class="hljs-comment">// 获取配置值</span>
+<span class="hljs-keyword">final</span> appName = configManager.getValue&lt;<span class="hljs-built_in">String</span>&gt;(<span class="hljs-string">&#x27;app.name&#x27;</span>, defaultValue: <span class="hljs-string">&#x27;OneApp&#x27;</span>);
+<span class="hljs-keyword">final</span> timeout = configManager.getValue&lt;<span class="hljs-built_in">int</span>&gt;(<span class="hljs-string">&#x27;network.timeout&#x27;</span>, defaultValue: <span class="hljs-number">30000</span>);
+<span class="hljs-keyword">final</span> enableAnalytics = configManager.getValue&lt;<span class="hljs-built_in">bool</span>&gt;(<span class="hljs-string">&#x27;features.enableAnalytics&#x27;</span>, defaultValue: <span class="hljs-keyword">true</span>);
+
+<span class="hljs-comment">// 设置配置值</span>
+<span class="hljs-keyword">await</span> configManager.setValue(<span class="hljs-string">&#x27;ui.theme&#x27;</span>, <span class="hljs-string">&#x27;dark&#x27;</span>);
+<span class="hljs-keyword">await</span> configManager.setValue(<span class="hljs-string">&#x27;features.enablePush&#x27;</span>, <span class="hljs-keyword">false</span>);
+
+<span class="hljs-comment">// 监听配置变化</span>
+configManager.onConfigurationChanged.listen((change) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;配置变更: <span class="hljs-subst">${change.key}</span> = <span class="hljs-subst">${change.newValue}</span>&#x27;</span>);
+});
+</code></pre>
+<h3 id="远程配置更新">远程配置更新</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 检查远程配置更新</span>
+<span class="hljs-keyword">final</span> remoteConfigService = RemoteConfigService.instance;
+<span class="hljs-keyword">final</span> hasUpdate = <span class="hljs-keyword">await</span> remoteConfigService.checkForUpdates();
+
+<span class="hljs-keyword">if</span> (hasUpdate) {
+  <span class="hljs-comment">// 获取远程配置</span>
+  <span class="hljs-keyword">final</span> remoteConfig = <span class="hljs-keyword">await</span> remoteConfigService.fetchRemoteConfig();
+  
+  <span class="hljs-keyword">if</span> (remoteConfig.isSuccess) {
+    <span class="hljs-comment">// 应用远程配置</span>
+    <span class="hljs-keyword">await</span> remoteConfigService.applyRemoteConfig(remoteConfig.data);
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;远程配置已更新&#x27;</span>);
+  }
+}
+
+<span class="hljs-comment">// 监听远程配置更新</span>
+remoteConfigService.onRemoteConfigUpdated.listen((config) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;收到远程配置更新&#x27;</span>);
+  <span class="hljs-comment">// 处理配置更新逻辑</span>
+});
+</code></pre>
+<h3 id="环境配置切换">环境配置切换</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 获取当前环境</span>
+<span class="hljs-keyword">final</span> currentEnv = EnvironmentManager.instance.getCurrentEnvironment();
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;当前环境: <span class="hljs-subst">$currentEnv</span>&#x27;</span>);
+
+<span class="hljs-comment">// 切换到测试环境</span>
+<span class="hljs-keyword">await</span> EnvironmentManager.instance.setCurrentEnvironment(Environment.testing);
+
+<span class="hljs-comment">// 获取环境配置</span>
+<span class="hljs-keyword">final</span> envConfig = EnvironmentManager.instance.getEnvironmentConfig(Environment.testing);
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;测试环境配置: <span class="hljs-subst">$envConfig</span>&#x27;</span>);
+
+<span class="hljs-comment">// 验证环境配置</span>
+<span class="hljs-keyword">final</span> isValid = <span class="hljs-keyword">await</span> EnvironmentManager.instance.validateEnvironmentConfig(Environment.testing);
+<span class="hljs-keyword">if</span> (!isValid) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;环境配置验证失败&#x27;</span>);
+}
+</code></pre>
+<h3 id="配置缓存管理">配置缓存管理</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 缓存配置</span>
+<span class="hljs-keyword">final</span> cacheManager = LocalCacheManager.instance;
+<span class="hljs-keyword">await</span> cacheManager.cacheConfiguration(<span class="hljs-string">&#x27;user_preferences&#x27;</span>, userPreferences);
+
+<span class="hljs-comment">// 获取缓存配置</span>
+<span class="hljs-keyword">final</span> cachedPreferences = cacheManager.getCachedConfiguration&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt;(<span class="hljs-string">&#x27;user_preferences&#x27;</span>);
+
+<span class="hljs-comment">// 获取缓存大小</span>
+<span class="hljs-keyword">final</span> cacheSize = <span class="hljs-keyword">await</span> cacheManager.getCacheSize();
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;缓存大小: <span class="hljs-subst">${cacheSize}</span>KB&#x27;</span>);
+
+<span class="hljs-comment">// 清理缓存</span>
+<span class="hljs-keyword">if</span> (cacheSize &gt; <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>) { <span class="hljs-comment">// 超过1MB</span>
+  <span class="hljs-keyword">await</span> cacheManager.compressCache();
+}
+</code></pre>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="单元测试">单元测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;ConfigurationManager Tests&#x27;</span>, () {
+  test(<span class="hljs-string">&#x27;should get and set configuration values&#x27;</span>, () <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> configManager = ConfigurationManager();
+    <span class="hljs-keyword">await</span> configManager.initialize(ConfigurationConfig.defaultConfig);
+    
+    <span class="hljs-comment">// When</span>
+    <span class="hljs-keyword">await</span> configManager.setValue(<span class="hljs-string">&#x27;test.key&#x27;</span>, <span class="hljs-string">&#x27;test_value&#x27;</span>);
+    <span class="hljs-keyword">final</span> value = configManager.getValue&lt;<span class="hljs-built_in">String</span>&gt;(<span class="hljs-string">&#x27;test.key&#x27;</span>);
+    
+    <span class="hljs-comment">// Then</span>
+    expect(value, <span class="hljs-string">&#x27;test_value&#x27;</span>);
+  });
+  
+  test(<span class="hljs-string">&#x27;should return default value when key not found&#x27;</span>, () {
+    <span class="hljs-comment">// Given</span>
+    <span class="hljs-keyword">final</span> configManager = ConfigurationManager();
+    
+    <span class="hljs-comment">// When</span>
+    <span class="hljs-keyword">final</span> value = configManager.getValue&lt;<span class="hljs-built_in">String</span>&gt;(<span class="hljs-string">&#x27;nonexistent.key&#x27;</span>, defaultValue: <span class="hljs-string">&#x27;default&#x27;</span>);
+    
+    <span class="hljs-comment">// Then</span>
+    expect(value, <span class="hljs-string">&#x27;default&#x27;</span>);
+  });
+});
+</code></pre>
+<h3 id="集成测试">集成测试</h3>
+<pre><code class="language-dart">group(<span class="hljs-string">&#x27;Configuration Integration Tests&#x27;</span>, () {
+  testWidgets(<span class="hljs-string">&#x27;configuration update flow&#x27;</span>, (tester) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 1. 初始化配置</span>
+    <span class="hljs-keyword">await</span> ConfigurationManager.instance.initialize(ConfigurationConfig.defaultConfig);
+    
+    <span class="hljs-comment">// 2. 模拟远程配置更新</span>
+    <span class="hljs-keyword">final</span> mockRemoteConfig = {<span class="hljs-string">&#x27;feature.newFeature&#x27;</span>: <span class="hljs-keyword">true</span>};
+    <span class="hljs-keyword">await</span> RemoteConfigService.instance.applyRemoteConfig(mockRemoteConfig);
+    
+    <span class="hljs-comment">// 3. 验证配置已更新</span>
+    <span class="hljs-keyword">final</span> newFeatureEnabled = ConfigurationManager.instance.getValue&lt;<span class="hljs-built_in">bool</span>&gt;(<span class="hljs-string">&#x27;feature.newFeature&#x27;</span>);
+    expect(newFeatureEnabled, <span class="hljs-keyword">true</span>);
+  });
+});
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="缓存策略">缓存策略</h3>
+<ul>
+<li><strong>内存缓存</strong>：热点配置内存缓存</li>
+<li><strong>磁盘缓存</strong>：所有配置磁盘持久化</li>
+<li><strong>缓存过期</strong>：配置缓存过期机制</li>
+<li><strong>预加载</strong>：应用启动时预加载关键配置</li>
+</ul>
+<h3 id="网络优化">网络优化</h3>
+<ul>
+<li><strong>增量同步</strong>：只同步变化的配置项</li>
+<li><strong>压缩传输</strong>：配置数据压缩传输</li>
+<li><strong>批量操作</strong>：批量获取和更新配置</li>
+<li><strong>连接池</strong>：网络连接池优化</li>
+</ul>
+<h2 id="安全考虑">安全考虑</h2>
+<h3 id="数据安全">数据安全</h3>
+<ul>
+<li><strong>配置加密</strong>：敏感配置加密存储</li>
+<li><strong>传输加密</strong>：配置传输使用HTTPS</li>
+<li><strong>签名验证</strong>：配置数据签名验证</li>
+<li><strong>访问控制</strong>：配置访问权限控制</li>
+</ul>
+<h3 id="隐私保护">隐私保护</h3>
+<ul>
+<li><strong>数据最小化</strong>：只收集必要的配置数据</li>
+<li><strong>匿名化</strong>：用户相关配置匿名化</li>
+<li><strong>数据清理</strong>：定期清理过期配置</li>
+<li><strong>透明度</strong>：配置使用透明化</li>
+</ul>
+<h2 id="监控和诊断">监控和诊断</h2>
+<h3 id="性能监控">性能监控</h3>
+<ul>
+<li><strong>配置使用统计</strong>：统计配置项使用频率</li>
+<li><strong>更新性能</strong>：监控配置更新性能</li>
+<li><strong>缓存命中率</strong>：监控缓存命中率</li>
+<li><strong>网络性能</strong>：监控配置网络请求性能</li>
+</ul>
+<h3 id="故障诊断">故障诊断</h3>
+<ul>
+<li><strong>配置验证</strong>：配置数据有效性验证</li>
+<li><strong>更新失败恢复</strong>：配置更新失败自动恢复</li>
+<li><strong>异常监控</strong>：配置相关异常监控</li>
+<li><strong>健康检查</strong>：配置服务健康检查</li>
+</ul>
+<h2 id="版本历史">版本历史</h2>
+<h3 id="v0268-当前版本">v0.2.6+8 (当前版本)</h3>
+<ul>
+<li>新增配置热更新功能</li>
+<li>优化缓存性能</li>
+<li>支持配置分组管理</li>
+<li>修复环境切换问题</li>
+</ul>
+<h3 id="v025">v0.2.5</h3>
+<ul>
+<li>支持远程配置灰度发布</li>
+<li>新增配置使用统计</li>
+<li>优化配置同步机制</li>
+<li>改进错误处理</li>
+</ul>
+<h2 id="依赖关系">依赖关系</h2>
+<h3 id="内部依赖">内部依赖</h3>
+<ul>
+<li><code>clr_configuration</code>: 配置服务SDK</li>
+<li><code>basic_storage</code>: 本地存储服务</li>
+<li><code>basic_network</code>: 网络请求服务</li>
+<li><code>basic_error</code>: 错误处理框架</li>
+</ul>
+<h3 id="外部依赖">外部依赖</h3>
+<ul>
+<li><code>shared_preferences</code>: 本地配置存储</li>
+<li><code>dio</code>: HTTP客户端</li>
+<li><code>encrypt</code>: 数据加密</li>
+<li><code>rxdart</code>: 响应式编程</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>app_configuration</code> 作为应用配置管理的核心模块，提供了完整的配置管理解决方案。通过远程配置、本地缓存、热更新和环境切换等功能，为 OneApp 提供了灵活、可靠、高效的配置管理能力，确保应用能够快速响应业务需求变化，同时保证用户体验的一致性和稳定性。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

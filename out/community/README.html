@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>OneApp Community - &#x793e;&#x533a;&#x6a21;&#x5757;&#x6587;&#x6863;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="oneapp-community---社区模块文档">OneApp Community - 社区模块文档</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>oneapp_community</code> 是 OneApp 的用户社区模块，提供车主社交、内容分享、话题讨论、活动参与等功能。该模块集成了多媒体内容展示、用户互动、内容管理等核心功能，为车主用户构建活跃的社区生态。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: oneapp_community</li>
+<li><strong>版本</strong>: 0.0.3</li>
+<li><strong>类型</strong>: Flutter Package</li>
+<li><strong>Dart 版本</strong>: &gt;=3.0.0 &lt;4.0.0</li>
+<li><strong>Flutter 版本</strong>: &gt;=1.17.0</li>
+</ul>
+<h2 id="目录结构">目录结构</h2>
+<pre><code>oneapp_community/
+├── lib/
+│   ├── oneapp_community.dart     # 主导出文件
+│   └── src/                      # 源代码目录
+│       ├── pages/                # 社区页面
+│       ├── widgets/              # 社区组件
+│       ├── models/               # 数据模型
+│       ├── services/             # 服务层
+│       ├── blocs/                # 状态管理
+│       └── utils/                # 工具类
+├── assets/                       # 静态资源
+├── pubspec.yaml                  # 依赖配置
+└── README.md                     # 项目说明
+</code></pre>
+<h2 id="核心功能模块">核心功能模块</h2>
+<h3 id="1-内容发布与管理">1. 内容发布与管理</h3>
+<h4 id="内容发布系统">内容发布系统</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 内容发布服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ContentPublishService</span> </span>{
+  <span class="hljs-keyword">final</span> CommunityRepository _repository;
+  <span class="hljs-keyword">final</span> MediaService _mediaService;
+  <span class="hljs-keyword">final</span> UserService _userService;
+  
+  ContentPublishService(
+    <span class="hljs-keyword">this</span>._repository,
+    <span class="hljs-keyword">this</span>._mediaService,
+    <span class="hljs-keyword">this</span>._userService,
+  );
+  
+  <span class="hljs-comment">// 发布图文内容</span>
+  Future&lt;Result&lt;Post&gt;&gt; publishTextPost({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> content,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; tags,
+    <span class="hljs-built_in">List</span>&lt;File&gt;? images,
+    <span class="hljs-built_in">String?</span> location,
+    PostPrivacy privacy = PostPrivacy.public,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-comment">// 1. 上传图片</span>
+      <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; imageUrls = [];
+      <span class="hljs-keyword">if</span> (images != <span class="hljs-keyword">null</span> &amp;&amp; images.isNotEmpty) {
+        <span class="hljs-keyword">final</span> uploadResults = <span class="hljs-keyword">await</span> Future.wait(
+          images.map((image) =&gt; _mediaService.uploadImage(image)),
+        );
+        imageUrls = uploadResults.where((url) =&gt; url != <span class="hljs-keyword">null</span>).cast&lt;<span class="hljs-built_in">String</span>&gt;().toList();
+      }
+      
+      <span class="hljs-comment">// 2. 创建帖子</span>
+      <span class="hljs-keyword">final</span> post = Post(
+        id: generateId(),
+        authorId: _userService.currentUserId,
+        content: content,
+        images: imageUrls,
+        tags: tags,
+        location: location,
+        privacy: privacy,
+        createdAt: <span class="hljs-built_in">DateTime</span>.now(),
+        updatedAt: <span class="hljs-built_in">DateTime</span>.now(),
+      );
+      
+      <span class="hljs-comment">// 3. 保存到数据库</span>
+      <span class="hljs-keyword">final</span> savedPost = <span class="hljs-keyword">await</span> _repository.createPost(post);
+      
+      <span class="hljs-comment">// 4. 通知相关用户</span>
+      <span class="hljs-keyword">await</span> _notifyFollowers(savedPost);
+      
+      <span class="hljs-keyword">return</span> Right(savedPost);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.publishFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 发布视频内容</span>
+  Future&lt;Result&lt;Post&gt;&gt; publishVideoPost({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> content,
+    <span class="hljs-keyword">required</span> File video,
+    File? thumbnail,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; tags,
+    <span class="hljs-built_in">String?</span> location,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-comment">// 1. 上传视频</span>
+      <span class="hljs-keyword">final</span> videoUrl = <span class="hljs-keyword">await</span> _mediaService.uploadVideo(video);
+      <span class="hljs-keyword">if</span> (videoUrl == <span class="hljs-keyword">null</span>) {
+        <span class="hljs-keyword">return</span> Left(CommunityFailure.videoUploadFailed());
+      }
+      
+      <span class="hljs-comment">// 2. 上传缩略图或生成缩略图</span>
+      <span class="hljs-built_in">String?</span> thumbnailUrl;
+      <span class="hljs-keyword">if</span> (thumbnail != <span class="hljs-keyword">null</span>) {
+        thumbnailUrl = <span class="hljs-keyword">await</span> _mediaService.uploadImage(thumbnail);
+      } <span class="hljs-keyword">else</span> {
+        thumbnailUrl = <span class="hljs-keyword">await</span> _mediaService.generateVideoThumbnail(videoUrl);
+      }
+      
+      <span class="hljs-comment">// 3. 创建视频帖子</span>
+      <span class="hljs-keyword">final</span> post = Post(
+        id: generateId(),
+        authorId: _userService.currentUserId,
+        content: content,
+        videoUrl: videoUrl,
+        thumbnailUrl: thumbnailUrl,
+        tags: tags,
+        location: location,
+        type: PostType.video,
+        createdAt: <span class="hljs-built_in">DateTime</span>.now(),
+        updatedAt: <span class="hljs-built_in">DateTime</span>.now(),
+      );
+      
+      <span class="hljs-keyword">final</span> savedPost = <span class="hljs-keyword">await</span> _repository.createPost(post);
+      <span class="hljs-keyword">return</span> Right(savedPost);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.publishFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 分享车辆状态</span>
+  Future&lt;Result&lt;Post&gt;&gt; shareVehicleStatus({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> vehicleId,
+    <span class="hljs-keyword">required</span> VehicleStatus status,
+    <span class="hljs-built_in">String?</span> content,
+    <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;? tags,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> post = Post(
+        id: generateId(),
+        authorId: _userService.currentUserId,
+        content: content ?? <span class="hljs-string">&#x27;分享我的爱车状态&#x27;</span>,
+        tags: tags ?? [<span class="hljs-string">&#x27;车辆状态&#x27;</span>],
+        vehicleData: VehicleShareData.fromStatus(vehicleId, status),
+        type: PostType.vehicleShare,
+        createdAt: <span class="hljs-built_in">DateTime</span>.now(),
+        updatedAt: <span class="hljs-built_in">DateTime</span>.now(),
+      );
+      
+      <span class="hljs-keyword">final</span> savedPost = <span class="hljs-keyword">await</span> _repository.createPost(post);
+      <span class="hljs-keyword">return</span> Right(savedPost);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.publishFailed(e.toString()));
+    }
+  }
+}
+</code></pre>
+<h3 id="2-内容浏览与互动">2. 内容浏览与互动</h3>
+<h4 id="内容流管理">内容流管理</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 社区内容流服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CommunityFeedService</span> </span>{
+  <span class="hljs-keyword">final</span> CommunityRepository _repository;
+  <span class="hljs-keyword">final</span> UserPreferenceService _preferenceService;
+  <span class="hljs-keyword">final</span> RecommendationEngine _recommendationEngine;
+  
+  CommunityFeedService(
+    <span class="hljs-keyword">this</span>._repository,
+    <span class="hljs-keyword">this</span>._preferenceService,
+    <span class="hljs-keyword">this</span>._recommendationEngine,
+  );
+  
+  <span class="hljs-comment">// 获取个性化内容流</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;Post&gt;&gt;&gt; getPersonalizedFeed({
+    <span class="hljs-built_in">int</span> page = <span class="hljs-number">1</span>,
+    <span class="hljs-built_in">int</span> pageSize = <span class="hljs-number">20</span>,
+    FeedType type = FeedType.recommended,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> userPreferences = <span class="hljs-keyword">await</span> _preferenceService.getUserPreferences();
+      
+      <span class="hljs-built_in">List</span>&lt;Post&gt; posts;
+      <span class="hljs-keyword">switch</span> (type) {
+        <span class="hljs-keyword">case</span> FeedType.recommended:
+          posts = <span class="hljs-keyword">await</span> _getRecommendedPosts(userPreferences, page, pageSize);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FeedType.following:
+          posts = <span class="hljs-keyword">await</span> _getFollowingPosts(page, pageSize);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FeedType.latest:
+          posts = <span class="hljs-keyword">await</span> _getLatestPosts(page, pageSize);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FeedType.trending:
+          posts = <span class="hljs-keyword">await</span> _getTrendingPosts(page, pageSize);
+          <span class="hljs-keyword">break</span>;
+      }
+      
+      <span class="hljs-keyword">return</span> Right(posts);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.feedLoadFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 获取推荐内容</span>
+  Future&lt;<span class="hljs-built_in">List</span>&lt;Post&gt;&gt; _getRecommendedPosts(
+    UserPreferences preferences,
+    <span class="hljs-built_in">int</span> page,
+    <span class="hljs-built_in">int</span> pageSize,
+  ) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> recommendations = <span class="hljs-keyword">await</span> _recommendationEngine.getRecommendations(
+      userId: _userService.currentUserId,
+      preferences: preferences,
+      page: page,
+      pageSize: pageSize,
+    );
+    
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _repository.getPostsByIds(recommendations.postIds);
+  }
+  
+  <span class="hljs-comment">// 搜索内容</span>
+  Future&lt;Result&lt;SearchResult&gt;&gt; searchContent({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> keyword,
+    <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;? tags,
+    PostType? type,
+    <span class="hljs-built_in">String?</span> location,
+    DateRange? dateRange,
+    <span class="hljs-built_in">int</span> page = <span class="hljs-number">1</span>,
+    <span class="hljs-built_in">int</span> pageSize = <span class="hljs-number">20</span>,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> searchParams = SearchParams(
+        keyword: keyword,
+        tags: tags,
+        type: type,
+        location: location,
+        dateRange: dateRange,
+        page: page,
+        pageSize: pageSize,
+      );
+      
+      <span class="hljs-keyword">final</span> searchResult = <span class="hljs-keyword">await</span> _repository.searchPosts(searchParams);
+      <span class="hljs-keyword">return</span> Right(searchResult);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.searchFailed(e.toString()));
+    }
+  }
+}
+
+<span class="hljs-comment">// 内容互动服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ContentInteractionService</span> </span>{
+  <span class="hljs-keyword">final</span> CommunityRepository _repository;
+  <span class="hljs-keyword">final</span> NotificationService _notificationService;
+  
+  ContentInteractionService(<span class="hljs-keyword">this</span>._repository, <span class="hljs-keyword">this</span>._notificationService);
+  
+  <span class="hljs-comment">// 点赞/取消点赞</span>
+  Future&lt;Result&lt;<span class="hljs-keyword">void</span>&gt;&gt; toggleLike(<span class="hljs-built_in">String</span> postId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> isLiked = <span class="hljs-keyword">await</span> _repository.isPostLiked(postId, _userService.currentUserId);
+      
+      <span class="hljs-keyword">if</span> (isLiked) {
+        <span class="hljs-keyword">await</span> _repository.unlikePost(postId, _userService.currentUserId);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">await</span> _repository.likePost(postId, _userService.currentUserId);
+        
+        <span class="hljs-comment">// 发送点赞通知</span>
+        <span class="hljs-keyword">final</span> post = <span class="hljs-keyword">await</span> _repository.getPostById(postId);
+        <span class="hljs-keyword">if</span> (post != <span class="hljs-keyword">null</span> &amp;&amp; post.authorId != _userService.currentUserId) {
+          <span class="hljs-keyword">await</span> _notificationService.sendLikeNotification(
+            targetUserId: post.authorId,
+            postId: postId,
+            likerUserId: _userService.currentUserId,
+          );
+        }
+      }
+      
+      <span class="hljs-keyword">return</span> Right(unit);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.interactionFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 评论</span>
+  Future&lt;Result&lt;Comment&gt;&gt; addComment({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> postId,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> content,
+    <span class="hljs-built_in">String?</span> parentCommentId,
+    <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;? mentionedUserIds,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> comment = Comment(
+        id: generateId(),
+        postId: postId,
+        authorId: _userService.currentUserId,
+        content: content,
+        parentCommentId: parentCommentId,
+        mentionedUserIds: mentionedUserIds ?? [],
+        createdAt: <span class="hljs-built_in">DateTime</span>.now(),
+      );
+      
+      <span class="hljs-keyword">final</span> savedComment = <span class="hljs-keyword">await</span> _repository.createComment(comment);
+      
+      <span class="hljs-comment">// 发送评论通知</span>
+      <span class="hljs-keyword">await</span> _sendCommentNotifications(savedComment);
+      
+      <span class="hljs-keyword">return</span> Right(savedComment);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.commentFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 分享</span>
+  Future&lt;Result&lt;<span class="hljs-keyword">void</span>&gt;&gt; sharePost({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> postId,
+    <span class="hljs-keyword">required</span> ShareTarget target,
+    <span class="hljs-built_in">String?</span> message,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> post = <span class="hljs-keyword">await</span> _repository.getPostById(postId);
+      <span class="hljs-keyword">if</span> (post == <span class="hljs-keyword">null</span>) {
+        <span class="hljs-keyword">return</span> Left(CommunityFailure.postNotFound());
+      }
+      
+      <span class="hljs-keyword">await</span> _repository.recordShare(postId, _userService.currentUserId, target);
+      
+      <span class="hljs-comment">// 根据分享目标执行相应操作</span>
+      <span class="hljs-keyword">switch</span> (target) {
+        <span class="hljs-keyword">case</span> ShareTarget.internal:
+          <span class="hljs-keyword">await</span> _shareToInternalFeed(post, message);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> ShareTarget.wechat:
+          <span class="hljs-keyword">await</span> _shareToWeChat(post);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> ShareTarget.weibo:
+          <span class="hljs-keyword">await</span> _shareToWeibo(post);
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
+          <span class="hljs-keyword">break</span>;
+      }
+      
+      <span class="hljs-keyword">return</span> Right(unit);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.shareFailed(e.toString()));
+    }
+  }
+}
+</code></pre>
+<h3 id="3-用户关系管理">3. 用户关系管理</h3>
+<h4 id="关注系统">关注系统</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 用户关系服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserRelationshipService</span> </span>{
+  <span class="hljs-keyword">final</span> CommunityRepository _repository;
+  <span class="hljs-keyword">final</span> NotificationService _notificationService;
+  
+  UserRelationshipService(<span class="hljs-keyword">this</span>._repository, <span class="hljs-keyword">this</span>._notificationService);
+  
+  <span class="hljs-comment">// 关注用户</span>
+  Future&lt;Result&lt;<span class="hljs-keyword">void</span>&gt;&gt; followUser(<span class="hljs-built_in">String</span> targetUserId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">if</span> (targetUserId == _userService.currentUserId) {
+        <span class="hljs-keyword">return</span> Left(CommunityFailure.cannotFollowSelf());
+      }
+      
+      <span class="hljs-keyword">final</span> isAlreadyFollowing = <span class="hljs-keyword">await</span> _repository.isFollowing(
+        _userService.currentUserId,
+        targetUserId,
+      );
+      
+      <span class="hljs-keyword">if</span> (isAlreadyFollowing) {
+        <span class="hljs-keyword">return</span> Left(CommunityFailure.alreadyFollowing());
+      }
+      
+      <span class="hljs-keyword">await</span> _repository.followUser(_userService.currentUserId, targetUserId);
+      
+      <span class="hljs-comment">// 发送关注通知</span>
+      <span class="hljs-keyword">await</span> _notificationService.sendFollowNotification(
+        targetUserId: targetUserId,
+        followerUserId: _userService.currentUserId,
+      );
+      
+      <span class="hljs-keyword">return</span> Right(unit);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.followFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 取消关注</span>
+  Future&lt;Result&lt;<span class="hljs-keyword">void</span>&gt;&gt; unfollowUser(<span class="hljs-built_in">String</span> targetUserId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">await</span> _repository.unfollowUser(_userService.currentUserId, targetUserId);
+      <span class="hljs-keyword">return</span> Right(unit);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.unfollowFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 获取关注列表</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;UserProfile&gt;&gt;&gt; getFollowing({
+    <span class="hljs-built_in">String?</span> userId,
+    <span class="hljs-built_in">int</span> page = <span class="hljs-number">1</span>,
+    <span class="hljs-built_in">int</span> pageSize = <span class="hljs-number">20</span>,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> targetUserId = userId ?? _userService.currentUserId;
+      <span class="hljs-keyword">final</span> followingList = <span class="hljs-keyword">await</span> _repository.getFollowing(
+        targetUserId,
+        page,
+        pageSize,
+      );
+      <span class="hljs-keyword">return</span> Right(followingList);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.loadFollowingFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 获取粉丝列表</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;UserProfile&gt;&gt;&gt; getFollowers({
+    <span class="hljs-built_in">String?</span> userId,
+    <span class="hljs-built_in">int</span> page = <span class="hljs-number">1</span>,
+    <span class="hljs-built_in">int</span> pageSize = <span class="hljs-number">20</span>,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> targetUserId = userId ?? _userService.currentUserId;
+      <span class="hljs-keyword">final</span> followersList = <span class="hljs-keyword">await</span> _repository.getFollowers(
+        targetUserId,
+        page,
+        pageSize,
+      );
+      <span class="hljs-keyword">return</span> Right(followersList);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.loadFollowersFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 获取共同关注</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;UserProfile&gt;&gt;&gt; getMutualFollowing(<span class="hljs-built_in">String</span> userId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> mutualFollowing = <span class="hljs-keyword">await</span> _repository.getMutualFollowing(
+        _userService.currentUserId,
+        userId,
+      );
+      <span class="hljs-keyword">return</span> Right(mutualFollowing);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.loadMutualFollowingFailed(e.toString()));
+    }
+  }
+}
+</code></pre>
+<h3 id="4-话题与标签系统">4. 话题与标签系统</h3>
+<h4 id="话题管理">话题管理</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 话题服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TopicService</span> </span>{
+  <span class="hljs-keyword">final</span> CommunityRepository _repository;
+  <span class="hljs-keyword">final</span> TrendingAnalyzer _trendingAnalyzer;
+  
+  TopicService(<span class="hljs-keyword">this</span>._repository, <span class="hljs-keyword">this</span>._trendingAnalyzer);
+  
+  <span class="hljs-comment">// 获取热门话题</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;Topic&gt;&gt;&gt; getTrendingTopics({
+    <span class="hljs-built_in">int</span> limit = <span class="hljs-number">20</span>,
+    <span class="hljs-built_in">Duration?</span> timeRange,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> topics = <span class="hljs-keyword">await</span> _trendingAnalyzer.getTrendingTopics(
+        limit: limit,
+        timeRange: timeRange ?? <span class="hljs-built_in">Duration</span>(days: <span class="hljs-number">7</span>),
+      );
+      <span class="hljs-keyword">return</span> Right(topics);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.loadTopicsFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 搜索话题</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;Topic&gt;&gt;&gt; searchTopics(<span class="hljs-built_in">String</span> keyword) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> topics = <span class="hljs-keyword">await</span> _repository.searchTopics(keyword);
+      <span class="hljs-keyword">return</span> Right(topics);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.searchTopicsFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 关注话题</span>
+  Future&lt;Result&lt;<span class="hljs-keyword">void</span>&gt;&gt; followTopic(<span class="hljs-built_in">String</span> topicId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">await</span> _repository.followTopic(_userService.currentUserId, topicId);
+      <span class="hljs-keyword">return</span> Right(unit);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.followTopicFailed(e.toString()));
+    }
+  }
+  
+  <span class="hljs-comment">// 获取话题下的内容</span>
+  Future&lt;Result&lt;<span class="hljs-built_in">List</span>&lt;Post&gt;&gt;&gt; getTopicPosts({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> topicId,
+    <span class="hljs-built_in">int</span> page = <span class="hljs-number">1</span>,
+    <span class="hljs-built_in">int</span> pageSize = <span class="hljs-number">20</span>,
+    PostSortType sortType = PostSortType.latest,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> posts = <span class="hljs-keyword">await</span> _repository.getTopicPosts(
+        topicId: topicId,
+        page: page,
+        pageSize: pageSize,
+        sortType: sortType,
+      );
+      <span class="hljs-keyword">return</span> Right(posts);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> Left(CommunityFailure.loadTopicPostsFailed(e.toString()));
+    }
+  }
+}
+</code></pre>
+<h3 id="5-多媒体内容处理">5. 多媒体内容处理</h3>
+<h4 id="视频播放器集成">视频播放器集成</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 社区视频播放器</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CommunityVideoPlayer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> videoUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> thumbnailUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> autoPlay;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> showControls;
+  <span class="hljs-keyword">final</span> VoidCallback? onPlayComplete;
+  
+  <span class="hljs-keyword">const</span> CommunityVideoPlayer({
+    Key? key,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.videoUrl,
+    <span class="hljs-keyword">this</span>.thumbnailUrl,
+    <span class="hljs-keyword">this</span>.autoPlay = <span class="hljs-keyword">false</span>,
+    <span class="hljs-keyword">this</span>.showControls = <span class="hljs-keyword">true</span>,
+    <span class="hljs-keyword">this</span>.onPlayComplete,
+  }) : <span class="hljs-keyword">super</span>(key: key);
+  
+  <span class="hljs-meta">@override</span>
+  _CommunityVideoPlayerState createState() =&gt; _CommunityVideoPlayerState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_CommunityVideoPlayerState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">CommunityVideoPlayer</span>&gt; </span>{
+  <span class="hljs-keyword">late</span> SuperPlayerController _controller;
+  <span class="hljs-built_in">bool</span> _isInitialized = <span class="hljs-keyword">false</span>;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _initializePlayer();
+  }
+  
+  <span class="hljs-keyword">void</span> _initializePlayer() {
+    _controller = SuperPlayerController();
+    
+    <span class="hljs-keyword">final</span> playerConfig = SuperPlayerModel();
+    playerConfig.videoURL = widget.videoUrl;
+    playerConfig.title = <span class="hljs-string">&#x27;社区视频&#x27;</span>;
+    playerConfig.coverURL = widget.thumbnailUrl;
+    
+    _controller.playWithModel(playerConfig);
+    
+    _controller.onSimplePlayerEventBroadcast.listen((event) {
+      <span class="hljs-keyword">if</span> (event[<span class="hljs-string">&#x27;event&#x27;</span>] == SuperPlayerViewEvent.onPlayEnd) {
+        widget.onPlayComplete?.call();
+      }
+    });
+    
+    setState(() {
+      _isInitialized = <span class="hljs-keyword">true</span>;
+    });
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">if</span> (!_isInitialized) {
+      <span class="hljs-keyword">return</span> _buildLoadingState();
+    }
+    
+    <span class="hljs-keyword">return</span> SuperPlayerView(
+      _controller,
+      isFullScreen: <span class="hljs-keyword">false</span>,
+      showLeftBackBtn: <span class="hljs-keyword">false</span>,
+    );
+  }
+  
+  Widget _buildLoadingState() {
+    <span class="hljs-keyword">return</span> Container(
+      height: <span class="hljs-number">200</span>,
+      color: Colors.black12,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: <span class="hljs-number">8</span>),
+            Text(<span class="hljs-string">&#x27;加载中...&#x27;</span>),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> dispose() {
+    _controller.releasePlayer();
+    <span class="hljs-keyword">super</span>.dispose();
+  }
+}
+</code></pre>
+<h2 id="数据模型">数据模型</h2>
+<h3 id="核心数据模型">核心数据模型</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 帖子模型</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Post</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> authorId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> content;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; images;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> videoUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> thumbnailUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; tags;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> location;
+  <span class="hljs-keyword">final</span> PostType type;
+  <span class="hljs-keyword">final</span> PostPrivacy privacy;
+  <span class="hljs-keyword">final</span> VehicleShareData? vehicleData;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> likeCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> commentCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> shareCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> createdAt;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> updatedAt;
+  
+  <span class="hljs-keyword">const</span> Post({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.id,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.authorId,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.content,
+    <span class="hljs-keyword">this</span>.images = <span class="hljs-keyword">const</span> [],
+    <span class="hljs-keyword">this</span>.videoUrl,
+    <span class="hljs-keyword">this</span>.thumbnailUrl,
+    <span class="hljs-keyword">this</span>.tags = <span class="hljs-keyword">const</span> [],
+    <span class="hljs-keyword">this</span>.location,
+    <span class="hljs-keyword">this</span>.type = PostType.text,
+    <span class="hljs-keyword">this</span>.privacy = PostPrivacy.public,
+    <span class="hljs-keyword">this</span>.vehicleData,
+    <span class="hljs-keyword">this</span>.likeCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">this</span>.commentCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">this</span>.shareCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.createdAt,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.updatedAt,
+  });
+}
+
+<span class="hljs-comment">// 评论模型</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Comment</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> postId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> authorId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> content;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> parentCommentId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; mentionedUserIds;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> likeCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;Comment&gt; replies;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> createdAt;
+  
+  <span class="hljs-keyword">const</span> Comment({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.id,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.postId,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.authorId,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.content,
+    <span class="hljs-keyword">this</span>.parentCommentId,
+    <span class="hljs-keyword">this</span>.mentionedUserIds = <span class="hljs-keyword">const</span> [],
+    <span class="hljs-keyword">this</span>.likeCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">this</span>.replies = <span class="hljs-keyword">const</span> [],
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.createdAt,
+  });
+}
+
+<span class="hljs-comment">// 用户资料模型</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserProfile</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> username;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> displayName;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> avatar;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> bio;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> location;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> followingCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> followersCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> postsCount;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> isVerified;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> joinedAt;
+  
+  <span class="hljs-keyword">const</span> UserProfile({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.id,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.username,
+    <span class="hljs-keyword">this</span>.displayName,
+    <span class="hljs-keyword">this</span>.avatar,
+    <span class="hljs-keyword">this</span>.bio,
+    <span class="hljs-keyword">this</span>.location,
+    <span class="hljs-keyword">this</span>.followingCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">this</span>.followersCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">this</span>.postsCount = <span class="hljs-number">0</span>,
+    <span class="hljs-keyword">this</span>.isVerified = <span class="hljs-keyword">false</span>,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.joinedAt,
+  });
+}
+</code></pre>
+<h2 id="ui-组件设计">UI 组件设计</h2>
+<h3 id="帖子卡片组件">帖子卡片组件</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 帖子卡片组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PostCard</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-keyword">final</span> Post post;
+  <span class="hljs-keyword">final</span> UserProfile author;
+  <span class="hljs-keyword">final</span> VoidCallback? onTap;
+  <span class="hljs-keyword">final</span> VoidCallback? onLike;
+  <span class="hljs-keyword">final</span> VoidCallback? onComment;
+  <span class="hljs-keyword">final</span> VoidCallback? onShare;
+  
+  <span class="hljs-keyword">const</span> PostCard({
+    Key? key,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.post,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.author,
+    <span class="hljs-keyword">this</span>.onTap,
+    <span class="hljs-keyword">this</span>.onLike,
+    <span class="hljs-keyword">this</span>.onComment,
+    <span class="hljs-keyword">this</span>.onShare,
+  }) : <span class="hljs-keyword">super</span>(key: key);
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Card(
+      margin: EdgeInsets.symmetric(horizontal: <span class="hljs-number">16</span>, vertical: <span class="hljs-number">8</span>),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.all(<span class="hljs-number">16</span>),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              SizedBox(height: <span class="hljs-number">12</span>),
+              _buildContent(),
+              <span class="hljs-keyword">if</span> (post.images.isNotEmpty) ...[
+                SizedBox(height: <span class="hljs-number">12</span>),
+                _buildImageGrid(),
+              ],
+              <span class="hljs-keyword">if</span> (post.videoUrl != <span class="hljs-keyword">null</span>) ...[
+                SizedBox(height: <span class="hljs-number">12</span>),
+                _buildVideoPlayer(),
+              ],
+              <span class="hljs-keyword">if</span> (post.vehicleData != <span class="hljs-keyword">null</span>) ...[
+                SizedBox(height: <span class="hljs-number">12</span>),
+                _buildVehicleData(),
+              ],
+              SizedBox(height: <span class="hljs-number">12</span>),
+              _buildInteractionBar(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildHeader() {
+    <span class="hljs-keyword">return</span> Row(
+      children: [
+        CircleAvatar(
+          radius: <span class="hljs-number">20</span>,
+          backgroundImage: author.avatar != <span class="hljs-keyword">null</span>
+              ? NetworkImage(author.avatar!)
+              : <span class="hljs-keyword">null</span>,
+          child: author.avatar == <span class="hljs-keyword">null</span>
+              ? Text(author.username[<span class="hljs-number">0</span>].toUpperCase())
+              : <span class="hljs-keyword">null</span>,
+        ),
+        SizedBox(width: <span class="hljs-number">12</span>),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    author.displayName ?? author.username,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: <span class="hljs-number">16</span>,
+                    ),
+                  ),
+                  <span class="hljs-keyword">if</span> (author.isVerified) ...[
+                    SizedBox(width: <span class="hljs-number">4</span>),
+                    Icon(
+                      Icons.verified,
+                      size: <span class="hljs-number">16</span>,
+                      color: Colors.blue,
+                    ),
+                  ],
+                ],
+              ),
+              Text(
+                timeago.format(post.createdAt),
+                style: TextStyle(
+                  color: Colors.grey[<span class="hljs-number">600</span>],
+                  fontSize: <span class="hljs-number">12</span>,
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.more_vert),
+          onPressed: () =&gt; _showPostMenu(context),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildContent() {
+    <span class="hljs-keyword">return</span> Text(
+      post.content,
+      style: TextStyle(fontSize: <span class="hljs-number">16</span>),
+    );
+  }
+  
+  Widget _buildInteractionBar() {
+    <span class="hljs-keyword">return</span> Row(
+      children: [
+        _buildInteractionButton(
+          icon: Icons.favorite_border,
+          count: post.likeCount,
+          onTap: onLike,
+        ),
+        SizedBox(width: <span class="hljs-number">24</span>),
+        _buildInteractionButton(
+          icon: Icons.comment_outlined,
+          count: post.commentCount,
+          onTap: onComment,
+        ),
+        SizedBox(width: <span class="hljs-number">24</span>),
+        _buildInteractionButton(
+          icon: Icons.share_outlined,
+          count: post.shareCount,
+          onTap: onShare,
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h2 id="依赖管理">依赖管理</h2>
+<h3 id="集成模块依赖">集成模块依赖</h3>
+<ul>
+<li><strong>basic_utils</strong>: 基础工具类</li>
+<li><strong>basic_uis</strong>: 基础 UI 组件</li>
+<li><strong>oneapp_membership</strong>: 会员系统集成</li>
+<li><strong>oneapp_car_sales</strong>: 汽车销售集成</li>
+<li><strong>oneapp_touch_point</strong>: 触点管理集成</li>
+<li><strong>oneapp_after_sales</strong>: 售后服务集成</li>
+<li><strong>share_to_friends</strong>: 分享功能组件</li>
+</ul>
+<h3 id="多媒体依赖">多媒体依赖</h3>
+<ul>
+<li><strong>superplayer_widget</strong>: 腾讯云超级播放器，用于视频播放</li>
+</ul>
+<h2 id="错误处理">错误处理</h2>
+<h3 id="社区特定异常">社区特定异常</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 社区功能异常</span>
+<span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CommunityFailure</span> </span>{
+  <span class="hljs-keyword">const</span> CommunityFailure();
+  
+  <span class="hljs-keyword">factory</span> CommunityFailure.publishFailed(<span class="hljs-built_in">String</span> message) = PublishFailure;
+  <span class="hljs-keyword">factory</span> CommunityFailure.feedLoadFailed(<span class="hljs-built_in">String</span> message) = FeedLoadFailure;
+  <span class="hljs-keyword">factory</span> CommunityFailure.interactionFailed(<span class="hljs-built_in">String</span> message) = InteractionFailure;
+  <span class="hljs-keyword">factory</span> CommunityFailure.followFailed(<span class="hljs-built_in">String</span> message) = FollowFailure;
+  <span class="hljs-keyword">factory</span> CommunityFailure.contentNotFound() = ContentNotFoundFailure;
+  <span class="hljs-keyword">factory</span> CommunityFailure.permissionDenied() = PermissionDeniedFailure;
+}
+</code></pre>
+<h2 id="总结">总结</h2>
+<p><code>oneapp_community</code> 模块为 OneApp 构建了完整的车主社区生态，通过内容发布、互动分享、用户关系等功能，促进了车主之间的交流与互动。模块集成了多媒体播放、分享组件等功能，并与其他业务模块深度整合，为用户提供了丰富的社区体验。</p>
+
+            
+            
+        </body>
+        </html>

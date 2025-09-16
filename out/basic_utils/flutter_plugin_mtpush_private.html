@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Flutter Plugin MTPush Private &#x7f8e;&#x56e2;&#x4e91;&#x63a8;&#x9001;&#x63d2;&#x4ef6;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="flutter-plugin-mtpush-private-美团云推送插件">Flutter Plugin MTPush Private 美团云推送插件</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>flutter_plugin_mtpush_private</code> 是 OneApp 基础工具模块群中的美团云推送私有版插件，基于 EngageLab 的推送服务开发。该插件为 Flutter 应用提供了完整的推送消息功能，包括通知推送、透传消息、标签管理等功能，支持 Android 和 iOS 双平台。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: flutter_plugin_mtpush_private</li>
+<li><strong>版本</strong>: 3.0.1+2</li>
+<li><strong>类型</strong>: Flutter Plugin（原生插件）</li>
+<li><strong>描述</strong>: 美团云推送私有版插件</li>
+<li><strong>Flutter 版本</strong>: &gt;=1.20.0</li>
+<li><strong>Dart 版本</strong>: &gt;=2.12.0 &lt;4.0.0</li>
+<li><strong>服务提供商</strong>: EngageLab (<a href="https://www.engagelab.com/">https://www.engagelab.com/</a>)</li>
+</ul>
+<h2 id="功能特性">功能特性</h2>
+<h3 id="核心功能">核心功能</h3>
+<ol>
+<li>
+<p><strong>推送消息接收</strong></p>
+<ul>
+<li>通知消息接收和展示</li>
+<li>透传消息接收和处理</li>
+<li>富媒体消息支持</li>
+<li>自定义消息格式</li>
+</ul>
+</li>
+<li>
+<p><strong>设备管理</strong></p>
+<ul>
+<li>设备注册和注销</li>
+<li>设备别名设置</li>
+<li>设备标签管理</li>
+<li>推送开关控制</li>
+</ul>
+</li>
+<li>
+<p><strong>标签和别名</strong></p>
+<ul>
+<li>用户标签设置</li>
+<li>别名绑定管理</li>
+<li>标签分组推送</li>
+<li>个性化推送</li>
+</ul>
+</li>
+<li>
+<p><strong>统计和分析</strong></p>
+<ul>
+<li>推送到达统计</li>
+<li>用户点击统计</li>
+<li>设备活跃统计</li>
+<li>自定义事件统计</li>
+</ul>
+</li>
+</ol>
+<h2 id="技术架构">技术架构</h2>
+<h3 id="目录结构">目录结构</h3>
+<pre><code>flutter_plugin_mtpush_private/
+├── lib/                        # Dart代码
+│   ├── flutter_plugin_mtpush_private.dart # 插件入口
+│   ├── src/                    # 源代码
+│   │   ├── mtpush_flutter.dart # 主要接口
+│   │   ├── mtpush_models.dart  # 数据模型
+│   │   ├── mtpush_constants.dart # 常量定义
+│   │   └── mtpush_utils.dart   # 工具类
+│   └── flutter_plugin_mtpush_private_platform_interface.dart
+├── android/                    # Android原生实现
+│   ├── src/main/kotlin/
+│   │   └── com/engagelab/privates/flutter_plugin_mtpush_private/
+│   │       ├── FlutterPluginMTPushPrivatePlugin.kt
+│   │       ├── MTPushReceiver.kt
+│   │       ├── NotificationHelper.kt
+│   │       └── Utils.kt
+│   └── build.gradle
+├── ios/                        # iOS原生实现
+│   ├── Classes/
+│   │   ├── FlutterPluginMTPushPrivatePlugin.h
+│   │   ├── FlutterPluginMTPushPrivatePlugin.m
+│   │   ├── MTPushNotificationDelegate.h
+│   │   └── MTPushNotificationDelegate.m
+│   └── flutter_plugin_mtpush_private.podspec
+├── example/                    # 示例应用
+└── test/                       # 测试文件
+</code></pre>
+<h3 id="依赖关系">依赖关系</h3>
+<h4 id="核心依赖">核心依赖</h4>
+<ul>
+<li>Flutter SDK</li>
+</ul>
+<h4 id="原生-sdk-依赖">原生 SDK 依赖</h4>
+<ul>
+<li><strong>Android</strong>: EngageLab Android Push SDK</li>
+<li><strong>iOS</strong>: EngageLab iOS Push SDK</li>
+</ul>
+<h2 id="核心模块分析">核心模块分析</h2>
+<h3 id="1-flutter端实现">1. Flutter端实现</h3>
+<h4 id="主接口-srcmtpush_flutterdart">主接口 (<code>src/mtpush_flutter.dart</code>)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MTFlutterPush</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> MethodChannel _channel = 
+      MethodChannel(<span class="hljs-string">&#x27;flutter_plugin_mtpush_private&#x27;</span>);
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> EventChannel _eventChannel = 
+      EventChannel(<span class="hljs-string">&#x27;flutter_plugin_mtpush_private_event&#x27;</span>);
+  
+  <span class="hljs-comment">// 初始化推送服务</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; initialize({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> appKey,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> appSecret,
+    <span class="hljs-built_in">String?</span> channel,
+    <span class="hljs-built_in">bool</span> enableDebug = <span class="hljs-keyword">false</span>,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;initialize&#x27;</span>, {
+      <span class="hljs-string">&#x27;appKey&#x27;</span>: appKey,
+      <span class="hljs-string">&#x27;appSecret&#x27;</span>: appSecret,
+      <span class="hljs-string">&#x27;channel&#x27;</span>: channel ?? <span class="hljs-string">&#x27;default&#x27;</span>,
+      <span class="hljs-string">&#x27;enableDebug&#x27;</span>: enableDebug,
+    });
+  }
+  
+  <span class="hljs-comment">// 获取设备注册ID</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">String?</span>&gt; getRegistrationId() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;getRegistrationId&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">// 设置别名</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; setAlias(<span class="hljs-built_in">String</span> alias) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;setAlias&#x27;</span>, {<span class="hljs-string">&#x27;alias&#x27;</span>: alias});
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 删除别名</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; deleteAlias() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;deleteAlias&#x27;</span>);
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 设置标签</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; setTags(<span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt; tags) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;setTags&#x27;</span>, {<span class="hljs-string">&#x27;tags&#x27;</span>: tags.toList()});
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 添加标签</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; addTags(<span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt; tags) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;addTags&#x27;</span>, {<span class="hljs-string">&#x27;tags&#x27;</span>: tags.toList()});
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 删除标签</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; deleteTags(<span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt; tags) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;deleteTags&#x27;</span>, {<span class="hljs-string">&#x27;tags&#x27;</span>: tags.toList()});
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 清空所有标签</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; cleanTags() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;cleanTags&#x27;</span>);
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 获取所有标签</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt;?&gt; getAllTags() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;getAllTags&#x27;</span>);
+    <span class="hljs-keyword">if</span> (result <span class="hljs-keyword">is</span> <span class="hljs-built_in">List</span>) {
+      <span class="hljs-keyword">return</span> result.cast&lt;<span class="hljs-built_in">String</span>&gt;().toSet();
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+  }
+  
+  <span class="hljs-comment">// 开启推送</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; resumePush() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;resumePush&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">// 停止推送</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; stopPush() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;stopPush&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">// 检查推送是否停止</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; isPushStopped() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> result = <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;isPushStopped&#x27;</span>);
+    <span class="hljs-keyword">return</span> result == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-comment">// 发送本地通知</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; sendLocalNotification(LocalNotification notification) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;sendLocalNotification&#x27;</span>, notification.toMap());
+  }
+  
+  <span class="hljs-comment">// 添加推送消息监听器</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> addReceiveNotificationListener(
+    <span class="hljs-keyword">void</span> <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; message) onReceive,
+  ) {
+    _eventChannel.receiveBroadcastStream(<span class="hljs-string">&#x27;receiveNotification&#x27;</span>).listen((data) {
+      <span class="hljs-keyword">if</span> (data <span class="hljs-keyword">is</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;) {
+        onReceive(data);
+      }
+    });
+  }
+  
+  <span class="hljs-comment">// 添加推送消息点击监听器</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> addReceiveOpenNotificationListener(
+    <span class="hljs-keyword">void</span> <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; message) onOpen,
+  ) {
+    _eventChannel.receiveBroadcastStream(<span class="hljs-string">&#x27;openNotification&#x27;</span>).listen((data) {
+      <span class="hljs-keyword">if</span> (data <span class="hljs-keyword">is</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;) {
+        onOpen(data);
+      }
+    });
+  }
+  
+  <span class="hljs-comment">// 添加透传消息监听器</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> addReceiveMessageListener(
+    <span class="hljs-keyword">void</span> <span class="hljs-built_in">Function</span>(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; message) onMessage,
+  ) {
+    _eventChannel.receiveBroadcastStream(<span class="hljs-string">&#x27;receiveMessage&#x27;</span>).listen((data) {
+      <span class="hljs-keyword">if</span> (data <span class="hljs-keyword">is</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;) {
+        onMessage(data);
+      }
+    });
+  }
+  
+  <span class="hljs-comment">// 设置通知栏样式</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; setNotificationStyle({
+    <span class="hljs-built_in">int?</span> notificationStyle,
+    <span class="hljs-built_in">int?</span> notificationMaxNumber,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;setNotificationStyle&#x27;</span>, {
+      <span class="hljs-string">&#x27;notificationStyle&#x27;</span>: notificationStyle,
+      <span class="hljs-string">&#x27;notificationMaxNumber&#x27;</span>: notificationMaxNumber,
+    });
+  }
+  
+  <span class="hljs-comment">// 设置静默时间</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; setSilenceTime({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> startHour,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> startMinute,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> endHour,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">int</span> endMinute,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;setSilenceTime&#x27;</span>, {
+      <span class="hljs-string">&#x27;startHour&#x27;</span>: startHour,
+      <span class="hljs-string">&#x27;startMinute&#x27;</span>: startMinute,
+      <span class="hljs-string">&#x27;endHour&#x27;</span>: endHour,
+      <span class="hljs-string">&#x27;endMinute&#x27;</span>: endMinute,
+    });
+  }
+  
+  <span class="hljs-comment">// 清理通知</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; clearAllNotifications() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;clearAllNotifications&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">// 清理指定通知</span>
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; clearNotificationById(<span class="hljs-built_in">int</span> notificationId) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _channel.invokeMethod(<span class="hljs-string">&#x27;clearNotificationById&#x27;</span>, {
+      <span class="hljs-string">&#x27;notificationId&#x27;</span>: notificationId,
+    });
+  }
+}
+</code></pre>
+<h4 id="数据模型-srcmtpush_modelsdart">数据模型 (<code>src/mtpush_models.dart</code>)</h4>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LocalNotification</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> title;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> content;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> subtitle;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? extras;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime?</span> fireTime;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int?</span> builderId;
+  
+  <span class="hljs-keyword">const</span> LocalNotification({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.id,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.title,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.content,
+    <span class="hljs-keyword">this</span>.subtitle,
+    <span class="hljs-keyword">this</span>.extras,
+    <span class="hljs-keyword">this</span>.fireTime,
+    <span class="hljs-keyword">this</span>.builderId,
+  });
+  
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; toMap() {
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-string">&#x27;id&#x27;</span>: id,
+      <span class="hljs-string">&#x27;title&#x27;</span>: title,
+      <span class="hljs-string">&#x27;content&#x27;</span>: content,
+      <span class="hljs-string">&#x27;subtitle&#x27;</span>: subtitle,
+      <span class="hljs-string">&#x27;extras&#x27;</span>: extras,
+      <span class="hljs-string">&#x27;fireTime&#x27;</span>: fireTime?.millisecondsSinceEpoch,
+      <span class="hljs-string">&#x27;builderId&#x27;</span>: builderId,
+    };
+  }
+  
+  <span class="hljs-keyword">factory</span> LocalNotification.fromMap(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; map) {
+    <span class="hljs-keyword">return</span> LocalNotification(
+      id: map[<span class="hljs-string">&#x27;id&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int</span>,
+      title: map[<span class="hljs-string">&#x27;title&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String</span>,
+      content: map[<span class="hljs-string">&#x27;content&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String</span>,
+      subtitle: map[<span class="hljs-string">&#x27;subtitle&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String?</span>,
+      extras: map[<span class="hljs-string">&#x27;extras&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;?,
+      fireTime: map[<span class="hljs-string">&#x27;fireTime&#x27;</span>] != <span class="hljs-keyword">null</span> ? 
+          <span class="hljs-built_in">DateTime</span>.fromMillisecondsSinceEpoch(map[<span class="hljs-string">&#x27;fireTime&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int</span>) : <span class="hljs-keyword">null</span>,
+      builderId: map[<span class="hljs-string">&#x27;builderId&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int?</span>,
+    );
+  }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PushMessage</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> messageId;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> title;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> content;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; extras;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> platform;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> receivedTime;
+  
+  <span class="hljs-keyword">const</span> PushMessage({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.messageId,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.title,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.content,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.extras,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.platform,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.receivedTime,
+  });
+  
+  <span class="hljs-keyword">factory</span> PushMessage.fromMap(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; map) {
+    <span class="hljs-keyword">return</span> PushMessage(
+      messageId: map[<span class="hljs-string">&#x27;messageId&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String</span>,
+      title: map[<span class="hljs-string">&#x27;title&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String</span>,
+      content: map[<span class="hljs-string">&#x27;content&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String</span>,
+      extras: map[<span class="hljs-string">&#x27;extras&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? ?? {},
+      platform: map[<span class="hljs-string">&#x27;platform&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int</span>,
+      receivedTime: <span class="hljs-built_in">DateTime</span>.fromMillisecondsSinceEpoch(
+        map[<span class="hljs-string">&#x27;receivedTime&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int</span>,
+      ),
+    );
+  }
+  
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; toMap() {
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-string">&#x27;messageId&#x27;</span>: messageId,
+      <span class="hljs-string">&#x27;title&#x27;</span>: title,
+      <span class="hljs-string">&#x27;content&#x27;</span>: content,
+      <span class="hljs-string">&#x27;extras&#x27;</span>: extras,
+      <span class="hljs-string">&#x27;platform&#x27;</span>: platform,
+      <span class="hljs-string">&#x27;receivedTime&#x27;</span>: receivedTime.millisecondsSinceEpoch,
+    };
+  }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TagAliasResult</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> success;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> errorMessage;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int?</span> errorCode;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt;? tags;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> alias;
+  
+  <span class="hljs-keyword">const</span> TagAliasResult({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.success,
+    <span class="hljs-keyword">this</span>.errorMessage,
+    <span class="hljs-keyword">this</span>.errorCode,
+    <span class="hljs-keyword">this</span>.tags,
+    <span class="hljs-keyword">this</span>.alias,
+  });
+  
+  <span class="hljs-keyword">factory</span> TagAliasResult.fromMap(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; map) {
+    <span class="hljs-keyword">return</span> TagAliasResult(
+      success: map[<span class="hljs-string">&#x27;success&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">bool</span>,
+      errorMessage: map[<span class="hljs-string">&#x27;errorMessage&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String?</span>,
+      errorCode: map[<span class="hljs-string">&#x27;errorCode&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">int?</span>,
+      tags: (map[<span class="hljs-string">&#x27;tags&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">dynamic</span>&gt;?)?.cast&lt;<span class="hljs-built_in">String</span>&gt;().toSet(),
+      alias: map[<span class="hljs-string">&#x27;alias&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String?</span>,
+    );
+  }
+}
+</code></pre>
+<h3 id="2-android端实现">2. Android端实现</h3>
+<h4 id="主插件类-flutterpluginmtpushprivatepluginkt">主插件类 (<code>FlutterPluginMTPushPrivatePlugin.kt</code>)</h4>
+<pre><code class="language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FlutterPluginMTPushPrivatePlugin</span>: <span class="hljs-type">FlutterPlugin</span>, <span class="hljs-type">MethodCallHandler {</span></span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> channel: MethodChannel
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> eventChannel: EventChannel
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> context: Context
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> eventSink: EventChannel.EventSink? = <span class="hljs-literal">null</span>
+
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onAttachedToEngine</span><span class="hljs-params">(binding: <span class="hljs-type">FlutterPlugin</span>.<span class="hljs-type">FlutterPluginBinding</span>)</span></span> {
+        channel = MethodChannel(binding.binaryMessenger, <span class="hljs-string">&quot;flutter_plugin_mtpush_private&quot;</span>)
+        eventChannel = EventChannel(binding.binaryMessenger, <span class="hljs-string">&quot;flutter_plugin_mtpush_private_event&quot;</span>)
+        
+        context = binding.applicationContext
+        channel.setMethodCallHandler(<span class="hljs-keyword">this</span>)
+        
+        eventChannel.setStreamHandler(<span class="hljs-keyword">object</span> : EventChannel.StreamHandler {
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onListen</span><span class="hljs-params">(arguments: <span class="hljs-type">Any</span>?, events: <span class="hljs-type">EventChannel</span>.<span class="hljs-type">EventSink</span>?)</span></span> {
+                eventSink = events
+            }
+            
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onCancel</span><span class="hljs-params">(arguments: <span class="hljs-type">Any</span>?)</span></span> {
+                eventSink = <span class="hljs-literal">null</span>
+            }
+        })
+        
+        <span class="hljs-comment">// 设置推送消息接收器</span>
+        MTPushReceiver.setEventSink(eventSink)
+    }
+
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onMethodCall</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">when</span> (call.method) {
+            <span class="hljs-string">&quot;initialize&quot;</span> -&gt; initialize(call, result)
+            <span class="hljs-string">&quot;getRegistrationId&quot;</span> -&gt; getRegistrationId(result)
+            <span class="hljs-string">&quot;setAlias&quot;</span> -&gt; setAlias(call, result)
+            <span class="hljs-string">&quot;deleteAlias&quot;</span> -&gt; deleteAlias(result)
+            <span class="hljs-string">&quot;setTags&quot;</span> -&gt; setTags(call, result)
+            <span class="hljs-string">&quot;addTags&quot;</span> -&gt; addTags(call, result)
+            <span class="hljs-string">&quot;deleteTags&quot;</span> -&gt; deleteTags(call, result)
+            <span class="hljs-string">&quot;cleanTags&quot;</span> -&gt; cleanTags(result)
+            <span class="hljs-string">&quot;getAllTags&quot;</span> -&gt; getAllTags(result)
+            <span class="hljs-string">&quot;resumePush&quot;</span> -&gt; resumePush(result)
+            <span class="hljs-string">&quot;stopPush&quot;</span> -&gt; stopPush(result)
+            <span class="hljs-string">&quot;isPushStopped&quot;</span> -&gt; isPushStopped(result)
+            <span class="hljs-string">&quot;sendLocalNotification&quot;</span> -&gt; sendLocalNotification(call, result)
+            <span class="hljs-string">&quot;setNotificationStyle&quot;</span> -&gt; setNotificationStyle(call, result)
+            <span class="hljs-string">&quot;setSilenceTime&quot;</span> -&gt; setSilenceTime(call, result)
+            <span class="hljs-string">&quot;clearAllNotifications&quot;</span> -&gt; clearAllNotifications(result)
+            <span class="hljs-string">&quot;clearNotificationById&quot;</span> -&gt; clearNotificationById(call, result)
+            <span class="hljs-keyword">else</span> -&gt; result.notImplemented()
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">initialize</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> appKey = call.argument&lt;String&gt;(<span class="hljs-string">&quot;appKey&quot;</span>)
+        <span class="hljs-keyword">val</span> appSecret = call.argument&lt;String&gt;(<span class="hljs-string">&quot;appSecret&quot;</span>)
+        <span class="hljs-keyword">val</span> channel = call.argument&lt;String&gt;(<span class="hljs-string">&quot;channel&quot;</span>) ?: <span class="hljs-string">&quot;default&quot;</span>
+        <span class="hljs-keyword">val</span> enableDebug = call.argument&lt;<span class="hljs-built_in">Boolean</span>&gt;(<span class="hljs-string">&quot;enableDebug&quot;</span>) ?: <span class="hljs-literal">false</span>
+        
+        <span class="hljs-keyword">if</span> (appKey == <span class="hljs-literal">null</span> || appSecret == <span class="hljs-literal">null</span>) {
+            result.error(<span class="hljs-string">&quot;INVALID_ARGUMENTS&quot;</span>, <span class="hljs-string">&quot;AppKey and AppSecret are required&quot;</span>, <span class="hljs-literal">null</span>)
+            <span class="hljs-keyword">return</span>
+        }
+        
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-comment">// 初始化美团云推送SDK</span>
+            MTPushInterface.setDebugMode(enableDebug)
+            MTPushInterface.<span class="hljs-keyword">init</span>(context, appKey, appSecret, channel)
+            
+            <span class="hljs-comment">// 注册推送服务</span>
+            MTPushInterface.register(context)
+            
+            result.success(<span class="hljs-literal">true</span>)
+        } <span class="hljs-keyword">catch</span> (e: Exception) {
+            result.error(<span class="hljs-string">&quot;INITIALIZATION_FAILED&quot;</span>, e.message, <span class="hljs-literal">null</span>)
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getRegistrationId</span><span class="hljs-params">(result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> registrationId = MTPushInterface.getRegistrationId(context)
+        result.success(registrationId)
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setAlias</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> alias = call.argument&lt;String&gt;(<span class="hljs-string">&quot;alias&quot;</span>)
+        <span class="hljs-keyword">if</span> (alias == <span class="hljs-literal">null</span>) {
+            result.error(<span class="hljs-string">&quot;INVALID_ARGUMENTS&quot;</span>, <span class="hljs-string">&quot;Alias is required&quot;</span>, <span class="hljs-literal">null</span>)
+            <span class="hljs-keyword">return</span>
+        }
+        
+        MTPushInterface.setAlias(context, alias, <span class="hljs-keyword">object</span> : TagAliasCallback {
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">gotResult</span><span class="hljs-params">(code: <span class="hljs-type">Int</span>, alias: <span class="hljs-type">String</span>?, tags: <span class="hljs-type">MutableSet</span>&lt;<span class="hljs-type">String</span>&gt;?)</span></span> {
+                result.success(code == <span class="hljs-number">0</span>)
+            }
+        })
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setTags</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> tagsList = call.argument&lt;List&lt;String&gt;&gt;(<span class="hljs-string">&quot;tags&quot;</span>)
+        <span class="hljs-keyword">if</span> (tagsList == <span class="hljs-literal">null</span>) {
+            result.error(<span class="hljs-string">&quot;INVALID_ARGUMENTS&quot;</span>, <span class="hljs-string">&quot;Tags are required&quot;</span>, <span class="hljs-literal">null</span>)
+            <span class="hljs-keyword">return</span>
+        }
+        
+        <span class="hljs-keyword">val</span> tags = tagsList.toMutableSet()
+        MTPushInterface.setTags(context, tags, <span class="hljs-keyword">object</span> : TagAliasCallback {
+            <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">gotResult</span><span class="hljs-params">(code: <span class="hljs-type">Int</span>, alias: <span class="hljs-type">String</span>?, tags: <span class="hljs-type">MutableSet</span>&lt;<span class="hljs-type">String</span>&gt;?)</span></span> {
+                result.success(code == <span class="hljs-number">0</span>)
+            }
+        })
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">sendLocalNotification</span><span class="hljs-params">(call: <span class="hljs-type">MethodCall</span>, result: <span class="hljs-type">Result</span>)</span></span> {
+        <span class="hljs-keyword">val</span> id = call.argument&lt;<span class="hljs-built_in">Int</span>&gt;(<span class="hljs-string">&quot;id&quot;</span>) ?: <span class="hljs-number">0</span>
+        <span class="hljs-keyword">val</span> title = call.argument&lt;String&gt;(<span class="hljs-string">&quot;title&quot;</span>)
+        <span class="hljs-keyword">val</span> content = call.argument&lt;String&gt;(<span class="hljs-string">&quot;content&quot;</span>)
+        <span class="hljs-keyword">val</span> fireTime = call.argument&lt;<span class="hljs-built_in">Long</span>&gt;(<span class="hljs-string">&quot;fireTime&quot;</span>)
+        
+        <span class="hljs-keyword">if</span> (title == <span class="hljs-literal">null</span> || content == <span class="hljs-literal">null</span>) {
+            result.error(<span class="hljs-string">&quot;INVALID_ARGUMENTS&quot;</span>, <span class="hljs-string">&quot;Title and content are required&quot;</span>, <span class="hljs-literal">null</span>)
+            <span class="hljs-keyword">return</span>
+        }
+        
+        <span class="hljs-keyword">val</span> notification = LocalNotification.Builder(context)
+            .setNotificationId(id)
+            .setTitle(title)
+            .setContent(content)
+        
+        fireTime?.let {
+            notification.setFireTime(Date(it))
+        }
+        
+        MTPushInterface.addLocalNotification(context, notification.build())
+        result.success(<span class="hljs-literal">true</span>)
+    }
+}
+</code></pre>
+<h4 id="推送消息接收器-mtpushreceiverkt">推送消息接收器 (<code>MTPushReceiver.kt</code>)</h4>
+<pre><code class="language-kotlin"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MTPushReceiver</span> : <span class="hljs-type">BroadcastReceiver</span></span>() {
+    <span class="hljs-keyword">companion</span> <span class="hljs-keyword">object</span> {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> eventSink: EventChannel.EventSink? = <span class="hljs-literal">null</span>
+        
+        <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">setEventSink</span><span class="hljs-params">(sink: <span class="hljs-type">EventChannel</span>.<span class="hljs-type">EventSink</span>?)</span></span> {
+            eventSink = sink
+        }
+    }
+    
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">onReceive</span><span class="hljs-params">(context: <span class="hljs-type">Context</span>, intent: <span class="hljs-type">Intent</span>)</span></span> {
+        <span class="hljs-keyword">val</span> bundle = intent.extras ?: <span class="hljs-keyword">return</span>
+        
+        <span class="hljs-keyword">when</span> (intent.action) {
+            MTPushInterface.ACTION_REGISTRATION_ID -&gt; {
+                handleRegistration(bundle)
+            }
+            MTPushInterface.ACTION_MESSAGE_RECEIVED -&gt; {
+                handleMessageReceived(bundle)
+            }
+            MTPushInterface.ACTION_NOTIFICATION_RECEIVED -&gt; {
+                handleNotificationReceived(bundle)
+            }
+            MTPushInterface.ACTION_NOTIFICATION_OPENED -&gt; {
+                handleNotificationOpened(bundle)
+            }
+        }
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleRegistration</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span> {
+        <span class="hljs-keyword">val</span> registrationId = bundle.getString(MTPushInterface.EXTRA_REGISTRATION_ID)
+        <span class="hljs-comment">// 处理注册ID</span>
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleMessageReceived</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span> {
+        <span class="hljs-keyword">val</span> message = parseMessage(bundle)
+        eventSink?.success(mapOf(
+            <span class="hljs-string">&quot;event&quot;</span> to <span class="hljs-string">&quot;receiveMessage&quot;</span>,
+            <span class="hljs-string">&quot;data&quot;</span> to message
+        ))
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleNotificationReceived</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span> {
+        <span class="hljs-keyword">val</span> notification = parseNotification(bundle)
+        eventSink?.success(mapOf(
+            <span class="hljs-string">&quot;event&quot;</span> to <span class="hljs-string">&quot;receiveNotification&quot;</span>,
+            <span class="hljs-string">&quot;data&quot;</span> to notification
+        ))
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleNotificationOpened</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span> {
+        <span class="hljs-keyword">val</span> notification = parseNotification(bundle)
+        eventSink?.success(mapOf(
+            <span class="hljs-string">&quot;event&quot;</span> to <span class="hljs-string">&quot;openNotification&quot;</span>,
+            <span class="hljs-string">&quot;data&quot;</span> to notification
+        ))
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">parseMessage</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span>: Map&lt;String, Any&gt; {
+        <span class="hljs-keyword">return</span> mapOf(
+            <span class="hljs-string">&quot;messageId&quot;</span> to (bundle.getString(MTPushInterface.EXTRA_MSG_ID) ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;title&quot;</span> to (bundle.getString(MTPushInterface.EXTRA_TITLE) ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;content&quot;</span> to (bundle.getString(MTPushInterface.EXTRA_MESSAGE) ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;extras&quot;</span> to parseExtras(bundle),
+            <span class="hljs-string">&quot;platform&quot;</span> to <span class="hljs-number">0</span>, <span class="hljs-comment">// Android</span>
+            <span class="hljs-string">&quot;receivedTime&quot;</span> to System.currentTimeMillis()
+        )
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">parseNotification</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span>: Map&lt;String, Any&gt; {
+        <span class="hljs-keyword">return</span> mapOf(
+            <span class="hljs-string">&quot;messageId&quot;</span> to (bundle.getString(MTPushInterface.EXTRA_MSG_ID) ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;title&quot;</span> to (bundle.getString(MTPushInterface.EXTRA_NOTIFICATION_TITLE) ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;content&quot;</span> to (bundle.getString(MTPushInterface.EXTRA_ALERT) ?: <span class="hljs-string">&quot;&quot;</span>),
+            <span class="hljs-string">&quot;extras&quot;</span> to parseExtras(bundle),
+            <span class="hljs-string">&quot;platform&quot;</span> to <span class="hljs-number">0</span>, <span class="hljs-comment">// Android</span>
+            <span class="hljs-string">&quot;receivedTime&quot;</span> to System.currentTimeMillis()
+        )
+    }
+    
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">parseExtras</span><span class="hljs-params">(bundle: <span class="hljs-type">Bundle</span>)</span></span>: Map&lt;String, Any&gt; {
+        <span class="hljs-keyword">val</span> extras = mutableMapOf&lt;String, Any&gt;()
+        <span class="hljs-keyword">val</span> extrasString = bundle.getString(MTPushInterface.EXTRA_EXTRA)
+        
+        extrasString?.let {
+            <span class="hljs-keyword">try</span> {
+                <span class="hljs-keyword">val</span> jsonObject = JSONObject(it)
+                <span class="hljs-keyword">val</span> keys = jsonObject.keys()
+                <span class="hljs-keyword">while</span> (keys.hasNext()) {
+                    <span class="hljs-keyword">val</span> key = keys.next()
+                    extras[key] = jsonObject.<span class="hljs-keyword">get</span>(key)
+                }
+            } <span class="hljs-keyword">catch</span> (e: JSONException) {
+                <span class="hljs-comment">// 解析失败，返回空Map</span>
+            }
+        }
+        
+        <span class="hljs-keyword">return</span> extras
+    }
+}
+</code></pre>
+<h3 id="3-ios端实现">3. iOS端实现</h3>
+<h4 id="主插件类-flutterpluginmtpushprivatepluginm">主插件类 (<code>FlutterPluginMTPushPrivatePlugin.m</code>)</h4>
+<pre><code class="language-objc"><span class="hljs-class"><span class="hljs-keyword">@implementation</span> <span class="hljs-title">FlutterPluginMTPushPrivatePlugin</span></span>
+
++ (<span class="hljs-type">void</span>)registerWithRegistrar:(<span class="hljs-built_in">NSObject</span>&lt;FlutterPluginRegistrar&gt;*)registrar {
+    FlutterMethodChannel* channel = [FlutterMethodChannel
+        methodChannelWithName:<span class="hljs-string">@&quot;flutter_plugin_mtpush_private&quot;</span>
+              binaryMessenger:[registrar messenger]];
+              
+    FlutterEventChannel* eventChannel = [FlutterEventChannel
+        eventChannelWithName:<span class="hljs-string">@&quot;flutter_plugin_mtpush_private_event&quot;</span>
+              binaryMessenger:[registrar messenger]];
+              
+    FlutterPluginMTPushPrivatePlugin* instance = [[FlutterPluginMTPushPrivatePlugin alloc] init];
+    [registrar addMethodCallDelegate:instance channel:channel];
+    [eventChannel setStreamHandler:instance];
+}
+
+- (<span class="hljs-type">void</span>)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    <span class="hljs-keyword">if</span> ([<span class="hljs-string">@&quot;initialize&quot;</span> isEqualToString:call.method]) {
+        [<span class="hljs-keyword">self</span> initialize:call result:result];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ([<span class="hljs-string">@&quot;getRegistrationId&quot;</span> isEqualToString:call.method]) {
+        [<span class="hljs-keyword">self</span> getRegistrationId:result];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ([<span class="hljs-string">@&quot;setAlias&quot;</span> isEqualToString:call.method]) {
+        [<span class="hljs-keyword">self</span> setAlias:call result:result];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ([<span class="hljs-string">@&quot;setTags&quot;</span> isEqualToString:call.method]) {
+        [<span class="hljs-keyword">self</span> setTags:call result:result];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ([<span class="hljs-string">@&quot;sendLocalNotification&quot;</span> isEqualToString:call.method]) {
+        [<span class="hljs-keyword">self</span> sendLocalNotification:call result:result];
+    } <span class="hljs-keyword">else</span> {
+        result(FlutterMethodNotImplemented);
+    }
+}
+
+- (<span class="hljs-type">void</span>)initialize:(FlutterMethodCall*)call result:(FlutterResult)result {
+    <span class="hljs-built_in">NSString</span>* appKey = call.arguments[<span class="hljs-string">@&quot;appKey&quot;</span>];
+    <span class="hljs-built_in">NSString</span>* appSecret = call.arguments[<span class="hljs-string">@&quot;appSecret&quot;</span>];
+    <span class="hljs-built_in">NSString</span>* channel = call.arguments[<span class="hljs-string">@&quot;channel&quot;</span>] ?: <span class="hljs-string">@&quot;default&quot;</span>;
+    <span class="hljs-type">BOOL</span> enableDebug = [call.arguments[<span class="hljs-string">@&quot;enableDebug&quot;</span>] boolValue];
+    
+    <span class="hljs-keyword">if</span> (!appKey || !appSecret) {
+        result([FlutterError errorWithCode:<span class="hljs-string">@&quot;INVALID_ARGUMENTS&quot;</span>
+                                  message:<span class="hljs-string">@&quot;AppKey and AppSecret are required&quot;</span>
+                                  details:<span class="hljs-literal">nil</span>]);
+        <span class="hljs-keyword">return</span>;
+    }
+    
+    <span class="hljs-comment">// 初始化美团云推送SDK</span>
+    [MTPushService setupWithOption:<span class="hljs-literal">nil</span>
+                            appKey:appKey
+                            appSecret:appSecret
+                            channel:channel
+                            apsForProduction:<span class="hljs-literal">NO</span>];
+    
+    <span class="hljs-keyword">if</span> (enableDebug) {
+        [MTPushService setDebugMode];
+    }
+    
+    <span class="hljs-comment">// 注册推送服务</span>
+    [MTPushService registerForRemoteNotificationTypes:(<span class="hljs-built_in">UIUserNotificationTypeBadge</span> |
+                                                       <span class="hljs-built_in">UIUserNotificationTypeSound</span> |
+                                                       <span class="hljs-built_in">UIUserNotificationTypeAlert</span>)
+                                            categories:<span class="hljs-literal">nil</span>];
+    
+    result(@YES);
+}
+
+- (<span class="hljs-type">void</span>)getRegistrationId:(FlutterResult)result {
+    <span class="hljs-built_in">NSString</span>* registrationId = [MTPushService registrationID];
+    result(registrationId);
+}
+
+- (<span class="hljs-type">void</span>)setAlias:(FlutterMethodCall*)call result:(FlutterResult)result {
+    <span class="hljs-built_in">NSString</span>* alias = call.arguments[<span class="hljs-string">@&quot;alias&quot;</span>];
+    
+    [MTPushService setAlias:alias
+                 completion:^(<span class="hljs-built_in">NSInteger</span> iResCode, <span class="hljs-built_in">NSString</span> *iAlias, <span class="hljs-built_in">NSInteger</span> seq) {
+                     result(@(iResCode == <span class="hljs-number">0</span>));
+                 }
+                        seq:<span class="hljs-number">0</span>];
+}
+
+- (<span class="hljs-type">void</span>)setTags:(FlutterMethodCall*)call result:(FlutterResult)result {
+    <span class="hljs-built_in">NSArray</span>* tagsArray = call.arguments[<span class="hljs-string">@&quot;tags&quot;</span>];
+    <span class="hljs-built_in">NSSet</span>* tags = [<span class="hljs-built_in">NSSet</span> setWithArray:tagsArray];
+    
+    [MTPushService setTags:tags
+                completion:^(<span class="hljs-built_in">NSInteger</span> iResCode, <span class="hljs-built_in">NSSet</span> *iTags, <span class="hljs-built_in">NSInteger</span> seq) {
+                    result(@(iResCode == <span class="hljs-number">0</span>));
+                }
+                       seq:<span class="hljs-number">0</span>];
+}
+
+<span class="hljs-meta">#<span class="hljs-keyword">pragma</span> mark - FlutterStreamHandler</span>
+
+- (FlutterError*)onListenWithArguments:(<span class="hljs-type">id</span>)arguments eventSink:(FlutterEventSink)events {
+    _eventSink = events;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>;
+}
+
+- (FlutterError*)onCancelWithArguments:(<span class="hljs-type">id</span>)arguments {
+    _eventSink = <span class="hljs-literal">nil</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>;
+}
+
+<span class="hljs-keyword">@end</span>
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="基础推送功能">基础推送功能</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PushExample</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  _PushExampleState createState() =&gt; _PushExampleState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_PushExampleState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">PushExample</span>&gt; </span>{
+  <span class="hljs-built_in">String?</span> _registrationId;
+  <span class="hljs-built_in">List</span>&lt;PushMessage&gt; _receivedMessages = [];
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _initializePush();
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; _initializePush() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 初始化推送服务</span>
+    <span class="hljs-keyword">await</span> MTFlutterPush.initialize(
+      appKey: <span class="hljs-string">&#x27;your_app_key&#x27;</span>,
+      appSecret: <span class="hljs-string">&#x27;your_app_secret&#x27;</span>,
+      channel: <span class="hljs-string">&#x27;default&#x27;</span>,
+      enableDebug: <span class="hljs-keyword">true</span>,
+    );
+    
+    <span class="hljs-comment">// 获取注册ID</span>
+    <span class="hljs-keyword">final</span> regId = <span class="hljs-keyword">await</span> MTFlutterPush.getRegistrationId();
+    setState(() {
+      _registrationId = regId;
+    });
+    
+    <span class="hljs-comment">// 设置用户别名</span>
+    <span class="hljs-keyword">await</span> MTFlutterPush.setAlias(<span class="hljs-string">&#x27;user_123&#x27;</span>);
+    
+    <span class="hljs-comment">// 设置用户标签</span>
+    <span class="hljs-keyword">await</span> MTFlutterPush.setTags({<span class="hljs-string">&#x27;VIP&#x27;</span>, <span class="hljs-string">&#x27;iOS&#x27;</span>, <span class="hljs-string">&#x27;Beijing&#x27;</span>});
+    
+    <span class="hljs-comment">// 监听推送消息</span>
+    _setupPushListeners();
+  }
+  
+  <span class="hljs-keyword">void</span> _setupPushListeners() {
+    <span class="hljs-comment">// 监听通知消息接收</span>
+    MTFlutterPush.addReceiveNotificationListener((message) {
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Received notification: <span class="hljs-subst">$message</span>&#x27;</span>);
+      _addMessage(PushMessage.fromMap(message));
+    });
+    
+    <span class="hljs-comment">// 监听通知消息点击</span>
+    MTFlutterPush.addReceiveOpenNotificationListener((message) {
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Opened notification: <span class="hljs-subst">$message</span>&#x27;</span>);
+      _handleNotificationClick(PushMessage.fromMap(message));
+    });
+    
+    <span class="hljs-comment">// 监听透传消息</span>
+    MTFlutterPush.addReceiveMessageListener((message) {
+      <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Received message: <span class="hljs-subst">$message</span>&#x27;</span>);
+      _handleTransparentMessage(PushMessage.fromMap(message));
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> _addMessage(PushMessage message) {
+    setState(() {
+      _receivedMessages.insert(<span class="hljs-number">0</span>, message);
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> _handleNotificationClick(PushMessage message) {
+    <span class="hljs-comment">// 处理通知点击事件</span>
+    <span class="hljs-keyword">if</span> (message.extras.containsKey(<span class="hljs-string">&#x27;page&#x27;</span>)) {
+      <span class="hljs-built_in">String</span> targetPage = message.extras[<span class="hljs-string">&#x27;page&#x27;</span>];
+      <span class="hljs-comment">// 根据页面参数进行跳转</span>
+      _navigateToPage(targetPage);
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _handleTransparentMessage(PushMessage message) {
+    <span class="hljs-comment">// 处理透传消息</span>
+    <span class="hljs-keyword">if</span> (message.extras.containsKey(<span class="hljs-string">&#x27;action&#x27;</span>)) {
+      <span class="hljs-built_in">String</span> action = message.extras[<span class="hljs-string">&#x27;action&#x27;</span>];
+      <span class="hljs-keyword">switch</span> (action) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;refresh_data&#x27;</span>:
+          _refreshAppData();
+          <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;show_dialog&#x27;</span>:
+          _showCustomDialog(message.content);
+          <span class="hljs-keyword">break</span>;
+      }
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _navigateToPage(<span class="hljs-built_in">String</span> page) {
+    <span class="hljs-comment">// 页面跳转逻辑</span>
+  }
+  
+  <span class="hljs-keyword">void</span> _refreshAppData() {
+    <span class="hljs-comment">// 刷新应用数据</span>
+  }
+  
+  <span class="hljs-keyword">void</span> _showCustomDialog(<span class="hljs-built_in">String</span> content) {
+    showDialog(
+      context: context,
+      builder: (context) =&gt; AlertDialog(
+        title: Text(<span class="hljs-string">&#x27;推送消息&#x27;</span>),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () =&gt; Navigator.of(context).pop(),
+            child: Text(<span class="hljs-string">&#x27;确定&#x27;</span>),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Scaffold(
+      appBar: AppBar(title: Text(<span class="hljs-string">&#x27;推送示例&#x27;</span>)),
+      body: Column(
+        children: [
+          Padding(
+            padding: <span class="hljs-keyword">const</span> EdgeInsets.all(<span class="hljs-number">16.0</span>),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(<span class="hljs-string">&#x27;注册ID: <span class="hljs-subst">${_registrationId ?? <span class="hljs-string">&quot;获取中...&quot;</span>}</span>&#x27;</span>),
+                SizedBox(height: <span class="hljs-number">16</span>),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _sendLocalNotification,
+                      child: Text(<span class="hljs-string">&#x27;发送本地通知&#x27;</span>),
+                    ),
+                    SizedBox(width: <span class="hljs-number">8</span>),
+                    ElevatedButton(
+                      onPressed: _clearAllNotifications,
+                      child: Text(<span class="hljs-string">&#x27;清除所有通知&#x27;</span>),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _receivedMessages.length,
+              itemBuilder: (context, index) {
+                <span class="hljs-keyword">final</span> message = _receivedMessages[index];
+                <span class="hljs-keyword">return</span> ListTile(
+                  title: Text(message.title),
+                  subtitle: Text(message.content),
+                  trailing: Text(
+                    DateFormat(<span class="hljs-string">&#x27;HH:mm:ss&#x27;</span>).format(message.receivedTime),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  <span class="hljs-keyword">void</span> _sendLocalNotification() {
+    <span class="hljs-keyword">final</span> notification = LocalNotification(
+      id: <span class="hljs-built_in">DateTime</span>.now().millisecondsSinceEpoch,
+      title: <span class="hljs-string">&#x27;本地通知&#x27;</span>,
+      content: <span class="hljs-string">&#x27;这是一条本地推送通知&#x27;</span>,
+      fireTime: <span class="hljs-built_in">DateTime</span>.now().add(<span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">5</span>)),
+    );
+    
+    MTFlutterPush.sendLocalNotification(notification);
+  }
+  
+  <span class="hljs-keyword">void</span> _clearAllNotifications() {
+    MTFlutterPush.clearAllNotifications();
+  }
+}
+</code></pre>
+<h3 id="高级推送管理">高级推送管理</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AdvancedPushManager</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> AdvancedPushManager _instance = AdvancedPushManager._internal();
+  <span class="hljs-keyword">factory</span> AdvancedPushManager() =&gt; _instance;
+  AdvancedPushManager._internal();
+  
+  <span class="hljs-built_in">bool</span> _isInitialized = <span class="hljs-keyword">false</span>;
+  <span class="hljs-built_in">String?</span> _currentUserId;
+  <span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt; _currentTags = {};
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">if</span> (_isInitialized) <span class="hljs-keyword">return</span>;
+    
+    <span class="hljs-keyword">await</span> MTFlutterPush.initialize(
+      appKey: Config.mtpushAppKey,
+      appSecret: Config.mtpushAppSecret,
+      enableDebug: Config.isDebugMode,
+    );
+    
+    _setupMessageHandlers();
+    _isInitialized = <span class="hljs-keyword">true</span>;
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; setUser({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> userId,
+    <span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt;? tags,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? userInfo,
+  }) <span class="hljs-keyword">async</span> {
+    _currentUserId = userId;
+    
+    <span class="hljs-comment">// 设置别名</span>
+    <span class="hljs-keyword">await</span> MTFlutterPush.setAlias(userId);
+    
+    <span class="hljs-comment">// 设置标签</span>
+    <span class="hljs-keyword">if</span> (tags != <span class="hljs-keyword">null</span>) {
+      _currentTags = tags;
+      <span class="hljs-keyword">await</span> MTFlutterPush.setTags(tags);
+    }
+    
+    <span class="hljs-comment">// 可以将用户信息发送到服务器</span>
+    <span class="hljs-keyword">if</span> (userInfo != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">await</span> _uploadUserInfo(userId, userInfo);
+    }
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; addUserTags(<span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt; tags) <span class="hljs-keyword">async</span> {
+    _currentTags.addAll(tags);
+    <span class="hljs-keyword">await</span> MTFlutterPush.addTags(tags);
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; removeUserTags(<span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">String</span>&gt; tags) <span class="hljs-keyword">async</span> {
+    _currentTags.removeAll(tags);
+    <span class="hljs-keyword">await</span> MTFlutterPush.deleteTags(tags);
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; logout() <span class="hljs-keyword">async</span> {
+    _currentUserId = <span class="hljs-keyword">null</span>;
+    _currentTags.clear();
+    
+    <span class="hljs-keyword">await</span> MTFlutterPush.deleteAlias();
+    <span class="hljs-keyword">await</span> MTFlutterPush.cleanTags();
+  }
+  
+  <span class="hljs-keyword">void</span> _setupMessageHandlers() {
+    <span class="hljs-comment">// 设置通知消息处理</span>
+    MTFlutterPush.addReceiveNotificationListener(_handleNotification);
+    MTFlutterPush.addReceiveOpenNotificationListener(_handleNotificationClick);
+    MTFlutterPush.addReceiveMessageListener(_handleTransparentMessage);
+  }
+  
+  <span class="hljs-keyword">void</span> _handleNotification(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; message) {
+    <span class="hljs-comment">// 记录通知接收事件</span>
+    _trackEvent(<span class="hljs-string">&#x27;notification_received&#x27;</span>, message);
+    
+    <span class="hljs-comment">// 更新应用角标</span>
+    _updateAppBadge();
+  }
+  
+  <span class="hljs-keyword">void</span> _handleNotificationClick(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; message) {
+    <span class="hljs-comment">// 记录通知点击事件</span>
+    _trackEvent(<span class="hljs-string">&#x27;notification_clicked&#x27;</span>, message);
+    
+    <span class="hljs-comment">// 处理深度链接</span>
+    <span class="hljs-keyword">if</span> (message[<span class="hljs-string">&#x27;extras&#x27;</span>] != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">final</span> extras = message[<span class="hljs-string">&#x27;extras&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;;
+      _handleDeepLink(extras);
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _handleTransparentMessage(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; message) {
+    <span class="hljs-comment">// 记录透传消息事件</span>
+    _trackEvent(<span class="hljs-string">&#x27;message_received&#x27;</span>, message);
+    
+    <span class="hljs-comment">// 处理业务逻辑</span>
+    <span class="hljs-keyword">final</span> extras = message[<span class="hljs-string">&#x27;extras&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? ?? {};
+    _processBusinessMessage(extras);
+  }
+  
+  <span class="hljs-keyword">void</span> _handleDeepLink(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; extras) {
+    <span class="hljs-keyword">if</span> (extras.containsKey(<span class="hljs-string">&#x27;deeplink&#x27;</span>)) {
+      <span class="hljs-keyword">final</span> deeplink = extras[<span class="hljs-string">&#x27;deeplink&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String</span>;
+      <span class="hljs-comment">// 处理深度链接跳转</span>
+      DeepLinkHandler.handle(deeplink);
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _processBusinessMessage(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; extras) {
+    <span class="hljs-keyword">final</span> action = extras[<span class="hljs-string">&#x27;action&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String?</span>;
+    
+    <span class="hljs-keyword">switch</span> (action) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;refresh_user_info&#x27;</span>:
+        UserService.refreshUserInfo();
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;update_config&#x27;</span>:
+        ConfigService.updateRemoteConfig();
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;force_logout&#x27;</span>:
+        AuthService.forceLogout();
+        <span class="hljs-keyword">break</span>;
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _trackEvent(<span class="hljs-built_in">String</span> eventName, <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; data) {
+    <span class="hljs-comment">// 发送事件统计</span>
+    AnalyticsService.trackEvent(eventName, data);
+  }
+  
+  <span class="hljs-keyword">void</span> _updateAppBadge() {
+    <span class="hljs-comment">// 更新应用角标数量</span>
+    <span class="hljs-comment">// 可以调用原生方法或使用其他插件</span>
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; _uploadUserInfo(<span class="hljs-built_in">String</span> userId, <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; userInfo) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 将用户信息上传到推送服务器</span>
+    <span class="hljs-comment">// 用于精准推送</span>
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; schedulePushSettings({
+    <span class="hljs-built_in">int?</span> silenceStartHour,
+    <span class="hljs-built_in">int?</span> silenceStartMinute,
+    <span class="hljs-built_in">int?</span> silenceEndHour,
+    <span class="hljs-built_in">int?</span> silenceEndMinute,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">if</span> (silenceStartHour != <span class="hljs-keyword">null</span> &amp;&amp; silenceEndHour != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">await</span> MTFlutterPush.setSilenceTime(
+        startHour: silenceStartHour,
+        startMinute: silenceStartMinute ?? <span class="hljs-number">0</span>,
+        endHour: silenceEndHour,
+        endMinute: silenceEndMinute ?? <span class="hljs-number">0</span>,
+      );
+    }
+  }
+}
+</code></pre>
+<h2 id="配置和部署">配置和部署</h2>
+<h3 id="android配置">Android配置</h3>
+<pre><code class="language-xml"><span class="hljs-comment">&lt;!-- android/app/src/main/AndroidManifest.xml --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.permission.INTERNET&quot;</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.permission.ACCESS_NETWORK_STATE&quot;</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">uses-permission</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;android.permission.ACCESS_WIFI_STATE&quot;</span> /&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">application</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- 美团云推送服务配置 --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span>
+        <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;MTPUSH_APPKEY&quot;</span>
+        <span class="hljs-attr">android:value</span>=<span class="hljs-string">&quot;your_app_key&quot;</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta-data</span>
+        <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;MTPUSH_CHANNEL&quot;</span>
+        <span class="hljs-attr">android:value</span>=<span class="hljs-string">&quot;default&quot;</span> /&gt;</span>
+        
+    <span class="hljs-comment">&lt;!-- 推送消息接收器 --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">receiver</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;com.engagelab.privates.flutter_plugin_mtpush_private.MTPushReceiver&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">intent-filter</span> <span class="hljs-attr">android:priority</span>=<span class="hljs-string">&quot;1000&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;cn.mtpush.android.intent.REGISTRATION&quot;</span> /&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;cn.mtpush.android.intent.MESSAGE_RECEIVED&quot;</span> /&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;cn.mtpush.android.intent.NOTIFICATION_RECEIVED&quot;</span> /&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">action</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;cn.mtpush.android.intent.NOTIFICATION_OPENED&quot;</span> /&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">category</span> <span class="hljs-attr">android:name</span>=<span class="hljs-string">&quot;your_package_name&quot;</span> /&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">intent-filter</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">receiver</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">application</span>&gt;</span>
+</code></pre>
+<h3 id="ios配置">iOS配置</h3>
+<pre><code class="language-xml"><span class="hljs-comment">&lt;!-- ios/Runner/Info.plist --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">key</span>&gt;</span>UIBackgroundModes<span class="hljs-tag">&lt;/<span class="hljs-name">key</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">array</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">string</span>&gt;</span>remote-notification<span class="hljs-tag">&lt;/<span class="hljs-name">string</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">array</span>&gt;</span>
+</code></pre>
+<h3 id="推送证书配置">推送证书配置</h3>
+<ul>
+<li><strong>开发环境</strong>: 配置开发推送证书</li>
+<li><strong>生产环境</strong>: 配置生产推送证书</li>
+<li><strong>证书管理</strong>: 定期更新推送证书</li>
+</ul>
+<h2 id="安全特性">安全特性</h2>
+<h3 id="数据安全">数据安全</h3>
+<ul>
+<li><strong>传输加密</strong>: 推送消息传输加密</li>
+<li><strong>身份验证</strong>: 设备身份验证机制</li>
+<li><strong>防重放</strong>: 防止推送消息重放攻击</li>
+<li><strong>数据校验</strong>: 推送消息完整性校验</li>
+</ul>
+<h3 id="隐私保护">隐私保护</h3>
+<ul>
+<li><strong>用户同意</strong>: 明确的推送权限申请</li>
+<li><strong>数据最小化</strong>: 仅收集必要的设备信息</li>
+<li><strong>匿名化</strong>: 用户数据匿名化处理</li>
+<li><strong>透明度</strong>: 清晰的隐私政策说明</li>
+</ul>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="推送优化">推送优化</h3>
+<ul>
+<li><strong>智能推送</strong>: 基于用户行为的智能推送</li>
+<li><strong>频率控制</strong>: 推送频率限制机制</li>
+<li><strong>时段控制</strong>: 静默时间设置</li>
+<li><strong>内容优化</strong>: 推送内容个性化</li>
+</ul>
+<h3 id="资源管理">资源管理</h3>
+<ul>
+<li><strong>内存优化</strong>: 及时释放推送相关资源</li>
+<li><strong>电池优化</strong>: 减少推送服务电池消耗</li>
+<li><strong>网络优化</strong>: 优化推送网络请求</li>
+<li><strong>存储优化</strong>: 合理管理推送数据存储</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>flutter_plugin_mtpush_private</code> 模块作为 OneApp 的美团云推送私有版插件，提供了完整的跨平台推送解决方案。通过与 EngageLab 推送服务的深度集成，实现了高效、可靠的消息推送功能。模块支持丰富的推送类型、精准的用户定位和完善的统计分析，能够满足各种推送场景的需求。良好的安全保护和性能优化机制确保了推送服务的稳定性和用户体验。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

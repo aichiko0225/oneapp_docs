@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>AI Chat Assistant - AI &#x804a;&#x5929;&#x52a9;&#x624b;&#x6a21;&#x5757;&#x6587;&#x6863;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="ai-chat-assistant---ai-聊天助手模块文档">AI Chat Assistant - AI 聊天助手模块文档</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>ai_chat_assistant</code> 是 OneApp 车辆模块群中的智能交互模块，提供基于人工智能的语音和文字聊天功能。该模块集成了语音识别、自然语言处理、语音合成等技术，为用户提供智能化的车辆助手服务。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: ai_chat_assistant</li>
+<li><strong>版本</strong>: 1.0.0+1</li>
+<li><strong>类型</strong>: Flutter Application Module</li>
+<li><strong>Dart 版本</strong>: ^3.5.0</li>
+</ul>
+<h2 id="目录结构">目录结构</h2>
+<pre><code>ai_chat_assistant/
+├── lib/
+│   ├── app.dart                  # 应用入口配置
+│   ├── main.dart                 # 主入口文件
+│   ├── enums/                    # 枚举定义
+│   ├── models/                   # 数据模型
+│   ├── screens/                  # 页面组件
+│   ├── services/                 # 服务层
+│   ├── themes/                   # 主题配置
+│   ├── utils/                    # 工具类
+│   └── widgets/                  # 自定义组件
+├── assets/
+│   └── images/                   # 图片资源
+├── android/                      # Android 原生代码
+├── pubspec.yaml                  # 依赖配置
+└── README.md                     # 项目说明
+</code></pre>
+<h2 id="核心功能模块">核心功能模块</h2>
+<h3 id="1-语音交互-voice-interaction">1. 语音交互 (Voice Interaction)</h3>
+<h4 id="功能特性">功能特性</h4>
+<ul>
+<li><strong>语音录制</strong>: 基于 <code>record</code> 包实现音频录制</li>
+<li><strong>语音播放</strong>: 基于 <code>audioplayers</code> 包实现音频播放</li>
+<li><strong>语音合成</strong>: 基于 <code>flutter_tts</code> 实现文字转语音</li>
+<li><strong>权限管理</strong>: 基于 <code>permission_handler</code> 管理麦克风权限</li>
+</ul>
+<h4 id="技术实现">技术实现</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 语音录制服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceRecordService</span> </span>{
+  <span class="hljs-keyword">late</span> Record _record;
+  <span class="hljs-built_in">bool</span> _isRecording = <span class="hljs-keyword">false</span>;
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; startRecording() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 检查麦克风权限</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">await</span> Permission.microphone.request().isGranted) {
+      <span class="hljs-keyword">await</span> _record.start();
+      _isRecording = <span class="hljs-keyword">true</span>;
+    }
+  }
+  
+  Future&lt;<span class="hljs-built_in">String?</span>&gt; stopRecording() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">if</span> (_isRecording) {
+      <span class="hljs-keyword">final</span> path = <span class="hljs-keyword">await</span> _record.stop();
+      _isRecording = <span class="hljs-keyword">false</span>;
+      <span class="hljs-keyword">return</span> path;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+  }
+}
+
+<span class="hljs-comment">// 语音合成服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TextToSpeechService</span> </span>{
+  <span class="hljs-keyword">late</span> FlutterTts _tts;
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; speak(<span class="hljs-built_in">String</span> text) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _tts.setLanguage(<span class="hljs-string">&quot;zh-CN&quot;</span>);
+    <span class="hljs-keyword">await</span> _tts.setPitch(<span class="hljs-number">1.0</span>);
+    <span class="hljs-keyword">await</span> _tts.setSpeechRate(<span class="hljs-number">0.5</span>);
+    <span class="hljs-keyword">await</span> _tts.speak(text);
+  }
+}
+</code></pre>
+<h3 id="2-聊天界面-chat-interface">2. 聊天界面 (Chat Interface)</h3>
+<h4 id="ui-组件设计">UI 组件设计</h4>
+<ul>
+<li><strong>消息列表</strong>: 显示对话历史</li>
+<li><strong>输入框</strong>: 支持文字和语音输入</li>
+<li><strong>消息气泡</strong>: 区分用户和 AI 回复</li>
+<li><strong>状态指示器</strong>: 显示录音、发送、处理状态</li>
+</ul>
+<h4 id="状态管理">状态管理</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 聊天状态管理</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ChatProvider</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChangeNotifier</span> </span>{
+  <span class="hljs-built_in">List</span>&lt;ChatMessage&gt; _messages = [];
+  <span class="hljs-built_in">bool</span> _isLoading = <span class="hljs-keyword">false</span>;
+  <span class="hljs-built_in">bool</span> _isRecording = <span class="hljs-keyword">false</span>;
+  
+  <span class="hljs-built_in">List</span>&lt;ChatMessage&gt; <span class="hljs-keyword">get</span> messages =&gt; _messages;
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isLoading =&gt; _isLoading;
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isRecording =&gt; _isRecording;
+  
+  <span class="hljs-keyword">void</span> addMessage(ChatMessage message) {
+    _messages.add(message);
+    notifyListeners();
+  }
+  
+  <span class="hljs-keyword">void</span> setLoading(<span class="hljs-built_in">bool</span> loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
+}
+</code></pre>
+<h3 id="3-ai-服务集成-ai-service-integration">3. AI 服务集成 (AI Service Integration)</h3>
+<h4 id="http-请求处理">HTTP 请求处理</h4>
+<ul>
+<li><strong>基于 HTTP 包</strong>: 与 AI 服务端通信</li>
+<li><strong>请求封装</strong>: 统一的请求格式和错误处理</li>
+<li><strong>响应解析</strong>: JSON 数据解析和模型映射</li>
+</ul>
+<h4 id="服务接口设计">服务接口设计</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// AI 聊天服务</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AIChatService</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">String</span> _baseUrl = <span class="hljs-string">&#x27;https://api.ai-service.com&#x27;</span>;
+  
+  Future&lt;AIChatResponse&gt; sendMessage({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> message,
+    <span class="hljs-built_in">String?</span> audioPath,
+    <span class="hljs-built_in">String?</span> sessionId,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> http.post(
+        <span class="hljs-built_in">Uri</span>.parse(<span class="hljs-string">&#x27;<span class="hljs-subst">$_baseUrl</span>/chat&#x27;</span>),
+        headers: {<span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>},
+        body: jsonEncode({
+          <span class="hljs-string">&#x27;message&#x27;</span>: message,
+          <span class="hljs-string">&#x27;audio_path&#x27;</span>: audioPath,
+          <span class="hljs-string">&#x27;session_id&#x27;</span>: sessionId,
+        }),
+      );
+      
+      <span class="hljs-keyword">if</span> (response.statusCode == <span class="hljs-number">200</span>) {
+        <span class="hljs-keyword">return</span> AIChatResponse.fromJson(jsonDecode(response.body));
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;AI 服务请求失败&#x27;</span>);
+      }
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;网络请求错误: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+  }
+}
+</code></pre>
+<h2 id="数据模型-models">数据模型 (models/)</h2>
+<h3 id="1-聊天消息模型">1. 聊天消息模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ChatMessage</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> id;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> content;
+  <span class="hljs-keyword">final</span> MessageType type;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> isFromUser;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> audioPath;
+  
+  ChatMessage({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.id,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.content,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.type,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.timestamp,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.isFromUser,
+    <span class="hljs-keyword">this</span>.audioPath,
+  });
+  
+  <span class="hljs-keyword">factory</span> ChatMessage.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) {
+    <span class="hljs-keyword">return</span> ChatMessage(
+      id: json[<span class="hljs-string">&#x27;id&#x27;</span>],
+      content: json[<span class="hljs-string">&#x27;content&#x27;</span>],
+      type: MessageType.fromString(json[<span class="hljs-string">&#x27;type&#x27;</span>]),
+      timestamp: <span class="hljs-built_in">DateTime</span>.parse(json[<span class="hljs-string">&#x27;timestamp&#x27;</span>]),
+      isFromUser: json[<span class="hljs-string">&#x27;is_from_user&#x27;</span>],
+      audioPath: json[<span class="hljs-string">&#x27;audio_path&#x27;</span>],
+    );
+  }
+}
+</code></pre>
+<h3 id="2-ai-响应模型">2. AI 响应模型</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AIChatResponse</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> responseText;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String?</span> audioUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? metadata;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;? suggestions;
+  
+  AIChatResponse({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.responseText,
+    <span class="hljs-keyword">this</span>.audioUrl,
+    <span class="hljs-keyword">this</span>.metadata,
+    <span class="hljs-keyword">this</span>.suggestions,
+  });
+  
+  <span class="hljs-keyword">factory</span> AIChatResponse.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) {
+    <span class="hljs-keyword">return</span> AIChatResponse(
+      responseText: json[<span class="hljs-string">&#x27;response_text&#x27;</span>],
+      audioUrl: json[<span class="hljs-string">&#x27;audio_url&#x27;</span>],
+      metadata: json[<span class="hljs-string">&#x27;metadata&#x27;</span>],
+      suggestions: <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;.from(json[<span class="hljs-string">&#x27;suggestions&#x27;</span>] ?? []),
+    );
+  }
+}
+</code></pre>
+<h2 id="枚举定义-enums">枚举定义 (enums/)</h2>
+<h3 id="消息类型枚举">消息类型枚举</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">enum</span> MessageType {
+  text,    <span class="hljs-comment">// 文字消息</span>
+  voice,   <span class="hljs-comment">// 语音消息</span>
+  image,   <span class="hljs-comment">// 图片消息</span>
+  system   <span class="hljs-comment">// 系统消息</span>
+}
+
+<span class="hljs-keyword">extension</span> MessageTypeExtension <span class="hljs-keyword">on</span> MessageType {
+  <span class="hljs-keyword">static</span> MessageType fromString(<span class="hljs-built_in">String</span> value) {
+    <span class="hljs-keyword">switch</span> (value) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;text&#x27;</span>: <span class="hljs-keyword">return</span> MessageType.text;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;voice&#x27;</span>: <span class="hljs-keyword">return</span> MessageType.voice;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;image&#x27;</span>: <span class="hljs-keyword">return</span> MessageType.image;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;system&#x27;</span>: <span class="hljs-keyword">return</span> MessageType.system;
+      <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> MessageType.text;
+    }
+  }
+}
+</code></pre>
+<h3 id="聊天状态枚举">聊天状态枚举</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">enum</span> ChatState {
+  idle,      <span class="hljs-comment">// 空闲状态</span>
+  listening, <span class="hljs-comment">// 监听语音输入</span>
+  processing,<span class="hljs-comment">// 处理请求</span>
+  speaking,  <span class="hljs-comment">// 播放语音回复</span>
+  error      <span class="hljs-comment">// 错误状态</span>
+}
+</code></pre>
+<h2 id="页面组件-screens">页面组件 (screens/)</h2>
+<h3 id="1-主聊天页面">1. 主聊天页面</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ChatScreen</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  _ChatScreenState createState() =&gt; _ChatScreenState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_ChatScreenState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">ChatScreen</span>&gt; </span>{
+  <span class="hljs-keyword">late</span> ChatProvider _chatProvider;
+  <span class="hljs-keyword">late</span> VoiceRecordService _voiceService;
+  <span class="hljs-keyword">late</span> TextToSpeechService _ttsService;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _chatProvider = Provider.of&lt;ChatProvider&gt;(context, listen: <span class="hljs-keyword">false</span>);
+    _voiceService = VoiceRecordService();
+    _ttsService = TextToSpeechService();
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Scaffold(
+      appBar: AppBar(title: Text(<span class="hljs-string">&#x27;AI 助手&#x27;</span>)),
+      body: Column(
+        children: [
+          Expanded(child: _buildMessageList()),
+          _buildInputArea(),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildMessageList() {
+    <span class="hljs-keyword">return</span> Consumer&lt;ChatProvider&gt;(
+      builder: (context, provider, child) {
+        <span class="hljs-keyword">return</span> ListView.builder(
+          itemCount: provider.messages.length,
+          itemBuilder: (context, index) {
+            <span class="hljs-keyword">return</span> MessageBubble(message: provider.messages[index]);
+          },
+        );
+      },
+    );
+  }
+  
+  Widget _buildInputArea() {
+    <span class="hljs-keyword">return</span> Container(
+      padding: EdgeInsets.all(<span class="hljs-number">16</span>),
+      child: Row(
+        children: [
+          Expanded(child: _buildTextInput()),
+          _buildVoiceButton(),
+          _buildSendButton(),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="2-语音录制页面">2. 语音录制页面</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceRecordScreen</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-meta">@override</span>
+  _VoiceRecordScreenState createState() =&gt; _VoiceRecordScreenState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_VoiceRecordScreenState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">VoiceRecordScreen</span>&gt;
+    <span class="hljs-title">with</span> <span class="hljs-title">TickerProviderStateMixin</span> </span>{
+  <span class="hljs-keyword">late</span> AnimationController _animationController;
+  <span class="hljs-built_in">bool</span> _isRecording = <span class="hljs-keyword">false</span>;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _animationController = AnimationController(
+      duration: <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">1</span>),
+      vsync: <span class="hljs-keyword">this</span>,
+    )..repeat();
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildRecordButton(),
+            _buildRecordingIndicator(),
+            _buildHintText(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h2 id="自定义组件-widgets">自定义组件 (widgets/)</h2>
+<h3 id="1-消息气泡组件">1. 消息气泡组件</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MessageBubble</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-keyword">final</span> ChatMessage message;
+  
+  MessageBubble({<span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.message});
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> Container(
+      margin: EdgeInsets.symmetric(vertical: <span class="hljs-number">4</span>, horizontal: <span class="hljs-number">16</span>),
+      child: Row(
+        mainAxisAlignment: message.isFromUser 
+            ? MainAxisAlignment.end 
+            : MainAxisAlignment.start,
+        children: [
+          <span class="hljs-keyword">if</span> (!message.isFromUser) _buildAvatar(),
+          Flexible(child: _buildBubble()),
+          <span class="hljs-keyword">if</span> (message.isFromUser) _buildAvatar(),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildBubble() {
+    <span class="hljs-keyword">return</span> Container(
+      padding: EdgeInsets.all(<span class="hljs-number">12</span>),
+      decoration: BoxDecoration(
+        color: message.isFromUser ? Colors.blue : Colors.grey[<span class="hljs-number">300</span>],
+        borderRadius: BorderRadius.circular(<span class="hljs-number">16</span>),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          <span class="hljs-keyword">if</span> (message.type == MessageType.voice) _buildVoiceContent(),
+          <span class="hljs-keyword">if</span> (message.type == MessageType.text) _buildTextContent(),
+          _buildTimestamp(),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="2-语音输入按钮">2. 语音输入按钮</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">VoiceInputButton</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-keyword">final</span> VoidCallback onStartRecording;
+  <span class="hljs-keyword">final</span> VoidCallback onStopRecording;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> isRecording;
+  
+  VoiceInputButton({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.onStartRecording,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.onStopRecording,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.isRecording,
+  });
+  
+  <span class="hljs-meta">@override</span>
+  _VoiceInputButtonState createState() =&gt; _VoiceInputButtonState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_VoiceInputButtonState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">VoiceInputButton</span>&gt;
+    <span class="hljs-title">with</span> <span class="hljs-title">SingleTickerProviderStateMixin</span> </span>{
+  <span class="hljs-keyword">late</span> AnimationController _controller;
+  <span class="hljs-keyword">late</span> Animation&lt;<span class="hljs-built_in">double</span>&gt; _scaleAnimation;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-keyword">void</span> initState() {
+    <span class="hljs-keyword">super</span>.initState();
+    _controller = AnimationController(
+      duration: <span class="hljs-built_in">Duration</span>(milliseconds: <span class="hljs-number">200</span>),
+      vsync: <span class="hljs-keyword">this</span>,
+    );
+    _scaleAnimation = Tween&lt;<span class="hljs-built_in">double</span>&gt;(begin: <span class="hljs-number">1.0</span>, end: <span class="hljs-number">1.2</span>).animate(_controller);
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> GestureDetector(
+      onTapDown: (_) =&gt; _startRecording(),
+      onTapUp: (_) =&gt; _stopRecording(),
+      onTapCancel: () =&gt; _stopRecording(),
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          <span class="hljs-keyword">return</span> Transform.scale(
+            scale: _scaleAnimation.value,
+            child: Container(
+              width: <span class="hljs-number">60</span>,
+              height: <span class="hljs-number">60</span>,
+              decoration: BoxDecoration(
+                color: widget.isRecording ? Colors.red : Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                widget.isRecording ? Icons.stop : Icons.mic,
+                color: Colors.white,
+                size: <span class="hljs-number">30</span>,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<h2 id="服务层-services">服务层 (services/)</h2>
+<h3 id="1-音频管理服务">1. 音频管理服务</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AudioService</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> AudioService _instance = AudioService._internal();
+  <span class="hljs-keyword">factory</span> AudioService() =&gt; _instance;
+  AudioService._internal();
+  
+  <span class="hljs-keyword">late</span> AudioPlayer _player;
+  <span class="hljs-keyword">late</span> Record _recorder;
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    _player = AudioPlayer();
+    _recorder = Record();
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; playAudio(<span class="hljs-built_in">String</span> path) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">await</span> _player.play(DeviceFileSource(path));
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;音频播放失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+  }
+  
+  Future&lt;<span class="hljs-built_in">String?</span>&gt; recordAudio() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">await</span> Permission.microphone.request().isGranted) {
+        <span class="hljs-keyword">final</span> directory = <span class="hljs-keyword">await</span> getTemporaryDirectory();
+        <span class="hljs-keyword">final</span> fileName = <span class="hljs-string">&#x27;voice_<span class="hljs-subst">${DateTime.now().millisecondsSinceEpoch}</span>.m4a&#x27;</span>;
+        <span class="hljs-keyword">final</span> filePath = <span class="hljs-string">&#x27;<span class="hljs-subst">${directory.path}</span>/<span class="hljs-subst">$fileName</span>&#x27;</span>;
+        
+        <span class="hljs-keyword">await</span> _recorder.start(path: filePath);
+        <span class="hljs-keyword">return</span> filePath;
+      }
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;录音失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; stopRecording() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _recorder.stop();
+  }
+}
+</code></pre>
+<h3 id="2-网络请求服务">2. 网络请求服务</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkService</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span> _timeout = <span class="hljs-built_in">Duration</span>(seconds: <span class="hljs-number">30</span>);
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt; post({
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">String</span> url,
+    <span class="hljs-keyword">required</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; data,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">String</span>&gt;? headers,
+  }) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> http.post(
+        <span class="hljs-built_in">Uri</span>.parse(url),
+        headers: {
+          <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>,
+          ...?headers,
+        },
+        body: jsonEncode(data),
+      ).timeout(_timeout);
+      
+      <span class="hljs-keyword">if</span> (response.statusCode == <span class="hljs-number">200</span>) {
+        <span class="hljs-keyword">return</span> jsonDecode(response.body);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;HTTP <span class="hljs-subst">${response.statusCode}</span>: <span class="hljs-subst">${response.reasonPhrase}</span>&#x27;</span>);
+      }
+    } <span class="hljs-keyword">on</span> TimeoutException {
+      <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;请求超时&#x27;</span>);
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">throw</span> Exception(<span class="hljs-string">&#x27;网络请求失败: <span class="hljs-subst">$e</span>&#x27;</span>);
+    }
+  }
+}
+</code></pre>
+<h2 id="工具类-utils">工具类 (utils/)</h2>
+<h3 id="1-文件管理工具">1. 文件管理工具</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FileUtils</span> </span>{
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">String</span>&gt; getAudioCacheDir() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> directory = <span class="hljs-keyword">await</span> getApplicationDocumentsDirectory();
+    <span class="hljs-keyword">final</span> audioDir = Directory(<span class="hljs-string">&#x27;<span class="hljs-subst">${directory.path}</span>/audio_cache&#x27;</span>);
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">await</span> audioDir.exists()) {
+      <span class="hljs-keyword">await</span> audioDir.create(recursive: <span class="hljs-keyword">true</span>);
+    }
+    <span class="hljs-keyword">return</span> audioDir.path;
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; clearAudioCache() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> cacheDir = <span class="hljs-keyword">await</span> getAudioCacheDir();
+    <span class="hljs-keyword">final</span> directory = Directory(cacheDir);
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">await</span> directory.exists()) {
+      <span class="hljs-keyword">await</span> directory.delete(recursive: <span class="hljs-keyword">true</span>);
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">String</span> generateFileName(<span class="hljs-built_in">String</span> <span class="hljs-keyword">extension</span>) {
+    <span class="hljs-keyword">final</span> timestamp = <span class="hljs-built_in">DateTime</span>.now().millisecondsSinceEpoch;
+    <span class="hljs-keyword">final</span> uuid = Uuid().v4().substring(<span class="hljs-number">0</span>, <span class="hljs-number">8</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;<span class="hljs-subst">${timestamp}</span>_<span class="hljs-subst">$uuid</span>.<span class="hljs-subst">$extension</span>&#x27;</span>;
+  }
+}
+</code></pre>
+<h3 id="2-权限管理工具">2. 权限管理工具</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PermissionUtils</span> </span>{
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; requestMicrophonePermission() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> status = <span class="hljs-keyword">await</span> Permission.microphone.request();
+    <span class="hljs-keyword">return</span> status.isGranted;
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-built_in">bool</span>&gt; checkMicrophonePermission() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> status = <span class="hljs-keyword">await</span> Permission.microphone.status;
+    <span class="hljs-keyword">return</span> status.isGranted;
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; openAppSettings() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> openAppSettings();
+  }
+}
+</code></pre>
+<h2 id="主题配置-themes">主题配置 (themes/)</h2>
+<h3 id="聊天主题定义">聊天主题定义</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ChatTheme</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> Color userBubbleColor = Color(<span class="hljs-number">0xFF007AFF</span>);
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> Color aiBubbleColor = Color(<span class="hljs-number">0xFFF0F0F0</span>);
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> Color backgroundColor = Color(<span class="hljs-number">0xFFFFFFFF</span>);
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> Color textColor = Color(<span class="hljs-number">0xFF000000</span>);
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> Color hintColor = Color(<span class="hljs-number">0xFF999999</span>);
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> BorderRadius bubbleBorderRadius = BorderRadius.all(
+    Radius.circular(<span class="hljs-number">16</span>),
+  );
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> TextStyle messageTextStyle = TextStyle(
+    fontSize: <span class="hljs-number">16</span>,
+    color: textColor,
+  );
+  
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> TextStyle timestampTextStyle = TextStyle(
+    fontSize: <span class="hljs-number">12</span>,
+    color: hintColor,
+  );
+}
+</code></pre>
+<h2 id="依赖管理">依赖管理</h2>
+<h3 id="核心依赖">核心依赖</h3>
+<ul>
+<li><strong>flutter</strong>: Flutter SDK</li>
+<li><strong>provider</strong>: 状态管理</li>
+<li><strong>http</strong>: HTTP 网络请求</li>
+<li><strong>basic_intl</strong>: 国际化支持</li>
+</ul>
+<h3 id="音频相关依赖">音频相关依赖</h3>
+<ul>
+<li><strong>record</strong>: 音频录制</li>
+<li><strong>audioplayers</strong>: 音频播放</li>
+<li><strong>flutter_tts</strong>: 文字转语音</li>
+<li><strong>permission_handler</strong>: 权限管理</li>
+</ul>
+<h3 id="ui-相关依赖">UI 相关依赖</h3>
+<ul>
+<li><strong>flutter_markdown</strong>: Markdown 渲染</li>
+<li><strong>fluttertoast</strong>: Toast 提示</li>
+</ul>
+<h3 id="工具依赖">工具依赖</h3>
+<ul>
+<li><strong>path_provider</strong>: 文件路径管理</li>
+<li><strong>uuid</strong>: 唯一标识符生成</li>
+</ul>
+<h2 id="错误处理">错误处理</h2>
+<h3 id="异常类型定义">异常类型定义</h3>
+<pre><code class="language-dart"><span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AIChatException</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Exception</span> </span>{
+  <span class="hljs-built_in">String</span> <span class="hljs-keyword">get</span> message;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NetworkException</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AIChatException</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> message;
+  NetworkException(<span class="hljs-keyword">this</span>.message);
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PermissionException</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AIChatException</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> message;
+  PermissionException(<span class="hljs-keyword">this</span>.message);
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AudioException</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AIChatException</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> message;
+  AudioException(<span class="hljs-keyword">this</span>.message);
+}
+</code></pre>
+<h3 id="全局错误处理">全局错误处理</h3>
+<pre><code class="language-dart"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ErrorHandler</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> handleError(<span class="hljs-built_in">dynamic</span> error) {
+    <span class="hljs-built_in">String</span> message = <span class="hljs-string">&#x27;未知错误&#x27;</span>;
+    
+    <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">is</span> NetworkException) {
+      message = <span class="hljs-string">&#x27;网络连接失败，请检查网络设置&#x27;</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">is</span> PermissionException) {
+      message = <span class="hljs-string">&#x27;缺少必要权限，请在设置中开启&#x27;</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">is</span> AudioException) {
+      message = <span class="hljs-string">&#x27;音频处理失败，请重试&#x27;</span>;
+    }
+    
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+}
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="内存管理">内存管理</h3>
+<ul>
+<li>及时释放音频资源</li>
+<li>定期清理缓存文件</li>
+<li>优化列表渲染性能</li>
+</ul>
+<h3 id="网络优化">网络优化</h3>
+<ul>
+<li>请求超时控制</li>
+<li>错误重试机制</li>
+<li>数据压缩传输</li>
+</ul>
+<h3 id="用户体验优化">用户体验优化</h3>
+<ul>
+<li>加载状态指示</li>
+<li>平滑动画过渡</li>
+<li>快速响应交互</li>
+</ul>
+<h2 id="测试策略">测试策略</h2>
+<h3 id="单元测试">单元测试</h3>
+<ul>
+<li>服务类功能测试</li>
+<li>工具类方法测试</li>
+<li>数据模型测试</li>
+</ul>
+<h3 id="集成测试">集成测试</h3>
+<ul>
+<li>音频录制播放测试</li>
+<li>网络请求测试</li>
+<li>权限获取测试</li>
+</ul>
+<h3 id="ui-测试">UI 测试</h3>
+<ul>
+<li>聊天界面交互测试</li>
+<li>语音输入测试</li>
+<li>错误场景测试</li>
+</ul>
+<h2 id="部署配置">部署配置</h2>
+<h3 id="android-配置">Android 配置</h3>
+<ul>
+<li>添加网络权限</li>
+<li>添加音频权限</li>
+<li>配置文件存储权限</li>
+</ul>
+<h3 id="ios-配置">iOS 配置</h3>
+<ul>
+<li>配置麦克风使用说明</li>
+<li>配置网络安全设置</li>
+<li>配置后台音频播放</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>ai_chat_assistant</code> 模块为 OneApp 提供了完整的 AI 聊天助手功能，集成了语音识别、自然语言处理和语音合成技术。模块采用清晰的分层架构，具有良好的可扩展性和维护性，为用户提供了智能化的车辆交互体验。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

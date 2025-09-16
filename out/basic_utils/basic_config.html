@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Basic Config - &#x914d;&#x7f6e;&#x7ba1;&#x7406;&#x6a21;&#x5757;&#x6587;&#x6863;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="basic-config---配置管理模块文档">Basic Config - 配置管理模块文档</h1>
+<h2 id="模块概述">模块概述</h2>
+<p><code>basic_config</code> 是 OneApp 基础工具模块群中的配置管理核心模块，提供统一的应用配置管理、环境切换、远程配置下发、配置缓存等功能。该模块支持多环境配置、动态配置更新、配置版本管理等特性，为整个应用提供灵活的配置管理能力。</p>
+<h3 id="基本信息">基本信息</h3>
+<ul>
+<li><strong>模块名称</strong>: basic_config</li>
+<li><strong>版本</strong>: 0.2.2</li>
+<li><strong>仓库</strong>: <a href="https://gitlab-rd0.maezia.com/dssomobile/oneapp/dssomobile-oneapp-basic-config">https://gitlab-rd0.maezia.com/dssomobile/oneapp/dssomobile-oneapp-basic-config</a></li>
+<li><strong>Flutter 版本</strong>: &gt;=2.5.0</li>
+<li><strong>Dart 版本</strong>: &gt;=2.16.2 &lt;4.0.0</li>
+</ul>
+<h2 id="目录结构">目录结构</h2>
+<pre><code>basic_config/
+├── lib/
+│   ├── basic_config.dart         # 主导出文件
+│   └── src/                      # 源代码目录
+│       ├── config/               # 配置核心实现
+│       ├── providers/            # 配置提供者
+│       ├── models/               # 数据模型
+│       ├── storage/              # 配置存储
+│       ├── parsers/              # 配置解析器
+│       └── utils/                # 工具类
+├── pubspec.yaml                  # 依赖配置
+└── README.md                     # 项目说明
+</code></pre>
+<h2 id="核心功能模块">核心功能模块</h2>
+<h3 id="1-配置管理器核心">1. 配置管理器核心</h3>
+<h4 id="配置管理器实现">配置管理器实现</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 配置管理器核心类</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BasicConfigManager</span> </span>{
+  <span class="hljs-keyword">static</span> BasicConfigManager? _instance;
+  <span class="hljs-keyword">static</span> BasicConfigManager <span class="hljs-keyword">get</span> instance =&gt; _instance ??= BasicConfigManager._internal();
+  
+  BasicConfigManager._internal();
+  
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, ConfigProvider&gt; _providers = {};
+  <span class="hljs-keyword">final</span> ConfigStorage _storage = ConfigStorage();
+  <span class="hljs-keyword">final</span> ConfigCache _cache = ConfigCache();
+  Environment _currentEnvironment = Environment.production;
+  
+  <span class="hljs-comment">// 初始化配置管理器</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize({
+    <span class="hljs-keyword">required</span> Environment environment,
+    <span class="hljs-built_in">List</span>&lt;ConfigProvider&gt;? providers,
+    <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? defaultConfigs,
+  }) <span class="hljs-keyword">async</span> {
+    _currentEnvironment = environment;
+    
+    <span class="hljs-comment">// 初始化存储</span>
+    <span class="hljs-keyword">await</span> _storage.initialize();
+    
+    <span class="hljs-comment">// 注册默认配置提供者</span>
+    _providers[<span class="hljs-string">&#x27;local&#x27;</span>] = LocalConfigProvider();
+    _providers[<span class="hljs-string">&#x27;remote&#x27;</span>] = RemoteConfigProvider();
+    _providers[<span class="hljs-string">&#x27;asset&#x27;</span>] = AssetConfigProvider();
+    
+    <span class="hljs-comment">// 注册自定义配置提供者</span>
+    <span class="hljs-keyword">if</span> (providers != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> provider <span class="hljs-keyword">in</span> providers) {
+        _providers[provider.name] = provider;
+        <span class="hljs-keyword">await</span> provider.initialize();
+      }
+    }
+    
+    <span class="hljs-comment">// 加载默认配置</span>
+    <span class="hljs-keyword">if</span> (defaultConfigs != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">await</span> _loadDefaultConfigs(defaultConfigs);
+    }
+    
+    <span class="hljs-comment">// 从存储中加载配置</span>
+    <span class="hljs-keyword">await</span> _loadConfigsFromStorage();
+    
+    <span class="hljs-comment">// 从远程加载配置</span>
+    <span class="hljs-keyword">await</span> _loadRemoteConfigs();
+  }
+  
+  <span class="hljs-comment">// 获取配置值</span>
+  T? <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, {T? defaultValue}) {
+    <span class="hljs-comment">// 首先从缓存中获取</span>
+    <span class="hljs-keyword">final</span> cachedValue = _cache.<span class="hljs-keyword">get</span>&lt;T&gt;(key);
+    <span class="hljs-keyword">if</span> (cachedValue != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">return</span> cachedValue;
+    }
+    
+    <span class="hljs-comment">// 按优先级从配置提供者获取</span>
+    <span class="hljs-keyword">final</span> providers = _getProvidersInPriority();
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> provider <span class="hljs-keyword">in</span> providers) {
+      <span class="hljs-keyword">final</span> value = provider.<span class="hljs-keyword">get</span>&lt;T&gt;(key);
+      <span class="hljs-keyword">if</span> (value != <span class="hljs-keyword">null</span>) {
+        _cache.<span class="hljs-keyword">set</span>(key, value);
+        <span class="hljs-keyword">return</span> value;
+      }
+    }
+    
+    <span class="hljs-keyword">return</span> defaultValue;
+  }
+  
+  <span class="hljs-comment">// 设置配置值</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value, {<span class="hljs-built_in">bool</span> persistent = <span class="hljs-keyword">true</span>}) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 更新缓存</span>
+    _cache.<span class="hljs-keyword">set</span>(key, value);
+    
+    <span class="hljs-comment">// 持久化存储</span>
+    <span class="hljs-keyword">if</span> (persistent) {
+      <span class="hljs-keyword">await</span> _storage.<span class="hljs-keyword">set</span>(key, value);
+    }
+    
+    <span class="hljs-comment">// 通知配置变更</span>
+    _notifyConfigChanged(key, value);
+  }
+  
+  <span class="hljs-comment">// 批量更新配置</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; updateConfigs(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; configs, {<span class="hljs-built_in">bool</span> persistent = <span class="hljs-keyword">true</span>}) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> entry <span class="hljs-keyword">in</span> configs.entries) {
+      <span class="hljs-keyword">await</span> <span class="hljs-keyword">set</span>(entry.key, entry.value, persistent: persistent);
+    }
+  }
+  
+  <span class="hljs-comment">// 刷新远程配置</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; refreshRemoteConfigs() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> remoteProvider = _providers[<span class="hljs-string">&#x27;remote&#x27;</span>] <span class="hljs-keyword">as</span> RemoteConfigProvider?;
+    <span class="hljs-keyword">if</span> (remoteProvider != <span class="hljs-keyword">null</span>) {
+      <span class="hljs-keyword">await</span> remoteProvider.refresh();
+      _cache.clear(); <span class="hljs-comment">// 清除缓存以使用新配置</span>
+    }
+  }
+  
+  <span class="hljs-comment">// 获取环境特定的配置</span>
+  T? getEnvironmentConfig&lt;T&gt;(<span class="hljs-built_in">String</span> key, {T? defaultValue}) {
+    <span class="hljs-keyword">final</span> envKey = <span class="hljs-string">&#x27;<span class="hljs-subst">${_currentEnvironment.name}</span>.<span class="hljs-subst">$key</span>&#x27;</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">get</span>&lt;T&gt;(envKey, defaultValue: <span class="hljs-keyword">get</span>&lt;T&gt;(key, defaultValue: defaultValue));
+  }
+  
+  <span class="hljs-comment">// 监听配置变更</span>
+  Stream&lt;ConfigChangeEvent&gt; <span class="hljs-keyword">get</span> configChanges =&gt; _configChangesController.stream;
+  <span class="hljs-keyword">final</span> StreamController&lt;ConfigChangeEvent&gt; _configChangesController = 
+      StreamController.broadcast();
+  
+  <span class="hljs-keyword">void</span> _notifyConfigChanged(<span class="hljs-built_in">String</span> key, <span class="hljs-built_in">dynamic</span> value) {
+    _configChangesController.add(ConfigChangeEvent(key, value));
+  }
+  
+  <span class="hljs-built_in">List</span>&lt;ConfigProvider&gt; _getProvidersInPriority() {
+    <span class="hljs-keyword">return</span> [
+      _providers[<span class="hljs-string">&#x27;remote&#x27;</span>]!,
+      _providers[<span class="hljs-string">&#x27;local&#x27;</span>]!,
+      _providers[<span class="hljs-string">&#x27;asset&#x27;</span>]!,
+    ];
+  }
+}
+
+<span class="hljs-comment">// 环境枚举</span>
+<span class="hljs-keyword">enum</span> Environment {
+  development,
+  testing,
+  staging,
+  production;
+  
+  <span class="hljs-built_in">String</span> <span class="hljs-keyword">get</span> name {
+    <span class="hljs-keyword">switch</span> (<span class="hljs-keyword">this</span>) {
+      <span class="hljs-keyword">case</span> Environment.development:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;dev&#x27;</span>;
+      <span class="hljs-keyword">case</span> Environment.testing:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;test&#x27;</span>;
+      <span class="hljs-keyword">case</span> Environment.staging:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;staging&#x27;</span>;
+      <span class="hljs-keyword">case</span> Environment.production:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;prod&#x27;</span>;
+    }
+  }
+}
+
+<span class="hljs-comment">// 配置变更事件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigChangeEvent</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> key;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">dynamic</span> value;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> timestamp;
+  
+  ConfigChangeEvent(<span class="hljs-keyword">this</span>.key, <span class="hljs-keyword">this</span>.value) : timestamp = <span class="hljs-built_in">DateTime</span>.now();
+}
+</code></pre>
+<h3 id="2-配置提供者">2. 配置提供者</h3>
+<h4 id="远程配置提供者">远程配置提供者</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 远程配置提供者</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RemoteConfigProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ConfigProvider</span> </span>{
+  <span class="hljs-keyword">final</span> NetworkService _networkService;
+  <span class="hljs-keyword">final</span> ConfigStorage _storage;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> _refreshInterval;
+  Timer? _refreshTimer;
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; _configs = {};
+  
+  RemoteConfigProvider({
+    <span class="hljs-keyword">required</span> NetworkService networkService,
+    <span class="hljs-keyword">required</span> ConfigStorage storage,
+    <span class="hljs-built_in">Duration</span> refreshInterval = <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span>(hours: <span class="hljs-number">1</span>),
+  }) : _networkService = networkService,
+       _storage = storage,
+       _refreshInterval = refreshInterval;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-built_in">String</span> <span class="hljs-keyword">get</span> name =&gt; <span class="hljs-string">&#x27;remote&#x27;</span>;
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 从本地存储加载缓存的远程配置</span>
+    _configs = <span class="hljs-keyword">await</span> _storage.getAll(<span class="hljs-string">&#x27;remote_config&#x27;</span>) ?? {};
+    
+    <span class="hljs-comment">// 启动定时刷新</span>
+    _startPeriodicRefresh();
+    
+    <span class="hljs-comment">// 立即执行一次刷新</span>
+    <span class="hljs-keyword">await</span> refresh();
+  }
+  
+  <span class="hljs-meta">@override</span>
+  T? <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key) {
+    <span class="hljs-keyword">final</span> value = _configs[key];
+    <span class="hljs-keyword">if</span> (value == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">return</span> value <span class="hljs-keyword">as</span> T;
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value) <span class="hljs-keyword">async</span> {
+    _configs[key] = value;
+    <span class="hljs-keyword">await</span> _storage.<span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;remote_config.<span class="hljs-subst">$key</span>&#x27;</span>, value);
+  }
+  
+  <span class="hljs-comment">// 刷新远程配置</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; refresh() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">final</span> response = <span class="hljs-keyword">await</span> _networkService.<span class="hljs-keyword">get</span>(
+        path: <span class="hljs-string">&#x27;/api/v1/configs&#x27;</span>,
+        queryParameters: {
+          <span class="hljs-string">&#x27;app_version&#x27;</span>: <span class="hljs-keyword">await</span> _getAppVersion(),
+          <span class="hljs-string">&#x27;platform&#x27;</span>: Platform.isAndroid ? <span class="hljs-string">&#x27;android&#x27;</span> : <span class="hljs-string">&#x27;ios&#x27;</span>,
+          <span class="hljs-string">&#x27;environment&#x27;</span>: BasicConfigManager.instance._currentEnvironment.name,
+        },
+      );
+      
+      response.fold(
+        (failure) {
+          BasicLogger.instance.warning(<span class="hljs-string">&#x27;Failed to fetch remote configs: <span class="hljs-subst">${failure.message}</span>&#x27;</span>);
+        },
+        (data) <span class="hljs-keyword">async</span> {
+          <span class="hljs-keyword">final</span> remoteConfigs = data[<span class="hljs-string">&#x27;configs&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;? ?? {};
+          
+          <span class="hljs-comment">// 检查配置版本</span>
+          <span class="hljs-keyword">final</span> remoteVersion = data[<span class="hljs-string">&#x27;version&#x27;</span>] <span class="hljs-keyword">as</span> <span class="hljs-built_in">String?</span>;
+          <span class="hljs-keyword">final</span> localVersion = <span class="hljs-keyword">await</span> _storage.<span class="hljs-keyword">get</span>(<span class="hljs-string">&#x27;remote_config_version&#x27;</span>);
+          
+          <span class="hljs-keyword">if</span> (remoteVersion != <span class="hljs-keyword">null</span> &amp;&amp; remoteVersion != localVersion) {
+            <span class="hljs-comment">// 更新配置</span>
+            _configs = remoteConfigs;
+            <span class="hljs-keyword">await</span> _storage.setAll(<span class="hljs-string">&#x27;remote_config&#x27;</span>, _configs);
+            <span class="hljs-keyword">await</span> _storage.<span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;remote_config_version&#x27;</span>, remoteVersion);
+            
+            BasicLogger.instance.info(<span class="hljs-string">&#x27;Remote configs updated to version: <span class="hljs-subst">$remoteVersion</span>&#x27;</span>);
+          }
+        },
+      );
+    } <span class="hljs-keyword">catch</span> (e) {
+      BasicLogger.instance.error(<span class="hljs-string">&#x27;Error refreshing remote configs&#x27;</span>, error: e);
+    }
+  }
+  
+  <span class="hljs-keyword">void</span> _startPeriodicRefresh() {
+    _refreshTimer = Timer.periodic(_refreshInterval, (_) =&gt; refresh());
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; dispose() <span class="hljs-keyword">async</span> {
+    _refreshTimer?.cancel();
+  }
+}
+</code></pre>
+<h4 id="本地配置提供者">本地配置提供者</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 本地配置提供者</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LocalConfigProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ConfigProvider</span> </span>{
+  <span class="hljs-keyword">final</span> ConfigStorage _storage;
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; _configs = {};
+  
+  LocalConfigProvider({<span class="hljs-keyword">required</span> ConfigStorage storage}) : _storage = storage;
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-built_in">String</span> <span class="hljs-keyword">get</span> name =&gt; <span class="hljs-string">&#x27;local&#x27;</span>;
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    _configs = <span class="hljs-keyword">await</span> _storage.getAll(<span class="hljs-string">&#x27;local_config&#x27;</span>) ?? {};
+  }
+  
+  <span class="hljs-meta">@override</span>
+  T? <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key) {
+    <span class="hljs-keyword">final</span> value = _configs[key];
+    <span class="hljs-keyword">if</span> (value == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">return</span> value <span class="hljs-keyword">as</span> T;
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value) <span class="hljs-keyword">async</span> {
+    _configs[key] = value;
+    <span class="hljs-keyword">await</span> _storage.<span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;local_config.<span class="hljs-subst">$key</span>&#x27;</span>, value);
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; dispose() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 本地配置无需清理</span>
+  }
+}
+</code></pre>
+<h4 id="资产配置提供者">资产配置提供者</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 资产配置提供者</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AssetConfigProvider</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">ConfigProvider</span> </span>{
+  <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; _configs = {};
+  
+  <span class="hljs-meta">@override</span>
+  <span class="hljs-built_in">String</span> <span class="hljs-keyword">get</span> name =&gt; <span class="hljs-string">&#x27;asset&#x27;</span>;
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _loadAssetConfigs();
+  }
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; _loadAssetConfigs() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-comment">// 加载默认配置文件</span>
+      <span class="hljs-keyword">final</span> defaultConfigJson = <span class="hljs-keyword">await</span> rootBundle.loadString(<span class="hljs-string">&#x27;assets/config/default.json&#x27;</span>);
+      <span class="hljs-keyword">final</span> defaultConfig = jsonDecode(defaultConfigJson) <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;;
+      
+      <span class="hljs-comment">// 加载环境特定配置</span>
+      <span class="hljs-keyword">final</span> environment = BasicConfigManager.instance._currentEnvironment.name;
+      <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">final</span> envConfigJson = <span class="hljs-keyword">await</span> rootBundle.loadString(<span class="hljs-string">&#x27;assets/config/<span class="hljs-subst">$environment</span>.json&#x27;</span>);
+        <span class="hljs-keyword">final</span> envConfig = jsonDecode(envConfigJson) <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;;
+        
+        <span class="hljs-comment">// 合并配置</span>
+        _configs = {...defaultConfig, ...envConfig};
+      } <span class="hljs-keyword">catch</span> (e) {
+        <span class="hljs-comment">// 环境特定配置文件不存在，使用默认配置</span>
+        _configs = defaultConfig;
+      }
+    } <span class="hljs-keyword">catch</span> (e) {
+      BasicLogger.instance.error(<span class="hljs-string">&#x27;Failed to load asset configs&#x27;</span>, error: e);
+      _configs = {};
+    }
+  }
+  
+  <span class="hljs-meta">@override</span>
+  T? <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key) {
+    <span class="hljs-keyword">return</span> _getNestedValue&lt;T&gt;(_configs, key);
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value) <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 资产配置是只读的</span>
+    <span class="hljs-keyword">throw</span> UnsupportedError(<span class="hljs-string">&#x27;Asset configs are read-only&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">// 获取嵌套配置值</span>
+  T? _getNestedValue&lt;T&gt;(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; map, <span class="hljs-built_in">String</span> key) {
+    <span class="hljs-keyword">final</span> keys = key.split(<span class="hljs-string">&#x27;.&#x27;</span>);
+    <span class="hljs-built_in">dynamic</span> current = map;
+    
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> k <span class="hljs-keyword">in</span> keys) {
+      <span class="hljs-keyword">if</span> (current <span class="hljs-keyword">is</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; &amp;&amp; current.containsKey(k)) {
+        current = current[k];
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+      }
+    }
+    
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">return</span> current <span class="hljs-keyword">as</span> T;
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+  }
+  
+  <span class="hljs-meta">@override</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; dispose() <span class="hljs-keyword">async</span> {
+    <span class="hljs-comment">// 资产配置无需清理</span>
+  }
+}
+</code></pre>
+<h3 id="3-配置存储">3. 配置存储</h3>
+<h4 id="配置存储实现">配置存储实现</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 配置存储实现</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigStorage</span> </span>{
+  <span class="hljs-keyword">final</span> BasicStorage _storage = BasicStorage.instance;
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-built_in">String</span> _configPrefix = <span class="hljs-string">&#x27;config_&#x27;</span>;
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">await</span> _storage.initialize();
+  }
+  
+  <span class="hljs-comment">// 设置配置值</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> storageKey = <span class="hljs-string">&#x27;<span class="hljs-subst">$_configPrefix</span><span class="hljs-subst">$key</span>&#x27;</span>;
+    
+    <span class="hljs-keyword">if</span> (value <span class="hljs-keyword">is</span> <span class="hljs-built_in">String</span>) {
+      <span class="hljs-keyword">await</span> _storage.setString(storageKey, value);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value <span class="hljs-keyword">is</span> <span class="hljs-built_in">int</span>) {
+      <span class="hljs-keyword">await</span> _storage.setInt(storageKey, value);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value <span class="hljs-keyword">is</span> <span class="hljs-built_in">double</span>) {
+      <span class="hljs-keyword">await</span> _storage.setDouble(storageKey, value);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value <span class="hljs-keyword">is</span> <span class="hljs-built_in">bool</span>) {
+      <span class="hljs-keyword">await</span> _storage.setBool(storageKey, value);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-comment">// 复杂对象序列化为 JSON</span>
+      <span class="hljs-keyword">final</span> jsonValue = jsonEncode(value);
+      <span class="hljs-keyword">await</span> _storage.setString(storageKey, jsonValue);
+    }
+  }
+  
+  <span class="hljs-comment">// 获取配置值</span>
+  Future&lt;T?&gt; <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> storageKey = <span class="hljs-string">&#x27;<span class="hljs-subst">$_configPrefix</span><span class="hljs-subst">$key</span>&#x27;</span>;
+    
+    <span class="hljs-keyword">if</span> (T == <span class="hljs-built_in">String</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _storage.getString(storageKey) <span class="hljs-keyword">as</span> T?;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (T == <span class="hljs-built_in">int</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _storage.getInt(storageKey) <span class="hljs-keyword">as</span> T?;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (T == <span class="hljs-built_in">double</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _storage.getDouble(storageKey) <span class="hljs-keyword">as</span> T?;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (T == <span class="hljs-built_in">bool</span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> _storage.getBool(storageKey) <span class="hljs-keyword">as</span> T?;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-comment">// 复杂对象从 JSON 反序列化</span>
+      <span class="hljs-keyword">final</span> jsonValue = <span class="hljs-keyword">await</span> _storage.getString(storageKey);
+      <span class="hljs-keyword">if</span> (jsonValue != <span class="hljs-keyword">null</span>) {
+        <span class="hljs-keyword">try</span> {
+          <span class="hljs-keyword">return</span> jsonDecode(jsonValue) <span class="hljs-keyword">as</span> T;
+        } <span class="hljs-keyword">catch</span> (e) {
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+        }
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+  }
+  
+  <span class="hljs-comment">// 批量设置配置</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; setAll(<span class="hljs-built_in">String</span> namespace, <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; configs) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> entry <span class="hljs-keyword">in</span> configs.entries) {
+      <span class="hljs-keyword">await</span> <span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;<span class="hljs-subst">$namespace</span>.<span class="hljs-subst">${entry.key}</span>&#x27;</span>, entry.value);
+    }
+  }
+  
+  <span class="hljs-comment">// 批量获取配置</span>
+  Future&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;?&gt; getAll(<span class="hljs-built_in">String</span> namespace) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> configs = &lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;{};
+    <span class="hljs-keyword">final</span> keys = <span class="hljs-keyword">await</span> _storage.getKeys();
+    <span class="hljs-keyword">final</span> namespacePrefix = <span class="hljs-string">&#x27;<span class="hljs-subst">$_configPrefix</span><span class="hljs-subst">$namespace</span>.&#x27;</span>;
+    
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> key <span class="hljs-keyword">in</span> keys) {
+      <span class="hljs-keyword">if</span> (key.startsWith(namespacePrefix)) {
+        <span class="hljs-keyword">final</span> configKey = key.substring(namespacePrefix.length);
+        <span class="hljs-keyword">final</span> value = <span class="hljs-keyword">await</span> _storage.getString(key);
+        <span class="hljs-keyword">if</span> (value != <span class="hljs-keyword">null</span>) {
+          <span class="hljs-keyword">try</span> {
+            configs[configKey] = jsonDecode(value);
+          } <span class="hljs-keyword">catch</span> (e) {
+            configs[configKey] = value;
+          }
+        }
+      }
+    }
+    
+    <span class="hljs-keyword">return</span> configs.isNotEmpty ? configs : <span class="hljs-keyword">null</span>;
+  }
+  
+  <span class="hljs-comment">// 删除配置</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; remove(<span class="hljs-built_in">String</span> key) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> storageKey = <span class="hljs-string">&#x27;<span class="hljs-subst">$_configPrefix</span><span class="hljs-subst">$key</span>&#x27;</span>;
+    <span class="hljs-keyword">await</span> _storage.remove(storageKey);
+  }
+  
+  <span class="hljs-comment">// 清除所有配置</span>
+  Future&lt;<span class="hljs-keyword">void</span>&gt; clear() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> keys = <span class="hljs-keyword">await</span> _storage.getKeys();
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">final</span> key <span class="hljs-keyword">in</span> keys) {
+      <span class="hljs-keyword">if</span> (key.startsWith(_configPrefix)) {
+        <span class="hljs-keyword">await</span> _storage.remove(key);
+      }
+    }
+  }
+}
+</code></pre>
+<h3 id="4-配置缓存">4. 配置缓存</h3>
+<h4 id="内存缓存实现">内存缓存实现</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 配置缓存实现</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigCache</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, CacheItem&gt; _cache = {};
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Duration</span> _defaultTtl;
+  Timer? _cleanupTimer;
+  
+  ConfigCache({
+    <span class="hljs-built_in">Duration</span> defaultTtl = <span class="hljs-keyword">const</span> <span class="hljs-built_in">Duration</span>(minutes: <span class="hljs-number">30</span>),
+  }) : _defaultTtl = defaultTtl {
+    _startCleanupTimer();
+  }
+  
+  <span class="hljs-comment">// 设置缓存</span>
+  <span class="hljs-keyword">void</span> <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value, {<span class="hljs-built_in">Duration?</span> ttl}) {
+    <span class="hljs-keyword">final</span> expiry = <span class="hljs-built_in">DateTime</span>.now().add(ttl ?? _defaultTtl);
+    _cache[key] = CacheItem(value, expiry);
+  }
+  
+  <span class="hljs-comment">// 获取缓存</span>
+  T? <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key) {
+    <span class="hljs-keyword">final</span> item = _cache[key];
+    <span class="hljs-keyword">if</span> (item == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    
+    <span class="hljs-keyword">if</span> (item.isExpired) {
+      _cache.remove(key);
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+    
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">return</span> item.value <span class="hljs-keyword">as</span> T;
+    } <span class="hljs-keyword">catch</span> (e) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+    }
+  }
+  
+  <span class="hljs-comment">// 清除缓存</span>
+  <span class="hljs-keyword">void</span> clear() {
+    _cache.clear();
+  }
+  
+  <span class="hljs-comment">// 清除过期缓存</span>
+  <span class="hljs-keyword">void</span> clearExpired() {
+    <span class="hljs-keyword">final</span> now = <span class="hljs-built_in">DateTime</span>.now();
+    _cache.removeWhere((key, item) =&gt; item.expiry.isBefore(now));
+  }
+  
+  <span class="hljs-keyword">void</span> _startCleanupTimer() {
+    _cleanupTimer = Timer.periodic(<span class="hljs-built_in">Duration</span>(minutes: <span class="hljs-number">5</span>), (_) {
+      clearExpired();
+    });
+  }
+  
+  <span class="hljs-keyword">void</span> dispose() {
+    _cleanupTimer?.cancel();
+    _cache.clear();
+  }
+}
+
+<span class="hljs-comment">// 缓存项</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CacheItem</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">dynamic</span> value;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">DateTime</span> expiry;
+  
+  CacheItem(<span class="hljs-keyword">this</span>.value, <span class="hljs-keyword">this</span>.expiry);
+  
+  <span class="hljs-built_in">bool</span> <span class="hljs-keyword">get</span> isExpired =&gt; <span class="hljs-built_in">DateTime</span>.now().isAfter(expiry);
+}
+</code></pre>
+<h3 id="5-配置模型">5. 配置模型</h3>
+<h4 id="配置接口和模型">配置接口和模型</h4>
+<pre><code class="language-dart"><span class="hljs-comment">// 配置提供者接口</span>
+<span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConfigProvider</span> </span>{
+  <span class="hljs-built_in">String</span> <span class="hljs-keyword">get</span> name;
+  
+  Future&lt;<span class="hljs-keyword">void</span>&gt; initialize();
+  T? <span class="hljs-keyword">get</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key);
+  Future&lt;<span class="hljs-keyword">void</span>&gt; <span class="hljs-keyword">set</span>&lt;T&gt;(<span class="hljs-built_in">String</span> key, T value);
+  Future&lt;<span class="hljs-keyword">void</span>&gt; dispose();
+}
+
+<span class="hljs-comment">// 应用配置模型</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> apiBaseUrl;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> environment;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> debugMode;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> requestTimeout;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> maxRetries;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; features;
+  <span class="hljs-keyword">final</span> ThemeConfig theme;
+  <span class="hljs-keyword">final</span> SecurityConfig security;
+  
+  <span class="hljs-keyword">const</span> AppConfig({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.apiBaseUrl,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.environment,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.debugMode,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.requestTimeout,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.maxRetries,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.features,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.theme,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.security,
+  });
+  
+  <span class="hljs-keyword">factory</span> AppConfig.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) {
+    <span class="hljs-keyword">return</span> AppConfig(
+      apiBaseUrl: json[<span class="hljs-string">&#x27;api_base_url&#x27;</span>] ?? <span class="hljs-string">&#x27;&#x27;</span>,
+      environment: json[<span class="hljs-string">&#x27;environment&#x27;</span>] ?? <span class="hljs-string">&#x27;production&#x27;</span>,
+      debugMode: json[<span class="hljs-string">&#x27;debug_mode&#x27;</span>] ?? <span class="hljs-keyword">false</span>,
+      requestTimeout: json[<span class="hljs-string">&#x27;request_timeout&#x27;</span>] ?? <span class="hljs-number">30000</span>,
+      maxRetries: json[<span class="hljs-string">&#x27;max_retries&#x27;</span>] ?? <span class="hljs-number">3</span>,
+      features: json[<span class="hljs-string">&#x27;features&#x27;</span>] ?? {},
+      theme: ThemeConfig.fromJson(json[<span class="hljs-string">&#x27;theme&#x27;</span>] ?? {}),
+      security: SecurityConfig.fromJson(json[<span class="hljs-string">&#x27;security&#x27;</span>] ?? {}),
+    );
+  }
+}
+
+<span class="hljs-comment">// 主题配置模型</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ThemeConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> primaryColor;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> accentColor;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">String</span> fontFamily;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">double</span> fontSize;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> darkMode;
+  
+  <span class="hljs-keyword">const</span> ThemeConfig({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.primaryColor,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.accentColor,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.fontFamily,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.fontSize,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.darkMode,
+  });
+  
+  <span class="hljs-keyword">factory</span> ThemeConfig.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) {
+    <span class="hljs-keyword">return</span> ThemeConfig(
+      primaryColor: json[<span class="hljs-string">&#x27;primary_color&#x27;</span>] ?? <span class="hljs-string">&#x27;#007AFF&#x27;</span>,
+      accentColor: json[<span class="hljs-string">&#x27;accent_color&#x27;</span>] ?? <span class="hljs-string">&#x27;#FF3B30&#x27;</span>,
+      fontFamily: json[<span class="hljs-string">&#x27;font_family&#x27;</span>] ?? <span class="hljs-string">&#x27;system&#x27;</span>,
+      fontSize: (json[<span class="hljs-string">&#x27;font_size&#x27;</span>] ?? <span class="hljs-number">16.0</span>).toDouble(),
+      darkMode: json[<span class="hljs-string">&#x27;dark_mode&#x27;</span>] ?? <span class="hljs-keyword">false</span>,
+    );
+  }
+}
+
+<span class="hljs-comment">// 安全配置模型</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecurityConfig</span> </span>{
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableEncryption;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableCertificatePinning;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt; trustedCertificates;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">int</span> sessionTimeout;
+  <span class="hljs-keyword">final</span> <span class="hljs-built_in">bool</span> enableBiometric;
+  
+  <span class="hljs-keyword">const</span> SecurityConfig({
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.enableEncryption,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.enableCertificatePinning,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.trustedCertificates,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.sessionTimeout,
+    <span class="hljs-keyword">required</span> <span class="hljs-keyword">this</span>.enableBiometric,
+  });
+  
+  <span class="hljs-keyword">factory</span> SecurityConfig.fromJson(<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt; json) {
+    <span class="hljs-keyword">return</span> SecurityConfig(
+      enableEncryption: json[<span class="hljs-string">&#x27;enable_encryption&#x27;</span>] ?? <span class="hljs-keyword">true</span>,
+      enableCertificatePinning: json[<span class="hljs-string">&#x27;enable_certificate_pinning&#x27;</span>] ?? <span class="hljs-keyword">false</span>,
+      trustedCertificates: <span class="hljs-built_in">List</span>&lt;<span class="hljs-built_in">String</span>&gt;.from(json[<span class="hljs-string">&#x27;trusted_certificates&#x27;</span>] ?? []),
+      sessionTimeout: json[<span class="hljs-string">&#x27;session_timeout&#x27;</span>] ?? <span class="hljs-number">1800</span>,
+      enableBiometric: json[<span class="hljs-string">&#x27;enable_biometric&#x27;</span>] ?? <span class="hljs-keyword">false</span>,
+    );
+  }
+}
+</code></pre>
+<h2 id="使用示例">使用示例</h2>
+<h3 id="基本配置管理">基本配置管理</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 初始化配置管理器</span>
+<span class="hljs-keyword">await</span> BasicConfigManager.instance.initialize(
+  environment: Environment.production,
+  defaultConfigs: {
+    <span class="hljs-string">&#x27;api_base_url&#x27;</span>: <span class="hljs-string">&#x27;https://api.oneapp.com&#x27;</span>,
+    <span class="hljs-string">&#x27;debug_mode&#x27;</span>: <span class="hljs-keyword">false</span>,
+    <span class="hljs-string">&#x27;request_timeout&#x27;</span>: <span class="hljs-number">30000</span>,
+  },
+);
+
+<span class="hljs-comment">// 获取配置值</span>
+<span class="hljs-keyword">final</span> apiUrl = BasicConfigManager.instance.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">String</span>&gt;(<span class="hljs-string">&#x27;api_base_url&#x27;</span>);
+<span class="hljs-keyword">final</span> debugMode = BasicConfigManager.instance.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">bool</span>&gt;(<span class="hljs-string">&#x27;debug_mode&#x27;</span>, defaultValue: <span class="hljs-keyword">false</span>);
+<span class="hljs-keyword">final</span> timeout = BasicConfigManager.instance.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">int</span>&gt;(<span class="hljs-string">&#x27;request_timeout&#x27;</span>, defaultValue: <span class="hljs-number">30000</span>);
+
+<span class="hljs-comment">// 设置配置值</span>
+<span class="hljs-keyword">await</span> BasicConfigManager.instance.<span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;user_preference&#x27;</span>, <span class="hljs-string">&#x27;dark_mode&#x27;</span>);
+
+<span class="hljs-comment">// 获取环境特定配置</span>
+<span class="hljs-keyword">final</span> devApiUrl = BasicConfigManager.instance.getEnvironmentConfig&lt;<span class="hljs-built_in">String</span>&gt;(<span class="hljs-string">&#x27;api_base_url&#x27;</span>);
+
+<span class="hljs-comment">// 监听配置变更</span>
+BasicConfigManager.instance.configChanges.listen((event) {
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Config changed: <span class="hljs-subst">${event.key}</span> = <span class="hljs-subst">${event.value}</span>&#x27;</span>);
+});
+</code></pre>
+<h3 id="级配置使用">���级配置使用</h3>
+<pre><code class="language-dart"><span class="hljs-comment">// 加载应用配置</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppConfigService</span> </span>{
+  <span class="hljs-keyword">static</span> AppConfig? _appConfig;
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; initialize() <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> configJson = BasicConfigManager.instance.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt;(<span class="hljs-string">&#x27;app_config&#x27;</span>);
+    <span class="hljs-keyword">if</span> (configJson != <span class="hljs-keyword">null</span>) {
+      _appConfig = AppConfig.fromJson(configJson);
+    }
+  }
+  
+  <span class="hljs-keyword">static</span> AppConfig <span class="hljs-keyword">get</span> config =&gt; _appConfig ?? _getDefaultConfig();
+  
+  <span class="hljs-keyword">static</span> AppConfig _getDefaultConfig() {
+    <span class="hljs-keyword">return</span> AppConfig(
+      apiBaseUrl: <span class="hljs-string">&#x27;https://api.oneapp.com&#x27;</span>,
+      environment: <span class="hljs-string">&#x27;production&#x27;</span>,
+      debugMode: <span class="hljs-keyword">false</span>,
+      requestTimeout: <span class="hljs-number">30000</span>,
+      maxRetries: <span class="hljs-number">3</span>,
+      features: {},
+      theme: ThemeConfig.fromJson({}),
+      security: SecurityConfig.fromJson({}),
+    );
+  }
+}
+
+<span class="hljs-comment">// 特性开关管理</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FeatureToggle</span> </span>{
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">bool</span> isEnabled(<span class="hljs-built_in">String</span> feature) {
+    <span class="hljs-keyword">final</span> features = BasicConfigManager.instance.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt;(<span class="hljs-string">&#x27;features&#x27;</span>) ?? {};
+    <span class="hljs-keyword">return</span> features[feature] == <span class="hljs-keyword">true</span>;
+  }
+  
+  <span class="hljs-keyword">static</span> Future&lt;<span class="hljs-keyword">void</span>&gt; enableFeature(<span class="hljs-built_in">String</span> feature) <span class="hljs-keyword">async</span> {
+    <span class="hljs-keyword">final</span> features = BasicConfigManager.instance.<span class="hljs-keyword">get</span>&lt;<span class="hljs-built_in">Map</span>&lt;<span class="hljs-built_in">String</span>, <span class="hljs-built_in">dynamic</span>&gt;&gt;(<span class="hljs-string">&#x27;features&#x27;</span>) ?? {};
+    features[feature] = <span class="hljs-keyword">true</span>;
+    <span class="hljs-keyword">await</span> BasicConfigManager.instance.<span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;features&#x27;</span>, features);
+  }
+}
+</code></pre>
+<h2 id="依赖管理">依赖管理</h2>
+<h3 id="核心依赖">核心依赖</h3>
+<ul>
+<li><strong>flutter</strong>: Flutter SDK</li>
+<li><strong>basic_modular</strong>: 模块化框架</li>
+<li><strong>basic_network</strong>: 网络请求服务</li>
+<li><strong>basic_storage</strong>: 本地存储服务</li>
+</ul>
+<h3 id="工具依赖">工具依赖</h3>
+<ul>
+<li><strong>json_annotation</strong>: JSON 序列化注解</li>
+<li><strong>dartz</strong>: 函数式编程支持</li>
+<li><strong>path_provider</strong>: 文件路径管理</li>
+</ul>
+<h3 id="开发依赖">开发依赖</h3>
+<ul>
+<li><strong>flutter_test</strong>: 测试框架</li>
+</ul>
+<h2 id="配置文件结构">配置文件结构</h2>
+<h3 id="默认配置文件-assetsconfigdefaultjson">默认配置文件 (assets/config/default.json)</h3>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;api_base_url&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://api.oneapp.com&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;request_timeout&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">30000</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;max_retries&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;debug_mode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;features&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;dark_mode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;biometric_auth&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;offline_mode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;theme&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;primary_color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;#007AFF&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;accent_color&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;#FF3B30&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;font_family&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;system&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;font_size&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">16.0</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;security&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;enable_encryption&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;session_timeout&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1800</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;enable_biometric&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h3 id="开发环境配置-assetsconfigdevjson">开发环境配置 (assets/config/dev.json)</h3>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;api_base_url&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;https://dev-api.oneapp.com&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;debug_mode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;features&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;debug_tools&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;mock_data&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">true</span>
+  <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<h2 id="性能优化">性能优化</h2>
+<h3 id="配置缓存策略">配置缓存策略</h3>
+<ul>
+<li>内存缓存常用配置</li>
+<li>设置合理的 TTL</li>
+<li>定期清理过期缓存</li>
+</ul>
+<h3 id="网络优化">网络优化</h3>
+<ul>
+<li>批量获取远程配置</li>
+<li>增量更新配置</li>
+<li>配置版本管理</li>
+</ul>
+<h3 id="存储优化">存储优化</h3>
+<ul>
+<li>压缩大型配置数据</li>
+<li>异步读写操作</li>
+<li>分类存储配置</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p><code>basic_config</code> 模块为 OneApp 提供了强大而灵活的配置管理能力，支持多环境配置、远程配置下发、配置缓存等特性。通过统一的配置管理接口，简化了应用配置的使用和维护，提高了开发效率和运维灵活性。</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

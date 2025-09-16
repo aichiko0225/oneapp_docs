@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+</style>
+            
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+    
+    <!-- 添加 Mermaid 支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* Mermaid 图表样式优化 */
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        
+        /* 深色模式下的 Mermaid 适配 */
+        .vscode-dark .mermaid {
+            background: #1e1e1e;
+            border-color: #3c3c3c;
+        }
+        
+        /* 高对比度模式适配 */
+        .vscode-high-contrast .mermaid,
+        .vscode-high-contrast-light .mermaid {
+            border-width: 2px;
+        }
+    </style>
+    
+    <style>
+        .task-list-item {
+            list-style-type: none;
+        }
+
+        .task-list-item-checkbox {
+            margin-left: -20px;
+            vertical-align: middle;
+            pointer-events: none;
+        }
+    </style>
+    
+    <style>
+        :root {
+          --color-note: #0969da;
+          --color-tip: #1a7f37;
+          --color-warning: #9a6700;
+          --color-severe: #bc4c00;
+          --color-caution: #d1242f;
+          --color-important: #8250df;
+        }
+    </style>
+    
+    <style>
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --color-note: #2f81f7;
+            --color-tip: #3fb950;
+            --color-warning: #d29922;
+            --color-severe: #db6d28;
+            --color-caution: #f85149;
+            --color-important: #a371f7;
+          }
+        }
+    </style>
+    
+    <style>
+        .markdown-alert {
+          padding: 0.5rem 1rem;
+          margin-bottom: 16px;
+          color: inherit;
+          border-left: .25em solid #888;
+        }
+
+        .markdown-alert>:first-child {
+          margin-top: 0
+        }
+
+        .markdown-alert>:last-child {
+          margin-bottom: 0
+        }
+
+        .markdown-alert .markdown-alert-title {
+          display: flex;
+          font-weight: 500;
+          align-items: center;
+          line-height: 1
+        }
+
+        .markdown-alert .markdown-alert-title .octicon {
+          margin-right: 0.5rem;
+          display: inline-block;
+          overflow: visible !important;
+          vertical-align: text-bottom;
+          fill: currentColor;
+        }
+
+        .markdown-alert.markdown-alert-note {
+          border-left-color: var(--color-note);
+        }
+
+        .markdown-alert.markdown-alert-note .markdown-alert-title {
+          color: var(--color-note);
+        }
+
+        .markdown-alert.markdown-alert-important {
+          border-left-color: var(--color-important);
+        }
+
+        .markdown-alert.markdown-alert-important .markdown-alert-title {
+          color: var(--color-important);
+        }
+
+        .markdown-alert.markdown-alert-warning {
+          border-left-color: var(--color-warning);
+        }
+
+        .markdown-alert.markdown-alert-warning .markdown-alert-title {
+          color: var(--color-warning);
+        }
+
+        .markdown-alert.markdown-alert-tip {
+          border-left-color: var(--color-tip);
+        }
+
+        .markdown-alert.markdown-alert-tip .markdown-alert-title {
+          color: var(--color-tip);
+        }
+
+        .markdown-alert.markdown-alert-caution {
+          border-left-color: var(--color-caution);
+        }
+
+        .markdown-alert.markdown-alert-caution .markdown-alert-title {
+          color: var(--color-caution);
+        }
+    </style>
+</head>
+<body class="vscode-body vscode-light">
+    {body}
+    
+    <!-- Mermaid 初始化脚本 -->
+    <script>
+        // 配置 Mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#0969da',
+                primaryTextColor: '#24292f',
+                primaryBorderColor: '#d1d9e0',
+                lineColor: '#656d76',
+                secondaryColor: '#f6f8fa',
+                tertiaryColor: '#ffffff',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                secondBkg: '#f6f8fa',
+                tertiaryBkg: '#ffffff'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 10,
+                actorMargin: 50,
+                width: 150,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35,
+                mirrorActors: true,
+                bottomMarginAdj: 1,
+                useMaxWidth: true,
+                rightAngles: false,
+                showSequenceNumbers: false
+            },
+            gantt: {
+                useMaxWidth: true
+            }
+        });
+
+        // 检测主题变化
+        function detectTheme() {
+            const body = document.body;
+            if (body.classList.contains('vscode-dark')) {
+                return 'dark';
+            } else if (body.classList.contains('vscode-high-contrast')) {
+                return 'dark';
+            }
+            return 'default';
+        }
+
+        // 更新 Mermaid 主题
+        function updateMermaidTheme() {
+            const theme = detectTheme();
+            const themeConfig = theme === 'dark' ? {
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#2f81f7',
+                    primaryTextColor: '#f0f6fc',
+                    primaryBorderColor: '#30363d',
+                    lineColor: '#7d8590',
+                    secondaryColor: '#21262d',
+                    tertiaryColor: '#0d1117',
+                    background: '#0d1117',
+                    mainBkg: '#0d1117',
+                    secondBkg: '#21262d',
+                    tertiaryBkg: '#161b22'
+                }
+            } : {
+                theme: 'default',
+                themeVariables: {
+                    primaryColor: '#0969da',
+                    primaryTextColor: '#24292f',
+                    primaryBorderColor: '#d1d9e0',
+                    lineColor: '#656d76',
+                    secondaryColor: '#f6f8fa',
+                    tertiaryColor: '#ffffff',
+                    background: '#ffffff',
+                    mainBkg: '#ffffff',
+                    secondBkg: '#f6f8fa',
+                    tertiaryBkg: '#ffffff'
+                }
+            };
+
+            mermaid.initialize({
+                ...mermaid.mermaidAPI.getConfig(),
+                ...themeConfig
+            });
+        }
+
+        // DOM 加载完成后处理 Mermaid 图表
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新主题
+            updateMermaidTheme();
+            
+            // 查找所有的 mermaid 代码块
+            const mermaidBlocks = document.querySelectorAll('code.language-mermaid');
+            
+            mermaidBlocks.forEach((block, index) => {
+                const parent = block.parentElement;
+                if (parent && parent.tagName === 'PRE') {
+                    // 创建 mermaid div
+                    const mermaidDiv = document.createElement('div');
+                    mermaidDiv.className = 'mermaid';
+                    mermaidDiv.textContent = block.textContent;
+                    mermaidDiv.id = `mermaid-${index}`;
+                    
+                    // 替换原来的 pre 标签
+                    parent.parentElement.replaceChild(mermaidDiv, parent);
+                }
+            });
+            
+            // 渲染所有 mermaid 图表
+            mermaid.run();
+        });
+
+        // 监听主题变化
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    updateMermaidTheme();
+                    // 重新渲染图表
+                    setTimeout(() => {
+                        mermaid.run();
+                    }, 100);
+                }
+            });
+        });
+
+        // 观察 body 的 class 变化
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            if (e.message.includes('mermaid')) {
+                console.warn('Mermaid rendering error:', e.message);
+            }
+        });
+    </script>
+</body>
+</html>

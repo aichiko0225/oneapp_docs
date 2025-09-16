@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>OneApp &#x67b6;&#x6784;&#x8bbe;&#x8ba1;&#x6587;&#x6863;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="oneapp-架构设计文档">OneApp 架构设计文档</h1>
+<p>欢迎来到 OneApp 项目的架构设计文档站点。</p>
+<h2 id="-文档概览">📖 文档概览</h2>
+<p>本文档站点包含了 OneApp Flutter 应用的完整技术架构设计和模块说明。</p>
+<h3 id="️-主要内容">🏗️ 主要内容</h3>
+<ul>
+<li><strong><a href="OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html">架构设计</a></strong> - 完整的系统架构设计文档</li>
+<li><strong><a href="main_app.html">主应用架构</a></strong> - 主应用的详细架构说明</li>
+<li><strong><a href="debug_tools.html">调试工具</a></strong> - 开发调试工具使用指南</li>
+</ul>
+<h3 id="-功能模块">📱 功能模块</h3>
+<h4 id="核心模块">核心模块</h4>
+<ul>
+<li><strong><a href="account/">账户模块</a></strong> - 用户账户管理和认证</li>
+<li><strong><a href="app_car/">车辆相关</a></strong> - 车辆控制、充电、维护等功能</li>
+<li><strong><a href="after_sales/">售后服务</a></strong> - 售后服务相关功能</li>
+</ul>
+<h4 id="基础设施">基础设施</h4>
+<ul>
+<li><strong><a href="basic_uis/">基础UI</a></strong> - UI组件和设计系统</li>
+<li><strong><a href="basic_utils/">基础工具</a></strong> - 网络、存储、日志等基础工具</li>
+</ul>
+<h4 id="业务功能">业务功能</h4>
+<ul>
+<li><strong><a href="car_sales/">汽车销售</a></strong> - 汽车销售相关功能</li>
+<li><strong><a href="community/">社区功能</a></strong> - 用户社区交互</li>
+<li><strong><a href="membership/">会员服务</a></strong> - 会员权益管理</li>
+<li><strong><a href="setting/">设置模块</a></strong> - 应用设置功能</li>
+</ul>
+<h2 id="-技术栈">🚀 技术栈</h2>
+<ul>
+<li><strong>框架</strong>: Flutter 3.0+</li>
+<li><strong>语言</strong>: Dart 3.0+</li>
+<li><strong>架构</strong>: MVVM + 模块化</li>
+<li><strong>状态管理</strong>: Provider + Bloc</li>
+<li><strong>路由</strong>: Flutter Modular</li>
+<li><strong>网络</strong>: Dio</li>
+<li><strong>存储</strong>: Hive + SharedPreferences</li>
+</ul>
+<h2 id="-如何使用">📋 如何使用</h2>
+<ol>
+<li>从左侧导航栏选择您感兴趣的模块</li>
+<li>使用右上角搜索功能快速查找内容</li>
+<li>点击右下角按钮切换深色/浅色主题</li>
+</ol>
+<hr>
+<blockquote>
+<p>💡 <strong>提示</strong>: 所有 Mermaid 图表都支持交互式查看，点击可放大查看详细信息。</p>
+</blockquote>
+
+            
+            
+        </body>
+        </html>
