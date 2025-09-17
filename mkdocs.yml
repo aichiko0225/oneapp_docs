@@ -14,14 +14,16 @@ theme:
   language: zh
   palette:
     # 浅色模式
-    - scheme: default
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: blue
       accent: blue
       toggle:
         icon: material/brightness-7
         name: 切换至深色模式
     # 深色模式  
-    - scheme: slate
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: blue
       accent: blue
       toggle:
@@ -50,7 +52,10 @@ theme:
 # Plugins
 plugins:
   - search:
-      lang: zh
+      lang: 
+        - zh
+        - en
+      separator: '[\s\-\.]+'
 
 # Extensions
 markdown_extensions:
@@ -104,6 +109,7 @@ extra:
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js
   - assets/js/mermaid.js
+  - assets/js/search-fix.js
 
 # Extra CSS
 extra_css:
@@ -125,28 +131,32 @@ nav:
       - 售后应用: after_sales/oneapp_after_sales.md
   - 车辆服务:
       - 概览: app_car/README.md
-      - AI聊天助手: app_car/ai_chat_assistant.md
-      - 高德定位: app_car/amap_flutter_location.md
-      - 高德搜索: app_car/amap_flutter_search.md
-      - 应用头像: app_car/app_avatar.md
-      - 车辆管理: app_car/app_car.md
-      - 车辆监控: app_car/app_carwatcher.md
-      - 充电服务: app_car/app_charging.md
-      - 应用组合: app_car/app_composer.md
-      - 维修保养: app_car/app_maintenance.md
-      - 订单管理: app_car/app_order.md
-      - RPA服务: app_car/app_rpa.md
-      - TouchGo: app_car/app_touchgo.md
-      - VUR服务: app_car/app_vur.md
-      - Wallbox: app_car/app_wallbox.md
-      - 车辆服务: app_car/car_services.md
-      - CLR虚拟形象: app_car/clr_avatarcore.md
-      - CLR订单服务: app_car/clr_order.md
-      - CLR TouchGo: app_car/clr_touchgo.md
-      - CLR Wallbox: app_car/clr_wallbox.md
-      - RPA插件: app_car/kit_rpa_plugin.md
-      - 缓存插件: app_car/one_app_cache_plugin.md
-      - 头像UI: app_car/ui_avatarx.md
+      - 应用层组件:
+          - AI聊天助手: app_car/ai_chat_assistant.md
+          - 应用头像: app_car/app_avatar.md
+          - 车辆管理: app_car/app_car.md
+          - 车辆监控: app_car/app_carwatcher.md
+          - 充电服务: app_car/app_charging.md
+          - 应用组合: app_car/app_composer.md
+          - 维修保养: app_car/app_maintenance.md
+          - 订单管理: app_car/app_order.md
+          - RPA服务: app_car/app_rpa.md
+          - TouchGo: app_car/app_touchgo.md
+          - VUR服务: app_car/app_vur.md
+          - Wallbox: app_car/app_wallbox.md
+      - 服务层SDK:
+          - CLR虚拟形象: app_car/clr_avatarcore.md
+          - CLR订单服务: app_car/clr_order.md
+          - CLR TouchGo: app_car/clr_touchgo.md
+          - CLR Wallbox: app_car/clr_wallbox.md
+      - 地图服务:
+          - 高德定位: app_car/amap_flutter_location.md
+          - 高德搜索: app_car/amap_flutter_search.md
+      - 插件和工具:
+          - 车辆服务: app_car/car_services.md
+          - RPA插件: app_car/kit_rpa_plugin.md
+          - 缓存插件: app_car/one_app_cache_plugin.md
+          - 头像UI: app_car/ui_avatarx.md
   - 基础UI组件:
       - 概览: basic_uis/README.md
       - 基础UI: basic_uis/basic_uis.md
@@ -155,15 +165,18 @@ nav:
       - UI业务: basic_uis/ui_business.md
   - 基础工具库:
       - 概览: basic_utils/README.md
-      - MVVM基础: basic_utils/base_mvvm.md
-      - 基础配置: basic_utils/basic_config.md
-      - 日志系统: basic_utils/basic_logger.md
-      - 网络基础: basic_utils/basic_network.md
-      - 平台基础: basic_utils/basic_platform.md
-      - 推送基础: basic_utils/basic_push.md
-      - 基础工具: basic_utils/basic_utils.md
-      - 下载器: basic_utils/flutter_downloader.md
-      - MT推送: basic_utils/flutter_plugin_mtpush_private.md
+      - 核心基础:
+          - MVVM基础: basic_utils/base_mvvm.md
+          - 基础配置: basic_utils/basic_config.md
+          - 基础工具: basic_utils/basic_utils.md
+          - 平台基础: basic_utils/basic_platform.md
+      - 网络和通信:
+          - 网络基础: basic_utils/basic_network.md
+          - 推送基础: basic_utils/basic_push.md
+          - MT推送: basic_utils/flutter_plugin_mtpush_private.md
+      - 工具服务:
+          - 日志系统: basic_utils/basic_logger.md
+          - 下载器: basic_utils/flutter_downloader.md
   - 汽车销售:
       - 概览: car_sales/README.md
   - 社区功能:

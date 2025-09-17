@@ -7,11 +7,11 @@
 * [🔧 调试工具](debug_tools.md)
 
 * **📱 核心模块**
-  * [👤 账户模块](account/)
+  * [👤 账户模块](account/README.md)
     * [CLR账户](account/clr_account.md)
     * [极光认证](account/jverify.md)
   
-  * [🚗 车辆相关](app_car/)
+  * [🚗 车辆相关](app_car/README.md)
     * [AI聊天助手](app_car/ai_chat_assistant.md)
     * [高德地图定位](app_car/amap_flutter_location.md)
     * [高德地图搜索](app_car/amap_flutter_search.md)
@@ -35,18 +35,18 @@
     * [OneApp缓存插件](app_car/one_app_cache_plugin.md)
     * [UI虚拟形象X](app_car/ui_avatarx.md)
   
-  * [🛠️ 售后服务](after_sales/)
+  * [🛠️ 售后服务](after_sales/README.md)
     * [CLR售后](after_sales/clr_after_sales.md)
     * [OneApp售后](after_sales/oneapp_after_sales.md)
 
 * **🎨 基础设施**
-  * [🎭 基础UI](basic_uis/)
+  * [🎭 基础UI](basic_uis/README.md)
     * [基础UI组件](basic_uis/basic_uis.md)
     * [通用UI组件](basic_uis/general_ui_component.md)
     * [UI基础](basic_uis/ui_basic.md)
     * [UI业务组件](basic_uis/ui_business.md)
   
-  * [🔧 基础工具](basic_utils/)
+  * [🔧 基础工具](basic_utils/README.md)
     * [MVVM基础](basic_utils/base_mvvm.md)
     * [基础配置](basic_utils/basic_config.md)
     * [日志系统](basic_utils/basic_logger.md)
@@ -58,17 +58,17 @@
     * [极光推送私有](basic_utils/flutter_plugin_mtpush_private.md)
 
 * **🏪 业务功能**
-  * [🚙 汽车销售](car_sales/)
+  * [🚙 汽车销售](car_sales/README.md)
   
-  * [👥 社区功能](community/)
+  * [👥 社区功能](community/README.md)
   
-  * [💎 会员服务](membership/)
+  * [💎 会员服务](membership/README.md)
   
-  * [🧩 服务组件](service_component/)
+  * [🧩 服务组件](service_component/README.md)
   
-  * [⚙️ 设置模块](setting/)
+  * [⚙️ 设置模块](setting/README.md)
   
-  * [📍 触点管理](touch_point/)
+  * [📍 触点管理](touch_point/README.md)
 
 ---
 

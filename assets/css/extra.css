@@ -256,6 +256,51 @@
   background: var(--md-default-fg-color);
 }
 
+/* 修复导航栏和目录滚动问题 */
+.md-sidebar {
+  height: calc(100vh - 2.4rem);
+  overflow: hidden;
+}
+
+.md-sidebar__scrollwrap {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-default-fg-color--light) transparent;
+}
+
+.md-nav {
+  max-height: none;
+}
+
+.md-nav__list {
+  padding-bottom: 2rem;
+}
+
+/* 修复右侧目录滚动 */
+.md-nav--secondary {
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.md-nav--secondary .md-nav__list {
+  padding-bottom: 3rem;
+  max-height: none;
+}
+
+/* 移动端滚动优化 */
+@media screen and (max-width: 76.1875em) {
+  .md-nav--primary .md-nav__list {
+    padding-bottom: 2rem;
+  }
+  
+  .md-sidebar {
+    height: calc(100vh - 3rem);
+  }
+}
+
 /* Tab 样式优化 */
 .md-typeset .tabbed-set {
   border-radius: 6px;

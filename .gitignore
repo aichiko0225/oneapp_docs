@@ -1,1 +1,26 @@
+# 构建输出目录
+/site
+
+# 临时文档目录 (由构建脚本动态生成)
+/docs
+
+# 调试文件夹
 /app-debug
+
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# MkDocs临时文件
+.mkdocs_cache/
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
