@@ -271,7 +271,7 @@ class AvatarPaymentService {
     }
   }
   
-  // 购买虚拟形象服��
+  // 购买虚拟形象服务
   Future<Result<PaymentResult>> purchaseAvatarService({
     required String userId,
     required AvatarServicePackage package,
@@ -462,7 +462,7 @@ enum ConsentItem {
   String get description {
     switch (this) {
       case ConsentItem.voiceDataCollection:
-        return '收集您的语音样本用于创建个性化虚拟��象';
+        return '收集您的语音样本用于创建个性化虚拟形象';
       case ConsentItem.voiceCloning:
         return '使用AI技术克隆您的声音特征';
       case ConsentItem.avatarDataProcessing:

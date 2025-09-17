@@ -4,7 +4,11 @@
 
 ## 🚀 快速开始
 
-### 环境要求
+### - 源文档直接在根目录维护，构建时自动拷贝
+
+## 🛠️ 技术栈
+
+- **框架**: Flutter 3.0+
 - **Python 3.7+** - 运行MkDocs
 - **PowerShell 5.0+** - 执行构建脚本（Windows自带）
 - **Git** - 版本控制（可选）
@@ -52,7 +56,7 @@ pip install mkdocs-material
 - **[设置功能](setting/README.md)** - 应用配置和个人设置
 - **[触点模块](touch_point/README.md)** - 用户接触点管理
 
-## � 项目结构
+## 📁 项目结构
 
 ```
 oneapp_docs/

@@ -651,7 +651,7 @@ class CrashLogCollector {
 
 ### Android 日志监控
 ```kotlin
-// Android ���志监控插件
+// Android 日志监控插件
 class LogcatMonitorPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private var logcatMonitor: LogcatMonitor? = null

@@ -723,7 +723,7 @@ BasicConfigManager.instance.configChanges.listen((event) {
 });
 ```
 
-### ���级配置使用
+### 高级配置使用
 ```dart
 // 加载应用配置
 class AppConfigService {

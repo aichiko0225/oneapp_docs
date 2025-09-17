@@ -54,7 +54,7 @@ class MaintenancePlanService {
     String vehicleId,
   ) async {
     try {
-      // 获取车辆���息
+      // 获取车辆信息
       final vehicle = await _vehicleService.getVehicleById(vehicleId);
       if (vehicle == null) {
         return Left(MaintenanceFailure.vehicleNotFound());
