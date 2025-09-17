@@ -113,7 +113,3 @@ try {
     
     exit 1
 }
-
-Write-Host ""
-Write-Host "Press any key..." -ForegroundColor Gray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

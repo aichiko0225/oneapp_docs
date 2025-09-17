@@ -29,10 +29,14 @@ if "%choice%"=="1" (
     echo.
     echo 开始构建文档...
     powershell -ExecutionPolicy Bypass -File "%~dp0build-docs.ps1"
+    echo.
+    echo 构建完成！
 ) else if "%choice%"=="2" (
     echo.
     echo 开始构建文档 (保留docs目录)...
     powershell -ExecutionPolicy Bypass -File "%~dp0build-docs.ps1" -KeepDocs
+    echo.
+    echo 构建完成！
 ) else if "%choice%"=="3" (
     powershell -ExecutionPolicy Bypass -File "%~dp0build-docs.ps1" -Help
     pause
@@ -44,7 +48,3 @@ if "%choice%"=="1" (
     pause
     exit /b 1
 )
-
-echo.
-echo 构建完成！
-pause
