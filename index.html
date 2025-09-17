@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>OneApp 架构设计文档</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="OneApp Flutter架构设计文档站点，包含完整的技术架构设计和模块说明">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    /* 自定义样式 */
+    :root {
+      --theme-color: #0969da;
+      --sidebar-width: 300px;
+    }
+    
+    /* Mermaid 图表样式优化 */
+    .mermaid {
+      text-align: center;
+      margin: 20px 0;
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    
+    /* 深色模式下的 Mermaid 适配 */
+    body.dark .mermaid {
+      background: #0d1117;
+      border-color: #30363d;
+    }
+    
+    /* 代码块样式优化 */
+    .markdown-section pre {
+      background-color: #f6f8fa;
+      border-radius: 6px;
+    }
+    
+    body.dark .markdown-section pre {
+      background-color: #161b22;
+    }
+    
+    /* 表格样式优化 */
+    .markdown-section table {
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    
+    .markdown-section table th,
+    .markdown-section table td {
+      border: 1px solid #d0d7de;
+      padding: 8px 13px;
+    }
+    
+    body.dark .markdown-section table th,
+    body.dark .markdown-section table td {
+      border-color: #30363d;
+    }
+    
+    /* 警告框样式 */
+    .markdown-section blockquote {
+      border-left: 4px solid var(--theme-color);
+      background-color: #f6f8fa;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    
+    body.dark .markdown-section blockquote {
+      background-color: #161b22;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">加载中...</div>
+  <script>
+    window.$docsify = {
+      name: 'OneApp 架构设计文档',
+      repo: 'https://github.com/aichiko0225/oneapp_docs',
+      loadSidebar: true,
+      loadNavbar: true,
+      subMaxLevel: 3,
+      auto2top: true,
+      maxLevel: 4,
+      
+      // 搜索配置
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: '🔍 搜索文档...',
+        noData: '😞 找不到结果',
+        depth: 4,
+        hideOtherSidebarContent: false
+      },
+      
+      // 复制代码配置
+      copyCode: {
+        buttonText: '复制',
+        errorText: '复制失败',
+        successText: '已复制'
+      },
+      
+      // 分页导航
+      pagination: {
+        previousText: '上一页',
+        nextText: '下一页',
+        crossChapter: true
+      },
+      
+      // 字数统计
+      count: {
+        countable: true,
+        fontsize: '0.9em',
+        color: 'rgb(90,90,90)',
+        language: 'chinese'
+      },
+      
+      // Mermaid 配置
+      mermaid: {
+        initialize: {
+          theme: 'default',
+          themeVariables: {
+            primaryColor: '#0969da',
+            primaryTextColor: '#24292f',
+            primaryBorderColor: '#d1d9e0',
+            lineColor: '#656d76',
+            secondaryColor: '#f6f8fa',
+            tertiaryColor: '#ffffff'
+          },
+          flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis'
+          },
+          sequence: {
+            diagramMarginX: 50,
+            diagramMarginY: 10,
+            actorMargin: 50,
+            width: 150,
+            height: 65,
+            boxMargin: 10,
+            boxTextMargin: 5,
+            noteMargin: 10,
+            messageMargin: 35,
+            mirrorActors: true,
+            useMaxWidth: true
+          }
+        }
+      }
+    };
+  </script>
+  
+  <!-- Docsify 核心 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  
+  <!-- 插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-count/dist/countable.min.js"></script>
+  
+  <!-- 语法高亮 -->
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-dart.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-kotlin.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
+  
+  <!-- Mermaid 支持 -->
+  <script src="//cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-mermaid@2.0.1/dist/docsify-mermaid.js"></script>
+  
+  <!-- 主题切换插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/index.min.js"></script>
+</body>
+</html>
