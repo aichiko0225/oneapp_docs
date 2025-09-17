@@ -30,6 +30,7 @@ pip install mkdocs-material
 ### 📖 主要内容
 
 - **[架构设计文档](OneApp架构设计文档.md)** - 完整的系统架构设计文档
+- **[AI聊天助手](CODE_ANALYSIS.md)** - AI聊天助手代码解析
 - **[主应用架构](main_app.md)** - 主应用的详细架构说明  
 - **[调试工具](debug_tools.md)** - 开发调试工具使用指南
 

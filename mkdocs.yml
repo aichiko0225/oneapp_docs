@@ -119,6 +119,7 @@ extra_css:
 nav:
   - 首页: README.md
   - 架构设计文档: OneApp架构设计文档.md
+  - AI聊天助手: CODE_ANALYSIS.md
   - 主应用架构: main_app.md
   - 调试工具: debug_tools.md
   - 账户模块:
