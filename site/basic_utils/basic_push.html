@@ -1,0 +1,4162 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="OneApp Flutter应用完整技术架构设计和模块说明">
+      
+      
+        <meta name="author" content="OneApp Team">
+      
+      
+      
+        <link rel="prev" href="basic_platform.html">
+      
+      
+        <link rel="next" href="basic_utils.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>推送基础 - OneApp 架构设计文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#basic_push" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-header__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OneApp 架构设计文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              推送基础
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  架构设计文档
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../main_app.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  主应用架构
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../debug_tools.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  调试工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../account/index.html" class="md-tabs__link">
+          
+  
+  
+  账户模块
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../after_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  售后服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../app_car/index.html" class="md-tabs__link">
+          
+  
+  
+  车辆服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_uis/index.html" class="md-tabs__link">
+          
+  
+  
+  基础UI组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  基础工具库
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../car_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  汽车销售
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/index.html" class="md-tabs__link">
+          
+  
+  
+  社区功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../membership/index.html" class="md-tabs__link">
+          
+  
+  
+  会员服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../service_component/index.html" class="md-tabs__link">
+          
+  
+  
+  服务组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../setting/index.html" class="md-tabs__link">
+          
+  
+  
+  设置功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../touch_point/index.html" class="md-tabs__link">
+          
+  
+  
+  触点模块
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-nav__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    OneApp 架构设计文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构设计文档
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main_app.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主应用架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug_tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    调试工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    账户模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            账户模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/clr_account.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR账户服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/jverify.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    极光验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    售后服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            售后服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/clr_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR售后服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/oneapp_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    售后应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            车辆服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/ai_chat_assistant.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI聊天助手
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/amap_flutter_location.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德定位
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/amap_flutter_search.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德搜索
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_avatar.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用头像
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_car.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_carwatcher.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆监控
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_charging.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    充电服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_composer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用组合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_maintenance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    维修保养
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    订单管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_rpa.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_vur.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    VUR服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/car_services.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_avatarcore.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR虚拟形象
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR订单服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/kit_rpa_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/one_app_cache_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    缓存插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/ui_avatarx.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    头像UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础UI组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            基础UI组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/basic_uis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/general_ui_component.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    通用组件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_basic.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_business.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI业务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具库
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="base_mvvm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MVVM基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_config.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础配置
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_logger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    日志系统
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_network.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网络基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_platform.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    平台基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    推送基础
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="basic_push.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    推送基础
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="模块概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本信息
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      功能特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="功能特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      目录结构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      基础框架依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送服务依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      工具依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心模块分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心模块分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_basic_pushdart" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 模块入口 (basic_push.dart)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_srcpush_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 推送管理器 (src/push_manager/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_srcproviders" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 推送服务提供商 (src/providers/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_srcnotifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 通知管理 (src/notifications/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5_srcmodels" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 数据模型 (src/models/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6_srchandlers" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 消息处理器 (src/handlers/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7_srcutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. 工具类 (src/utils/)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送服务架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送服务架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送流程设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      多渠道推送策略
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      业务流程
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="业务流程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送初始化流程
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      消息处理流程
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送消息模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送消息模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      消息结构定义
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      通知配置模型
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送服务提供商实现
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送服务提供商实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      美团云推送集成
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fcm" class="md-nav__link">
+    <span class="md-ellipsis">
+      FCM集成
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      本地通知系统
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="本地通知系统">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      本地通知管理器
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送统计和分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送统计和分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      统计数据收集
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全和隐私
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="安全和隐私">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据保护
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      隐私合规
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送性能
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      资源管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置和部署
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置和部署">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      环境管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      最佳实践
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="最佳实践">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      开发建议
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户体验
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_utils.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="flutter_downloader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    下载器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="flutter_plugin_mtpush_private.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MT推送
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    汽车销售
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            汽车销售
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../car_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    社区功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            社区功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    会员服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            会员服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../membership/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    服务组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            服务组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../service_component/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    设置功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            设置功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setting/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    触点模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            触点模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../touch_point/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="模块概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本信息
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      功能特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="功能特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      目录结构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      基础框架依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送服务依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      工具依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心模块分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心模块分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_basic_pushdart" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 模块入口 (basic_push.dart)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_srcpush_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 推送管理器 (src/push_manager/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_srcproviders" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 推送服务提供商 (src/providers/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_srcnotifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 通知管理 (src/notifications/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5_srcmodels" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 数据模型 (src/models/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6_srchandlers" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 消息处理器 (src/handlers/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7_srcutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. 工具类 (src/utils/)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送服务架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送服务架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送流程设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      多渠道推送策略
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      业务流程
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="业务流程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送初始化流程
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      消息处理流程
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送消息模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送消息模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      消息结构定义
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      通知配置模型
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送服务提供商实现
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送服务提供商实现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      美团云推送集成
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fcm" class="md-nav__link">
+    <span class="md-ellipsis">
+      FCM集成
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      本地通知系统
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="本地通知系统">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      本地通知管理器
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送统计和分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="推送统计和分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      统计数据收集
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全和隐私
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="安全和隐私">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据保护
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      隐私合规
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送性能
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      资源管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置和部署
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置和部署">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      推送配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      环境管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      最佳实践
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="最佳实践">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      开发建议
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      用户体验
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="basic_push">Basic Push 推送服务模块<a class="headerlink" href="#basic_push" title="Permanent link">&para;</a></h1>
+<h2 id="_1">模块概述<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><code>basic_push</code> 是 OneApp 基础工具模块群中的推送服务模块，负责统一管理应用的消息推送功能。该模块集成了多种推送服务提供商，提供统一的推送接口和消息处理能力，支持本地通知、远程推送、定时推送等功能。</p>
+<h3 id="_2">基本信息<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>模块名称</strong>: basic_push</li>
+<li><strong>版本</strong>: 0.2.5+8</li>
+<li><strong>描述</strong>: 移动应用推送服务框架</li>
+<li><strong>Flutter 版本</strong>: &gt;=1.17.0</li>
+<li><strong>Dart 版本</strong>: &gt;=2.17.0 &lt;4.0.0</li>
+</ul>
+<h2 id="_3">功能特性<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">核心功能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>多渠道推送支持</strong><br />
+   - 美团云推送集成<br />
+   - FCM (Firebase Cloud Messaging)<br />
+   - APNs (Apple Push Notification)<br />
+   - 华为推送服务</p>
+</li>
+<li>
+<p><strong>消息类型管理</strong><br />
+   - 文本消息推送<br />
+   - 富媒体消息<br />
+   - 自定义数据推送<br />
+   - 静默推送</p>
+</li>
+<li>
+<p><strong>推送策略控制</strong><br />
+   - 定时推送<br />
+   - 地理位置推送<br />
+   - 用户分组推送<br />
+   - A/B测试推送</p>
+</li>
+<li>
+<p><strong>本地通知系统</strong><br />
+   - 即时本地通知<br />
+   - 定时本地通知<br />
+   - 重复通知设置<br />
+   - 通知分类管理</p>
+</li>
+</ol>
+<h2 id="_5">技术架构<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">目录结构<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lib/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── basic_push.dart             # 模块入口文件
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── src/                        # 源代码目录
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── push_manager/           # 推送管理器
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   ├── providers/              # 推送服务提供商
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   ├── notifications/          # 通知管理
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   ├── models/                 # 数据模型
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   ├── handlers/               # 消息处理器
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   └── utils/                  # 工具类
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>├── android/                    # Android特定实现
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├── ios/                        # iOS特定实现
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>└── test/                       # 测试文件
+</span></code></pre></div>
+<h3 id="_7">依赖关系<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h4 id="_8">基础框架依赖<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>basic_network: ^0.2.1</code> - 网络通信框架</li>
+<li><code>basic_logger: ^0.2.0</code> - 日志系统</li>
+<li><code>basic_storage: ^0.2.0</code> - 本地存储</li>
+<li><code>basic_modular: ^0.2.0</code> - 模块化框架</li>
+<li><code>basic_platform: ^0.2.2</code> - 平台适配</li>
+</ul>
+<h4 id="_9">推送服务依赖<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>flutter_plugin_mtpush_private</code> - 美团云推送插件（本地依赖）</li>
+</ul>
+<h4 id="_10">工具依赖<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>rxdart: ^0.27.7</code> - 响应式编程</li>
+<li><code>dartz: ^0.10.1</code> - 函数式编程</li>
+<li><code>dartx: ^1.1.0</code> - Dart扩展</li>
+<li><code>kt_dart: ^1.1.0</code> - Kotlin风格扩展</li>
+<li><code>freezed_annotation: ^2.2.0</code> - 数据类注解</li>
+<li><code>json_annotation: ^4.8.1</code> - JSON序列化</li>
+</ul>
+<h2 id="_11">核心模块分析<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="1_basic_pushdart">1. 模块入口 (<code>basic_push.dart</code>)<a class="headerlink" href="#1_basic_pushdart" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 推送服务统一初始化<br />
+- 对外接口导出<br />
+- 服务生命周期管理</p>
+<h3 id="2_srcpush_manager">2. 推送管理器 (<code>src/push_manager/</code>)<a class="headerlink" href="#2_srcpush_manager" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 推送服务统一管理<br />
+- 多渠道推送协调<br />
+- 消息路由分发<br />
+- 推送状态监控</p>
+<p><strong>主要组件</strong>:<br />
+- <code>PushManager</code> - 推送管理器主类<br />
+- <code>ChannelManager</code> - 推送渠道管理<br />
+- <code>MessageRouter</code> - 消息路由器<br />
+- <code>StatusMonitor</code> - 状态监控器</p>
+<h3 id="3_srcproviders">3. 推送服务提供商 (<code>src/providers/</code>)<a class="headerlink" href="#3_srcproviders" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 不同推送服务的具体实现<br />
+- 推送渠道适配<br />
+- 服务配置管理<br />
+- 错误处理和重试</p>
+<p><strong>主要提供商</strong>:<br />
+- <code>MTPushProvider</code> - 美团云推送服务<br />
+- <code>FCMProvider</code> - Firebase云消息服务<br />
+- <code>APNsProvider</code> - Apple推送通知服务<br />
+- <code>HuaweiPushProvider</code> - 华为推送服务</p>
+<h3 id="4_srcnotifications">4. 通知管理 (<code>src/notifications/</code>)<a class="headerlink" href="#4_srcnotifications" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 本地通知创建和管理<br />
+- 通知样式定制<br />
+- 通知行为处理<br />
+- 通知权限管理</p>
+<p><strong>主要组件</strong>:<br />
+- <code>LocalNotificationManager</code> - 本地通知管理器<br />
+- <code>NotificationBuilder</code> - 通知构建器<br />
+- <code>NotificationScheduler</code> - 通知调度器<br />
+- <code>NotificationPermissionHandler</code> - 权限处理器</p>
+<h3 id="5_srcmodels">5. 数据模型 (<code>src/models/</code>)<a class="headerlink" href="#5_srcmodels" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 推送消息数据模型<br />
+- 通知配置模型<br />
+- 推送统计模型<br />
+- 错误信息模型</p>
+<p><strong>主要模型</strong>:<br />
+- <code>PushMessage</code> - 推送消息模型<br />
+- <code>NotificationConfig</code> - 通知配置模型<br />
+- <code>PushStats</code> - 推送统计模型<br />
+- <code>PushError</code> - 推送错误模型</p>
+<h3 id="6_srchandlers">6. 消息处理器 (<code>src/handlers/</code>)<a class="headerlink" href="#6_srchandlers" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 消息接收处理<br />
+- 消息点击响应<br />
+- 自定义动作处理<br />
+- 消息生命周期管理</p>
+<p><strong>主要处理器</strong>:<br />
+- <code>MessageReceiveHandler</code> - 消息接收处理器<br />
+- <code>MessageClickHandler</code> - 消息点击处理器<br />
+- <code>CustomActionHandler</code> - 自定义动作处理器<br />
+- <code>LifecycleHandler</code> - 生命周期处理器</p>
+<h3 id="7_srcutils">7. 工具类 (<code>src/utils/</code>)<a class="headerlink" href="#7_srcutils" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 推送工具方法<br />
+- 消息格式化工具<br />
+- 时间处理工具<br />
+- 加密解密工具</p>
+<p><strong>主要工具</strong>:<br />
+- <code>PushUtils</code> - 推送工具类<br />
+- <code>MessageFormatter</code> - 消息格式化器<br />
+- <code>TimeUtils</code> - 时间工具类<br />
+- <code>CryptoUtils</code> - 加密工具类</p>
+<h2 id="_12">推送服务架构<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">推送流程设计<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    A[应用服务器] --&gt; B[推送服务商]
+    B --&gt; C[设备推送服务]
+    C --&gt; D[OneApp推送模块]
+    D --&gt; E[消息处理器]
+    E --&gt; F[业务模块]
+
+    G[本地推送] --&gt; D
+    H[定时推送] --&gt; D
+
+    D --&gt; I[通知展示]
+    D --&gt; J[数据处理]
+    D --&gt; K[统计上报]</code></pre>
+<h3 id="_14">多渠道推送策略<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PushChannelStrategy</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sendMessage</span><span class="p">(</span><span class="n">PushMessage</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isAndroid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="c1">// Android优先使用厂商推送</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kd">await</span><span class="w"> </span><span class="n">_isHuaweiDevice</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">HuaweiPushProvider</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kd">await</span><span class="w"> </span><span class="n">_isXiaomiDevice</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">MiPushProvider</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="c1">// fallback to FCM or 美团云推送</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="kd">await</span><span class="w"> </span><span class="n">_sendWithFallback</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Platform</span><span class="p">.</span><span class="n">isIOS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="c1">// iOS使用APNs</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">APNsProvider</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_sendWithFallback</span><span class="p">(</span><span class="n">PushMessage</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">FCMProvider</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">MTPushProvider</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_15">业务流程<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">推送初始化流程<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    A[应用启动] --&gt; B[初始化推送模块]
+    B --&gt; C[检查推送权限]
+    C --&gt; D{权限是否已授予}
+    D --&gt;|否| E[请求推送权限]
+    D --&gt;|是| F[注册推送服务]
+    E --&gt; G{用户是否同意}
+    G --&gt;|是| F
+    G --&gt;|否| H[记录权限拒绝]
+    F --&gt; I[获取设备Token]
+    I --&gt; J[上报Token到服务器]
+    J --&gt; K[设置消息监听器]
+    K --&gt; L[推送服务就绪]
+    H --&gt; M[功能降级处理]</code></pre>
+<h3 id="_17">消息处理流程<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>graph TD
+    A[接收推送消息] --&gt; B[解析消息内容]
+    B --&gt; C[验证消息有效性]
+    C --&gt; D{消息是否有效}
+    D --&gt;|否| E[丢弃消息]
+    D --&gt;|是| F[判断应用状态]
+    F --&gt; G{应用是否在前台}
+    G --&gt;|是| H[直接处理消息]
+    G --&gt;|否| I[显示系统通知]
+    H --&gt; J[触发业务逻辑]
+    I --&gt; K[用户点击通知]
+    K --&gt; L[启动应用]
+    L --&gt; J
+    J --&gt; M[记录推送统计]
+    E --&gt; N[记录错误日志]</code></pre>
+<h2 id="_18">推送消息模型<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<h3 id="_19">消息结构定义<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@freezed</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PushMessage</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$PushMessage</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kd">factory</span><span class="w"> </span><span class="n">PushMessage</span><span class="p">({</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">messageId</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">body</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">imageUrl</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">customData</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">(</span><span class="n">MessageType</span><span class="p">.</span><span class="n">notification</span><span class="p">)</span><span class="w"> </span><span class="n">MessageType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">(</span><span class="n">MessagePriority</span><span class="p">.</span><span class="n">normal</span><span class="p">)</span><span class="w"> </span><span class="n">MessagePriority</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="n">DateTime</span><span class="o">?</span><span class="w"> </span><span class="n">scheduleTime</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">([])</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tags</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="n">PushChannel</span><span class="o">?</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_PushMessage</span><span class="p">;</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">  </span><span class="kd">factory</span><span class="w"> </span><span class="n">PushMessage</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="n">_$PushMessageFromJson</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="p">}</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="n">enum</span><span class="w"> </span><span class="n">MessageType</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">  </span><span class="n">notification</span><span class="p">,</span><span class="w">  </span><span class="c1">// 通知消息</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">  </span><span class="n">data</span><span class="p">,</span><span class="w">         </span><span class="c1">// 数据消息</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">  </span><span class="n">silent</span><span class="p">,</span><span class="w">       </span><span class="c1">// 静默消息</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="p">}</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="n">enum</span><span class="w"> </span><span class="n">MessagePriority</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">  </span><span class="n">low</span><span class="p">,</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">  </span><span class="n">normal</span><span class="p">,</span>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">  </span><span class="n">high</span><span class="p">,</span>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">  </span><span class="n">urgent</span><span class="p">,</span>
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_20">通知配置模型<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@freezed</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">class</span><span class="w"> </span><span class="nc">NotificationConfig</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">_$NotificationConfig</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kd">factory</span><span class="w"> </span><span class="n">NotificationConfig</span><span class="p">({</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">channelId</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">channelName</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">channelDescription</span><span class="p">,</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">(</span><span class="n">NotificationImportance</span><span class="p">.</span><span class="n">normal</span><span class="p">)</span><span class="w"> </span><span class="n">NotificationImportance</span><span class="w"> </span><span class="n">importance</span><span class="p">,</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableSound</span><span class="p">,</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableVibration</span><span class="p">,</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nd">@Default</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableLights</span><span class="p">,</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">soundPath</span><span class="p">,</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="n">Color</span><span class="o">?</span><span class="w"> </span><span class="n">lightColor</span><span class="p">,</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">vibrationPattern</span><span class="p">,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_NotificationConfig</span><span class="p">;</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">  </span><span class="kd">factory</span><span class="w"> </span><span class="n">NotificationConfig</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">      </span><span class="n">_$NotificationConfigFromJson</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_21">推送服务提供商实现<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<h3 id="_22">美团云推送集成<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">MTPushProvider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">PushProvider</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nd">@override</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">initialize</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">MTFlutterPush</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="nl">appKey:</span><span class="w"> </span><span class="n">_appKey</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">      </span><span class="nl">appSecret:</span><span class="w"> </span><span class="n">_appSecret</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="c1">// 设置消息监听器</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="n">MTFlutterPush</span><span class="p">.</span><span class="n">addReceiveNotificationListener</span><span class="p">(</span><span class="n">_onReceiveNotification</span><span class="p">);</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="n">MTFlutterPush</span><span class="p">.</span><span class="n">addReceiveMessageListener</span><span class="p">(</span><span class="n">_onReceiveMessage</span><span class="p">);</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span><span class="nd">@override</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getDeviceToken</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">MTFlutterPush</span><span class="p">.</span><span class="n">getRegistrationId</span><span class="p">();</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">  </span><span class="nd">@override</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sendMessage</span><span class="p">(</span><span class="n">PushMessage</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">notification</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MTNotification</span><span class="p">(</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="n">message</span><span class="p">.</span><span class="n">title</span><span class="p">,</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">      </span><span class="nl">content:</span><span class="w"> </span><span class="n">message</span><span class="p">.</span><span class="n">body</span><span class="p">,</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">      </span><span class="nl">extras:</span><span class="w"> </span><span class="n">message</span><span class="p">.</span><span class="n">customData</span><span class="p">,</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">MTFlutterPush</span><span class="p">.</span><span class="n">sendLocalNotification</span><span class="p">(</span><span class="n">notification</span><span class="p">);</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_onReceiveNotification</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">notification</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PushMessage</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">notification</span><span class="p">);</span>
+</span><span id="__span-4-32"><a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="w">    </span><span class="n">messageController</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-4-33"><a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-34"><a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="fcm">FCM集成<a class="headerlink" href="#fcm" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">FCMProvider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">PushProvider</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">FirebaseMessaging</span><span class="w"> </span><span class="n">_messaging</span><span class="p">;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nd">@override</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">initialize</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="n">_messaging</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FirebaseMessaging</span><span class="p">.</span><span class="n">instance</span><span class="p">;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="c1">// 请求权限</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_messaging</span><span class="p">.</span><span class="n">requestPermission</span><span class="p">();</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="c1">// 设置消息监听器</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">    </span><span class="n">FirebaseMessaging</span><span class="p">.</span><span class="n">onMessage</span><span class="p">.</span><span class="n">listen</span><span class="p">(</span><span class="n">_onForegroundMessage</span><span class="p">);</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="n">FirebaseMessaging</span><span class="p">.</span><span class="n">onBackgroundMessage</span><span class="p">(</span><span class="n">_onBackgroundMessage</span><span class="p">);</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">    </span><span class="n">FirebaseMessaging</span><span class="p">.</span><span class="n">onMessageOpenedApp</span><span class="p">.</span><span class="n">listen</span><span class="p">(</span><span class="n">_onMessageOpenedApp</span><span class="p">);</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">  </span><span class="nd">@override</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getDeviceToken</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">_messaging</span><span class="p">.</span><span class="n">getToken</span><span class="p">();</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_onForegroundMessage</span><span class="p">(</span><span class="n">RemoteMessage</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">pushMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_convertMessage</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span><span class="n">messageController</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">pushMessage</span><span class="p">);</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_23">本地通知系统<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
+<h3 id="_24">本地通知管理器<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">LocalNotificationManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">_channelId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;oneapp_notifications&#39;</span><span class="p">;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">_channelName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;OneApp Notifications&#39;</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="kd">late</span><span class="w"> </span><span class="n">FlutterLocalNotificationsPlugin</span><span class="w"> </span><span class="n">_plugin</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">initialize</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="n">_plugin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FlutterLocalNotificationsPlugin</span><span class="p">();</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">androidSettings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AndroidInitializationSettings</span><span class="p">(</span><span class="s1">&#39;@mipmap/ic_launcher&#39;</span><span class="p">);</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">iosSettings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DarwinInitializationSettings</span><span class="p">();</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">initSettings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InitializationSettings</span><span class="p">(</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">      </span><span class="nl">android:</span><span class="w"> </span><span class="n">androidSettings</span><span class="p">,</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">      </span><span class="nl">iOS:</span><span class="w"> </span><span class="n">iosSettings</span><span class="p">,</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_plugin</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">      </span><span class="n">initSettings</span><span class="p">,</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="w">      </span><span class="nl">onDidReceiveNotificationResponse:</span><span class="w"> </span><span class="n">_onNotificationTapped</span><span class="p">,</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_createNotificationChannel</span><span class="p">();</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">showNotification</span><span class="p">(</span><span class="n">LocalNotification</span><span class="w"> </span><span class="n">notification</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">androidDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AndroidNotificationDetails</span><span class="p">(</span>
+</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="w">      </span><span class="n">_channelId</span><span class="p">,</span>
+</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="w">      </span><span class="n">_channelName</span><span class="p">,</span>
+</span><span id="__span-6-30"><a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="w">      </span><span class="nl">channelDescription:</span><span class="w"> </span><span class="s1">&#39;OneApp local notifications&#39;</span><span class="p">,</span>
+</span><span id="__span-6-31"><a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span class="w">      </span><span class="nl">importance:</span><span class="w"> </span><span class="n">Importance</span><span class="p">.</span><span class="n">max</span><span class="p">,</span>
+</span><span id="__span-6-32"><a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="w">      </span><span class="nl">priority:</span><span class="w"> </span><span class="n">Priority</span><span class="p">.</span><span class="n">high</span><span class="p">,</span>
+</span><span id="__span-6-33"><a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-6-34"><a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>
+</span><span id="__span-6-35"><a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">iosDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DarwinNotificationDetails</span><span class="p">();</span>
+</span><span id="__span-6-36"><a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>
+</span><span id="__span-6-37"><a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">details</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NotificationDetails</span><span class="p">(</span>
+</span><span id="__span-6-38"><a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a><span class="w">      </span><span class="nl">android:</span><span class="w"> </span><span class="n">androidDetails</span><span class="p">,</span>
+</span><span id="__span-6-39"><a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a><span class="w">      </span><span class="nl">iOS:</span><span class="w"> </span><span class="n">iosDetails</span><span class="p">,</span>
+</span><span id="__span-6-40"><a id="__codelineno-6-40" name="__codelineno-6-40" href="#__codelineno-6-40"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-6-41"><a id="__codelineno-6-41" name="__codelineno-6-41" href="#__codelineno-6-41"></a>
+</span><span id="__span-6-42"><a id="__codelineno-6-42" name="__codelineno-6-42" href="#__codelineno-6-42"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_plugin</span><span class="p">.</span><span class="n">show</span><span class="p">(</span>
+</span><span id="__span-6-43"><a id="__codelineno-6-43" name="__codelineno-6-43" href="#__codelineno-6-43"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+</span><span id="__span-6-44"><a id="__codelineno-6-44" name="__codelineno-6-44" href="#__codelineno-6-44"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">title</span><span class="p">,</span>
+</span><span id="__span-6-45"><a id="__codelineno-6-45" name="__codelineno-6-45" href="#__codelineno-6-45"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">body</span><span class="p">,</span>
+</span><span id="__span-6-46"><a id="__codelineno-6-46" name="__codelineno-6-46" href="#__codelineno-6-46"></a><span class="w">      </span><span class="n">details</span><span class="p">,</span>
+</span><span id="__span-6-47"><a id="__codelineno-6-47" name="__codelineno-6-47" href="#__codelineno-6-47"></a><span class="w">      </span><span class="nl">payload:</span><span class="w"> </span><span class="n">notification</span><span class="p">.</span><span class="n">payload</span><span class="p">,</span>
+</span><span id="__span-6-48"><a id="__codelineno-6-48" name="__codelineno-6-48" href="#__codelineno-6-48"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-6-49"><a id="__codelineno-6-49" name="__codelineno-6-49" href="#__codelineno-6-49"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-50"><a id="__codelineno-6-50" name="__codelineno-6-50" href="#__codelineno-6-50"></a>
+</span><span id="__span-6-51"><a id="__codelineno-6-51" name="__codelineno-6-51" href="#__codelineno-6-51"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">scheduleNotification</span><span class="p">(</span><span class="n">ScheduledNotification</span><span class="w"> </span><span class="n">notification</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-52"><a id="__codelineno-6-52" name="__codelineno-6-52" href="#__codelineno-6-52"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_plugin</span><span class="p">.</span><span class="n">zonedSchedule</span><span class="p">(</span>
+</span><span id="__span-6-53"><a id="__codelineno-6-53" name="__codelineno-6-53" href="#__codelineno-6-53"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+</span><span id="__span-6-54"><a id="__codelineno-6-54" name="__codelineno-6-54" href="#__codelineno-6-54"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">title</span><span class="p">,</span>
+</span><span id="__span-6-55"><a id="__codelineno-6-55" name="__codelineno-6-55" href="#__codelineno-6-55"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">body</span><span class="p">,</span>
+</span><span id="__span-6-56"><a id="__codelineno-6-56" name="__codelineno-6-56" href="#__codelineno-6-56"></a><span class="w">      </span><span class="n">notification</span><span class="p">.</span><span class="n">scheduledDate</span><span class="p">,</span>
+</span><span id="__span-6-57"><a id="__codelineno-6-57" name="__codelineno-6-57" href="#__codelineno-6-57"></a><span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">NotificationDetails</span><span class="p">(</span>
+</span><span id="__span-6-58"><a id="__codelineno-6-58" name="__codelineno-6-58" href="#__codelineno-6-58"></a><span class="w">        </span><span class="nl">android:</span><span class="w"> </span><span class="n">AndroidNotificationDetails</span><span class="p">(</span>
+</span><span id="__span-6-59"><a id="__codelineno-6-59" name="__codelineno-6-59" href="#__codelineno-6-59"></a><span class="w">          </span><span class="n">_channelId</span><span class="p">,</span>
+</span><span id="__span-6-60"><a id="__codelineno-6-60" name="__codelineno-6-60" href="#__codelineno-6-60"></a><span class="w">          </span><span class="n">_channelName</span><span class="p">,</span>
+</span><span id="__span-6-61"><a id="__codelineno-6-61" name="__codelineno-6-61" href="#__codelineno-6-61"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-6-62"><a id="__codelineno-6-62" name="__codelineno-6-62" href="#__codelineno-6-62"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-6-63"><a id="__codelineno-6-63" name="__codelineno-6-63" href="#__codelineno-6-63"></a><span class="w">      </span><span class="nl">androidAllowWhileIdle:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-6-64"><a id="__codelineno-6-64" name="__codelineno-6-64" href="#__codelineno-6-64"></a><span class="w">      </span><span class="nl">uiLocalNotificationDateInterpretation:</span><span class="w"> </span>
+</span><span id="__span-6-65"><a id="__codelineno-6-65" name="__codelineno-6-65" href="#__codelineno-6-65"></a><span class="w">          </span><span class="n">UILocalNotificationDateInterpretation</span><span class="p">.</span><span class="n">absoluteTime</span><span class="p">,</span>
+</span><span id="__span-6-66"><a id="__codelineno-6-66" name="__codelineno-6-66" href="#__codelineno-6-66"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-6-67"><a id="__codelineno-6-67" name="__codelineno-6-67" href="#__codelineno-6-67"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-68"><a id="__codelineno-6-68" name="__codelineno-6-68" href="#__codelineno-6-68"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_25">推送统计和分析<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h2>
+<h3 id="_26">统计数据收集<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PushAnalytics</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">trackMessageReceived</span><span class="p">(</span><span class="n">PushMessage</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PushEvent</span><span class="p">(</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nl">type:</span><span class="w"> </span><span class="n">PushEventType</span><span class="p">.</span><span class="n">received</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">      </span><span class="nl">messageId:</span><span class="w"> </span><span class="n">message</span><span class="p">.</span><span class="n">messageId</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">      </span><span class="nl">timestamp:</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">      </span><span class="nl">platform:</span><span class="w"> </span><span class="n">Platform</span><span class="p">.</span><span class="n">operatingSystem</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_uploadEvent</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">trackMessageClicked</span><span class="p">(</span><span class="n">PushMessage</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PushEvent</span><span class="p">(</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">      </span><span class="nl">type:</span><span class="w"> </span><span class="n">PushEventType</span><span class="p">.</span><span class="n">clicked</span><span class="p">,</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">      </span><span class="nl">messageId:</span><span class="w"> </span><span class="n">message</span><span class="p">.</span><span class="n">messageId</span><span class="p">,</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">      </span><span class="nl">timestamp:</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">      </span><span class="nl">platform:</span><span class="w"> </span><span class="n">Platform</span><span class="p">.</span><span class="n">operatingSystem</span><span class="p">,</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">_uploadEvent</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">PushStats</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getStats</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">_fetchStatsFromServer</span><span class="p">();</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_27">安全和隐私<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h2>
+<h3 id="_28">数据保护<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>消息加密</strong>: 敏感推送内容加密传输</li>
+<li><strong>Token安全</strong>: 设备Token安全存储和传输</li>
+<li><strong>权限控制</strong>: 严格的推送权限管理</li>
+<li><strong>数据脱敏</strong>: 统计数据脱敏处理</li>
+</ul>
+<h3 id="_29">隐私合规<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>用户同意</strong>: 明确的推送权限申请</li>
+<li><strong>数据最小化</strong>: 仅收集必要的推送数据</li>
+<li><strong>透明度</strong>: 清晰的隐私政策说明</li>
+<li><strong>用户控制</strong>: 用户可控制推送设置</li>
+</ul>
+<h2 id="_30">性能优化<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h2>
+<h3 id="_31">推送性能<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>批量处理</strong>: 批量处理推送消息</li>
+<li><strong>缓存机制</strong>: 推送Token和配置缓存</li>
+<li><strong>重试策略</strong>: 智能重试失败的推送</li>
+<li><strong>负载均衡</strong>: 推送服务负载均衡</li>
+</ul>
+<h3 id="_32">资源管理<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>内存优化</strong>: 及时释放推送相关资源</li>
+<li><strong>电池优化</strong>: 减少后台推送服务耗电</li>
+<li><strong>网络优化</strong>: 优化推送网络请求</li>
+<li><strong>存储优化</strong>: 合理管理推送数据存储</li>
+</ul>
+<h2 id="_33">测试策略<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h2>
+<h3 id="_34">单元测试<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>推送管理器测试</strong>: 核心推送逻辑</li>
+<li><strong>消息处理测试</strong>: 消息解析和处理</li>
+<li><strong>本地通知测试</strong>: 本地通知功能</li>
+<li><strong>工具类测试</strong>: 推送工具方法</li>
+</ul>
+<h3 id="_35">集成测试<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>推送服务集成</strong>: 各推送服务集成</li>
+<li><strong>平台兼容性</strong>: 不同平台推送功能</li>
+<li><strong>权限流程测试</strong>: 推送权限申请流程</li>
+<li><strong>消息端到端测试</strong>: 完整推送流程</li>
+</ul>
+<h3 id="_36">性能测试<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>大量消息处理</strong>: 高频推送消息处理</li>
+<li><strong>内存泄漏测试</strong>: 长时间运行内存检测</li>
+<li><strong>电池消耗测试</strong>: 推送服务电池影响</li>
+<li><strong>网络性能测试</strong>: 推送网络性能</li>
+</ul>
+<h2 id="_37">配置和部署<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h2>
+<h3 id="_38">推送配置<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PushConfig</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mtpushConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="s1">&#39;appKey&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your_mtpush_app_key&#39;</span><span class="p">,</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="s1">&#39;appSecret&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your_mtpush_app_secret&#39;</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="s1">&#39;channel&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="p">};</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fcmConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="s1">&#39;senderId&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your_fcm_sender_id&#39;</span><span class="p">,</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="s1">&#39;projectId&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;your_firebase_project_id&#39;</span><span class="p">,</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="p">};</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_39">环境管理<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>开发环境</strong>: 使用测试推送服务</li>
+<li><strong>测试环境</strong>: 模拟生产推送场景</li>
+<li><strong>生产环境</strong>: 正式推送服务配置</li>
+<li><strong>灰度发布</strong>: 逐步推送新功能</li>
+</ul>
+<h2 id="_40">最佳实践<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h2>
+<h3 id="_41">开发建议<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>合理频率</strong>: 控制推送消息频率</li>
+<li><strong>内容优化</strong>: 推送内容简洁明了</li>
+<li><strong>时机选择</strong>: 选择合适的推送时机</li>
+<li><strong>个性化</strong>: 基于用户行为个性化推送</li>
+</ol>
+<h3 id="_42">用户体验<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>权限引导</strong>: 友好的权限申请引导</li>
+<li><strong>设置透明</strong>: 清晰的推送设置选项</li>
+<li><strong>内容相关</strong>: 推送内容与用户相关</li>
+<li><strong>反馈机制</strong>: 提供推送反馈渠道</li>
+</ol>
+<h2 id="_43">总结<a class="headerlink" href="#_43" title="Permanent link">&para;</a></h2>
+<p><code>basic_push</code> 模块作为 OneApp 的推送服务基础模块，提供了完整的跨平台推送解决方案。通过多渠道推送支持、统一的消息处理和完善的本地通知系统，为应用提供了可靠的消息推送能力。模块具有良好的扩展性和兼容性，能够适应不同的推送场景和业务需求。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight", "search.share", "header.autohide", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+      
+        <script src="../assets/js/mermaid.js"></script>
+      
+    
+  </body>
+</html>

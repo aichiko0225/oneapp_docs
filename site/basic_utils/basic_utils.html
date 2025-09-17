@@ -1,0 +1,3865 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="OneApp Flutter应用完整技术架构设计和模块说明">
+      
+      
+        <meta name="author" content="OneApp Team">
+      
+      
+      
+        <link rel="prev" href="basic_push.html">
+      
+      
+        <link rel="next" href="flutter_downloader.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>基础工具 - OneApp 架构设计文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#basic_utils" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-header__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OneApp 架构设计文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              基础工具
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  架构设计文档
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../main_app.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  主应用架构
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../debug_tools.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  调试工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../account/index.html" class="md-tabs__link">
+          
+  
+  
+  账户模块
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../after_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  售后服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../app_car/index.html" class="md-tabs__link">
+          
+  
+  
+  车辆服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_uis/index.html" class="md-tabs__link">
+          
+  
+  
+  基础UI组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  基础工具库
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../car_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  汽车销售
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/index.html" class="md-tabs__link">
+          
+  
+  
+  社区功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../membership/index.html" class="md-tabs__link">
+          
+  
+  
+  会员服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../service_component/index.html" class="md-tabs__link">
+          
+  
+  
+  服务组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../setting/index.html" class="md-tabs__link">
+          
+  
+  
+  设置功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../touch_point/index.html" class="md-tabs__link">
+          
+  
+  
+  触点模块
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-nav__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    OneApp 架构设计文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构设计文档
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main_app.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主应用架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug_tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    调试工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    账户模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            账户模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/clr_account.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR账户服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/jverify.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    极光验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    售后服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            售后服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/clr_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR售后服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/oneapp_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    售后应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            车辆服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/ai_chat_assistant.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI聊天助手
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/amap_flutter_location.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德定位
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/amap_flutter_search.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德搜索
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_avatar.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用头像
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_car.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_carwatcher.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆监控
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_charging.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    充电服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_composer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用组合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_maintenance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    维修保养
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    订单管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_rpa.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_vur.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    VUR服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/car_services.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_avatarcore.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR虚拟形象
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR订单服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/kit_rpa_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/one_app_cache_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    缓存插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/ui_avatarx.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    头像UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础UI组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            基础UI组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/basic_uis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/general_ui_component.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    通用组件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_basic.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_business.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI业务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具库
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="base_mvvm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MVVM基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_config.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础配置
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_logger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    日志系统
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_network.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网络基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_platform.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    平台基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="basic_push.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推送基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="basic_utils.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="模块概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本信息
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      功能特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="功能特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      目录结构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心框架依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      工具依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      功能依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      云服务依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心模块分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心模块分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_basic_utilsdart" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 模块入口 (basic_utils.dart)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_srcevent_bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 事件总线 (src/event_bus/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_srcimage" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 图片处理 (src/image/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_srcshare" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 分享功能 (src/share/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5_srccrypto" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 加密解密 (src/crypto/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6_srcstorage" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 云存储 (src/storage/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7_srcnetwork" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. 网络工具 (src/network/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8_srcutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. 通用工具 (src/utils/)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      通用组件
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通用组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loading组件
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toast" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toast组件
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      网络优化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      存储优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="安全特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据安全
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      隐私保护
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      最佳实践
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="最佳实践">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      开发建议
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用指南
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="flutter_downloader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    下载器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="flutter_plugin_mtpush_private.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MT推送
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    汽车销售
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            汽车销售
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../car_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    社区功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            社区功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    会员服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            会员服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../membership/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    服务组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            服务组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../service_component/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    设置功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            设置功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setting/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    触点模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            触点模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../touch_point/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="模块概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本信息
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      功能特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="功能特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      目录结构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心框架依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      工具依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      功能依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      云服务依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心模块分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心模块分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_basic_utilsdart" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 模块入口 (basic_utils.dart)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_srcevent_bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 事件总线 (src/event_bus/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_srcimage" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 图片处理 (src/image/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_srcshare" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 分享功能 (src/share/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5_srccrypto" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. 加密解密 (src/crypto/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6_srcstorage" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. 云存储 (src/storage/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7_srcnetwork" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. 网络工具 (src/network/)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8_srcutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. 通用工具 (src/utils/)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      通用组件
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通用组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loading组件
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toast" class="md-nav__link">
+    <span class="md-ellipsis">
+      Toast组件
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      网络优化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      存储优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      安全特性
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="安全特性">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据安全
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      隐私保护
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      最佳实践
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="最佳实践">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      开发建议
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用指南
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="basic_utils">Basic Utils 基础工具模块<a class="headerlink" href="#basic_utils" title="Permanent link">&para;</a></h1>
+<h2 id="_1">模块概述<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><code>basic_utils</code> 是 OneApp 基础工具模块群中的核心工具集合，提供了应用开发中常用的基础工具类、辅助方法和通用组件。该模块包含了事件总线、图片处理、分享功能、加密解密、文件上传等丰富的工具功能。</p>
+<h3 id="_2">基本信息<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>模块名称</strong>: basic_utils</li>
+<li><strong>版本</strong>: 0.0.3</li>
+<li><strong>描述</strong>: 基础工具包</li>
+<li><strong>Flutter 版本</strong>: &gt;=2.10.5</li>
+<li><strong>Dart 版本</strong>: &gt;=3.0.0 &lt;4.0.08</li>
+</ul>
+<h2 id="_3">功能特性<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">核心功能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>事件总线系统</strong><br />
+   - 全局事件发布订阅<br />
+   - 类型安全的事件传递<br />
+   - 事件生命周期管理<br />
+   - 异步事件处理</p>
+</li>
+<li>
+<p><strong>图片处理工具</strong><br />
+   - 图片选择和拍照<br />
+   - 图片压缩和格式转换<br />
+   - 图片裁剪和编辑<br />
+   - 图片缓存管理</p>
+</li>
+<li>
+<p><strong>分享功能集成</strong><br />
+   - 社交平台分享<br />
+   - 文件分享<br />
+   - 链接分享<br />
+   - 自定义分享内容</p>
+</li>
+<li>
+<p><strong>加密解密服务</strong><br />
+   - 对称加密算法<br />
+   - 非对称加密算法<br />
+   - 哈希算法<br />
+   - 数字签名</p>
+</li>
+<li>
+<p><strong>云存储服务</strong><br />
+   - 腾讯云COS集成<br />
+   - 文件上传下载<br />
+   - 断点续传<br />
+   - 存储管理</p>
+</li>
+</ol>
+<h2 id="_5">技术架构<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_6">目录结构<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>lib/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── basic_utils.dart            # 模块入口文件
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── src/                        # 源代码目录
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── event_bus/              # 事件总线
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   ├── image/                  # 图片处理
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   ├── share/                  # 分享功能
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   ├── crypto/                 # 加密解密
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   ├── storage/                # 云存储
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   ├── network/                # 网络工具
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   ├── utils/                  # 通用工具
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│   └── models/                 # 数据模型
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>├── widgets/                    # 通用组件
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>└── test/                       # 测试文件
+</span></code></pre></div>
+<h3 id="_7">依赖关系<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h4 id="_8">核心框架依赖<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>basic_modular: ^0.2.3</code> - 模块化框架</li>
+<li><code>basic_storage: 0.2.2</code> - 基础存储</li>
+<li><code>basic_webview: ^0.2.4</code> - WebView组件</li>
+</ul>
+<h4 id="_9">工具依赖<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>event_bus: ^2.0.0</code> - 事件总线</li>
+<li><code>shared_preferences: ^2.0.17</code> - 本地存储</li>
+<li><code>http: ^1.0.0</code> - HTTP客户端</li>
+<li><code>dartz: ^0.10.1</code> - 函数式编程</li>
+</ul>
+<h4 id="_10">功能依赖<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>image_picker: ^1.1.2</code> - 图片选择</li>
+<li><code>flutter_image_compress: 2.1.0</code> - 图片压缩</li>
+<li><code>share_plus: 7.2.1</code> - 分享功能</li>
+<li><code>fluwx: ^4.2.5</code> - 微信SDK</li>
+<li><code>weibo_kit: ^4.0.0</code> - 微博SDK</li>
+</ul>
+<h4 id="_11">安全依赖<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>crypto: any</code> - 加密算法</li>
+<li><code>encrypt: any</code> - 加密工具</li>
+<li><code>pointycastle: any</code> - 加密库</li>
+</ul>
+<h4 id="_12">云服务依赖<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>tencentcloud_cos_sdk_plugin: 1.2.0</code> - 腾讯云COS</li>
+</ul>
+<h2 id="_13">核心模块分析<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="1_basic_utilsdart">1. 模块入口 (<code>basic_utils.dart</code>)<a class="headerlink" href="#1_basic_utilsdart" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 工具模块统一导出<br />
+- 全局配置初始化<br />
+- 服务注册管理</p>
+<h3 id="2_srcevent_bus">2. 事件总线 (<code>src/event_bus/</code>)<a class="headerlink" href="#2_srcevent_bus" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 全局事件发布订阅机制<br />
+- 类型安全的事件传递<br />
+- 事件过滤和转换<br />
+- 内存泄漏防护</p>
+<p><strong>主要组件</strong>:<br />
+- <code>GlobalEventBus</code> - 全局事件总线<br />
+- <code>EventSubscription</code> - 事件订阅管理<br />
+- <code>TypedEvent</code> - 类型化事件<br />
+- <code>EventFilter</code> - 事件过滤器</p>
+<p><strong>使用示例</strong>:<br />
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// 定义事件类型</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">class</span><span class="w"> </span><span class="nc">UserLoginEvent</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">userId</span><span class="p">;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">userName</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="n">UserLoginEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">userId</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">userName</span><span class="p">);</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1">// 发布事件</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">GlobalEventBus</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">fire</span><span class="p">(</span><span class="n">UserLoginEvent</span><span class="p">(</span><span class="s1">&#39;123&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;John&#39;</span><span class="p">));</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1">// 订阅事件</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="kd">final</span><span class="w"> </span><span class="n">subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GlobalEventBus</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="kd">on</span><span class="o">&lt;</span><span class="n">UserLoginEvent</span><span class="o">&gt;</span><span class="p">().</span><span class="n">listen</span><span class="p">((</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;User </span><span class="si">${</span><span class="n">event</span><span class="p">.</span><span class="n">userName</span><span class="si">}</span><span class="s1"> logged in&#39;</span><span class="p">);</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="p">});</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="c1">// 取消订阅</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="n">subscription</span><span class="p">.</span><span class="n">cancel</span><span class="p">();</span>
+</span></code></pre></div></p>
+<h3 id="3_srcimage">3. 图片处理 (<code>src/image/</code>)<a class="headerlink" href="#3_srcimage" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 图片选择和拍照功能<br />
+- 图片压缩和格式转换<br />
+- 图片编辑和处理<br />
+- 图片缓存和管理</p>
+<p><strong>主要组件</strong>:<br />
+- <code>ImagePicker</code> - 图片选择器<br />
+- <code>ImageCompressor</code> - 图片压缩器<br />
+- <code>ImageEditor</code> - 图片编辑器<br />
+- <code>ImageCache</code> - 图片缓存管理</p>
+<p><strong>使用示例</strong>:<br />
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">ImageUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">File</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">pickImage</span><span class="p">({</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">ImageSource</span><span class="w"> </span><span class="k">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ImageSource</span><span class="p">.</span><span class="n">gallery</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">maxWidth</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">maxHeight</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">imageQuality</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">picker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ImagePicker</span><span class="p">();</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">XFile</span><span class="o">?</span><span class="w"> </span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">picker</span><span class="p">.</span><span class="n">pickImage</span><span class="p">(</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="k">source</span><span class="o">:</span><span class="w"> </span><span class="k">source</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="nl">maxWidth:</span><span class="w"> </span><span class="n">maxWidth</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="nl">maxHeight:</span><span class="w"> </span><span class="n">maxHeight</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">      </span><span class="nl">imageQuality:</span><span class="w"> </span><span class="n">imageQuality</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">image</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">path</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">File</span><span class="o">&gt;</span><span class="w"> </span><span class="n">compressImage</span><span class="p">(</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">    </span><span class="n">File</span><span class="w"> </span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">quality</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">85</span><span class="p">,</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">    </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">minWidth</span><span class="p">,</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">minHeight</span><span class="p">,</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">FlutterImageCompress</span><span class="p">.</span><span class="n">compressAndGetFile</span><span class="p">(</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">      </span><span class="n">file</span><span class="p">.</span><span class="n">absolute</span><span class="p">.</span><span class="n">path</span><span class="p">,</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">      </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">file</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/compressed_</span><span class="si">${</span><span class="n">file</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">      </span><span class="nl">quality:</span><span class="w"> </span><span class="n">quality</span><span class="p">,</span>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="w">      </span><span class="nl">minWidth:</span><span class="w"> </span><span class="n">minWidth</span><span class="p">,</span>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">      </span><span class="nl">minHeight:</span><span class="w"> </span><span class="n">minHeight</span><span class="p">,</span>
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>
+</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="n">result</span><span class="o">!</span><span class="p">.</span><span class="n">path</span><span class="p">);</span>
+</span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="4_srcshare">4. 分享功能 (<code>src/share/</code>)<a class="headerlink" href="#4_srcshare" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 系统原生分享<br />
+- 社交平台分享<br />
+- 自定义分享内容<br />
+- 分享结果回调</p>
+<p><strong>主要组件</strong>:<br />
+- <code>ShareManager</code> - 分享管理器<br />
+- <code>WeChatShare</code> - 微信分享<br />
+- <code>WeiboShare</code> - 微博分享<br />
+- <code>SystemShare</code> - 系统分享</p>
+<p><strong>使用示例</strong>:<br />
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">ShareUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shareText</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Share</span><span class="p">.</span><span class="n">share</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shareFile</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">filePath</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">Share</span><span class="p">.</span><span class="n">shareXFiles</span><span class="p">([</span><span class="n">XFile</span><span class="p">(</span><span class="n">filePath</span><span class="p">)]);</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shareToWeChat</span><span class="p">({</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">description</span><span class="p">,</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">imageUrl</span><span class="p">,</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">webpageUrl</span><span class="p">,</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">WeChatShareWebPageModel</span><span class="p">(</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">      </span><span class="nl">webPage:</span><span class="w"> </span><span class="n">webpageUrl</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="n">title</span><span class="p">,</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">      </span><span class="nl">description:</span><span class="w"> </span><span class="n">description</span><span class="p">,</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">      </span><span class="nl">thumbnail:</span><span class="w"> </span><span class="n">WeChatImage</span><span class="p">.</span><span class="n">network</span><span class="p">(</span><span class="n">imageUrl</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">fluwx</span><span class="p">.</span><span class="n">shareToWeChat</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="5_srccrypto">5. 加密解密 (<code>src/crypto/</code>)<a class="headerlink" href="#5_srccrypto" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 对称加密解密<br />
+- 非对称加密解密<br />
+- 数字签名验证<br />
+- 哈希算法实现</p>
+<p><strong>主要组件</strong>:<br />
+- <code>AESCrypto</code> - AES加密<br />
+- <code>RSACrypto</code> - RSA加密<br />
+- <code>HashUtils</code> - 哈希工具<br />
+- <code>SignatureUtils</code> - 数字签名</p>
+<p><strong>使用示例</strong>:<br />
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">CryptoUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">md5Hash</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">digest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">md5</span><span class="p">.</span><span class="n">convert</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">digest</span><span class="p">.</span><span class="n">toString</span><span class="p">();</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">sha256Hash</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">digest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sha256</span><span class="p">.</span><span class="n">convert</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">digest</span><span class="p">.</span><span class="n">toString</span><span class="p">();</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">aesEncrypt</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">plainText</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">encrypter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Encrypter</span><span class="p">(</span><span class="n">AES</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">fromBase64</span><span class="p">(</span><span class="n">key</span><span class="p">)));</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">encrypted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">encrypter</span><span class="p">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">plainText</span><span class="p">);</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">encrypted</span><span class="p">.</span><span class="n">base64</span><span class="p">;</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">aesDecrypt</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">encryptedText</span><span class="p">,</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">encrypter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Encrypter</span><span class="p">(</span><span class="n">AES</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">fromBase64</span><span class="p">(</span><span class="n">key</span><span class="p">)));</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">decrypted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">encrypter</span><span class="p">.</span><span class="n">decrypt64</span><span class="p">(</span><span class="n">encryptedText</span><span class="p">);</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">decrypted</span><span class="p">;</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="6_srcstorage">6. 云存储 (<code>src/storage/</code>)<a class="headerlink" href="#6_srcstorage" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 腾讯云COS集成<br />
+- 文件上传下载<br />
+- 断点续传<br />
+- 存储空间管理</p>
+<p><strong>主要组件</strong>:<br />
+- <code>COSManager</code> - COS管理器<br />
+- <code>FileUploader</code> - 文件上传器<br />
+- <code>FileDownloader</code> - 文件下载器<br />
+- <code>StorageMonitor</code> - 存储监控</p>
+<p><strong>使用示例</strong>:<br />
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">CloudStorageUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">uploadFile</span><span class="p">(</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">filePath</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">objectKey</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="kt">Function</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">onProgress</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">      </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">TencentCloudCosSdkPlugin</span><span class="p">.</span><span class="n">upload</span><span class="p">(</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">        </span><span class="n">filePath</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">        </span><span class="n">objectKey</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="n">_generateObjectKey</span><span class="p">(</span><span class="n">filePath</span><span class="p">),</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">        </span><span class="nl">onProgress:</span><span class="w"> </span><span class="n">onProgress</span><span class="p">,</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">      </span><span class="p">);</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="p">;</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Upload failed: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">downloadFile</span><span class="p">(</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">url</span><span class="p">,</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span><span class="kt">String</span><span class="w"> </span><span class="n">savePath</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span><span class="kt">Function</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">onProgress</span><span class="p">,</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">  </span><span class="p">})</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">      </span><span class="kd">await</span><span class="w"> </span><span class="n">TencentCloudCosSdkPlugin</span><span class="p">.</span><span class="n">download</span><span class="p">(</span>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">        </span><span class="n">url</span><span class="p">,</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">        </span><span class="n">savePath</span><span class="p">,</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">        </span><span class="nl">onProgress:</span><span class="w"> </span><span class="n">onProgress</span><span class="p">,</span>
+</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">      </span><span class="p">);</span>
+</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">      </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Download failed: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-38"><a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a>
+</span><span id="__span-5-39"><a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">_generateObjectKey</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">filePath</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-40"><a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">fileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path</span><span class="p">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filePath</span><span class="p">);</span>
+</span><span id="__span-5-41"><a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">().</span><span class="n">millisecondsSinceEpoch</span><span class="p">;</span>
+</span><span id="__span-5-42"><a id="__codelineno-5-42" name="__codelineno-5-42" href="#__codelineno-5-42"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;uploads/</span><span class="si">$</span><span class="n">timestamp</span><span class="s1">/</span><span class="si">$</span><span class="n">fileName</span><span class="s1">&#39;</span><span class="p">;</span>
+</span><span id="__span-5-43"><a id="__codelineno-5-43" name="__codelineno-5-43" href="#__codelineno-5-43"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-44"><a id="__codelineno-5-44" name="__codelineno-5-44" href="#__codelineno-5-44"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="7_srcnetwork">7. 网络工具 (<code>src/network/</code>)<a class="headerlink" href="#7_srcnetwork" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- HTTP请求封装<br />
+- 网络状态检测<br />
+- 请求重试机制<br />
+- 响应数据处理</p>
+<p><strong>主要组件</strong>:<br />
+- <code>HttpClient</code> - HTTP客户端<br />
+- <code>NetworkMonitor</code> - 网络监控<br />
+- <code>RequestInterceptor</code> - 请求拦截器<br />
+- <code>ResponseHandler</code> - 响应处理器</p>
+<h3 id="8_srcutils">8. 通用工具 (<code>src/utils/</code>)<a class="headerlink" href="#8_srcutils" title="Permanent link">&para;</a></h3>
+<p><strong>功能职责</strong>:<br />
+- 字符串处理工具<br />
+- 日期时间工具<br />
+- 数学计算工具<br />
+- 格式化工具</p>
+<p><strong>主要工具</strong>:<br />
+- <code>StringUtils</code> - 字符串工具<br />
+- <code>DateUtils</code> - 日期工具<br />
+- <code>MathUtils</code> - 数学工具<br />
+- <code>FormatUtils</code> - 格式化工具</p>
+<p><strong>工具方法示例</strong>:<br />
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">StringUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isNullOrEmpty</span><span class="p">(</span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">str</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isValidEmail</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;^[^@]+@[^@]+\.[^@]+&#39;</span><span class="p">).</span><span class="n">hasMatch</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isValidPhone</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">phone</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">RegExp</span><span class="p">(</span><span class="s1">r&#39;^1[3-9]\d{9}$&#39;</span><span class="p">).</span><span class="n">hasMatch</span><span class="p">(</span><span class="n">phone</span><span class="p">);</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">maskPhone</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">phone</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">phone</span><span class="p">.</span><span class="n">length</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">11</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">phone</span><span class="p">;</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">${</span><span class="n">phone</span><span class="p">.</span><span class="n">substring</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="si">}</span><span class="s1">****</span><span class="si">${</span><span class="n">phone</span><span class="p">.</span><span class="n">substring</span><span class="p">(</span><span class="m">7</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">;</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="p">}</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="kd">class</span><span class="w"> </span><span class="nc">DateUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">formatDateTime</span><span class="p">(</span><span class="n">DateTime</span><span class="w"> </span><span class="n">dateTime</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">pattern</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="w">    </span><span class="n">pattern</span><span class="w"> </span><span class="o">??=</span><span class="w"> </span><span class="s1">&#39;yyyy-MM-dd HH:mm:ss&#39;</span><span class="p">;</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DateFormat</span><span class="p">(</span><span class="n">pattern</span><span class="p">).</span><span class="n">format</span><span class="p">(</span><span class="n">dateTime</span><span class="p">);</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">DateTime</span><span class="o">?</span><span class="w"> </span><span class="n">parseDateTime</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">dateStr</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">pattern</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="w">      </span><span class="n">pattern</span><span class="w"> </span><span class="o">??=</span><span class="w"> </span><span class="s1">&#39;yyyy-MM-dd HH:mm:ss&#39;</span><span class="p">;</span>
+</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DateFormat</span><span class="p">(</span><span class="n">pattern</span><span class="p">).</span><span class="n">parse</span><span class="p">(</span><span class="n">dateStr</span><span class="p">);</span>
+</span><span id="__span-6-30"><a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-31"><a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+</span><span id="__span-6-32"><a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-33"><a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-34"><a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>
+</span><span id="__span-6-35"><a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isToday</span><span class="p">(</span><span class="n">DateTime</span><span class="w"> </span><span class="n">dateTime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-36"><a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">();</span>
+</span><span id="__span-6-37"><a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dateTime</span><span class="p">.</span><span class="n">year</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">now</span><span class="p">.</span><span class="n">year</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-6-38"><a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a><span class="w">           </span><span class="n">dateTime</span><span class="p">.</span><span class="n">month</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">now</span><span class="p">.</span><span class="n">month</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-6-39"><a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a><span class="w">           </span><span class="n">dateTime</span><span class="p">.</span><span class="n">day</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">now</span><span class="p">.</span><span class="n">day</span><span class="p">;</span>
+</span><span id="__span-6-40"><a id="__codelineno-6-40" name="__codelineno-6-40" href="#__codelineno-6-40"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-41"><a id="__codelineno-6-41" name="__codelineno-6-41" href="#__codelineno-6-41"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h2 id="_14">通用组件<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="loading">Loading组件<a class="headerlink" href="#loading" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">LoadingUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">OverlayEntry</span><span class="o">?</span><span class="w"> </span><span class="n">_overlayEntry</span><span class="p">;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">show</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">message</span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="n">hide</span><span class="p">();</span><span class="w"> </span><span class="c1">// 先隐藏之前的</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="n">_overlayEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OverlayEntry</span><span class="p">(</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">      </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Material</span><span class="p">(</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black54</span><span class="p">,</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="nl">child:</span><span class="w"> </span><span class="n">Center</span><span class="p">(</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">            </span><span class="nl">padding:</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">20</span><span class="p">),</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">            </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">              </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">              </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">            </span><span class="p">),</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">              </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">              </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">CircularProgressIndicator</span><span class="p">(),</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">message</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">...[</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">                  </span><span class="k">const</span><span class="w"> </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">                  </span><span class="n">Text</span><span class="p">(</span><span class="n">message</span><span class="p">),</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">                </span><span class="p">],</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">              </span><span class="p">],</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">            </span><span class="p">),</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">          </span><span class="p">),</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="w">    </span><span class="n">Overlay</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">insert</span><span class="p">(</span><span class="n">_overlayEntry</span><span class="o">!</span><span class="p">);</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">hide</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="w">    </span><span class="n">_overlayEntry</span><span class="o">?</span><span class="p">.</span><span class="n">remove</span><span class="p">();</span>
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="w">    </span><span class="n">_overlayEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+</span><span id="__span-7-38"><a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-39"><a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="toast">Toast组件<a class="headerlink" href="#toast" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">ToastUtils</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">showSuccess</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="n">Fluttertoast</span><span class="p">.</span><span class="n">showToast</span><span class="p">(</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nl">msg:</span><span class="w"> </span><span class="n">message</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="nl">textColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">      </span><span class="nl">toastLength:</span><span class="w"> </span><span class="n">Toast</span><span class="p">.</span><span class="n">LENGTH_SHORT</span><span class="p">,</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">showError</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="n">Fluttertoast</span><span class="p">.</span><span class="n">showToast</span><span class="p">(</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">      </span><span class="nl">msg:</span><span class="w"> </span><span class="n">message</span><span class="p">,</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">      </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">      </span><span class="nl">textColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">      </span><span class="nl">toastLength:</span><span class="w"> </span><span class="n">Toast</span><span class="p">.</span><span class="n">LENGTH_SHORT</span><span class="p">,</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">showInfo</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">message</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">    </span><span class="n">Fluttertoast</span><span class="p">.</span><span class="n">showToast</span><span class="p">(</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">      </span><span class="nl">msg:</span><span class="w"> </span><span class="n">message</span><span class="p">,</span>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">      </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">,</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">      </span><span class="nl">textColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">      </span><span class="nl">toastLength:</span><span class="w"> </span><span class="n">Toast</span><span class="p">.</span><span class="n">LENGTH_SHORT</span><span class="p">,</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_15">性能优化<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">内存管理<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>事件订阅管理</strong>: 及时取消不需要的事件订阅</li>
+<li><strong>图片内存优化</strong>: 合理控制图片加载和缓存</li>
+<li><strong>对象池</strong>: 复用常用对象减少GC压力</li>
+<li><strong>弱引用</strong>: 使用弱引用避免内存泄漏</li>
+</ul>
+<h3 id="_17">网络优化<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>请求缓存</strong>: 缓存网络请求结果</li>
+<li><strong>并发控制</strong>: 控制并发请求数量</li>
+<li><strong>超时重试</strong>: 智能超时和重试机制</li>
+<li><strong>数据压缩</strong>: 压缩传输数据</li>
+</ul>
+<h3 id="_18">存储优化<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>文件压缩</strong>: 压缩存储文件</li>
+<li><strong>清理策略</strong>: 定期清理过期文件</li>
+<li><strong>分块上传</strong>: 大文件分块上传</li>
+<li><strong>断点续传</strong>: 支持上传下载断点续传</li>
+</ul>
+<h2 id="_19">安全特性<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
+<h3 id="_20">数据安全<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>敏感数据加密</strong>: 敏感信息加密存储</li>
+<li><strong>传输加密</strong>: HTTPS传输保护</li>
+<li><strong>数据校验</strong>: 数据完整性校验</li>
+<li><strong>防篡改</strong>: 数字签名防篡改</li>
+</ul>
+<h3 id="_21">隐私保护<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>权限控制</strong>: 严格的功能权限控制</li>
+<li><strong>数据脱敏</strong>: 敏感数据脱敏处理</li>
+<li><strong>本地存储</strong>: 安全的本地数据存储</li>
+<li><strong>清理机制</strong>: 数据清理和销毁机制</li>
+</ul>
+<h2 id="_22">测试策略<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
+<h3 id="_23">单元测试<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>工具类测试</strong>: 各种工具方法测试</li>
+<li><strong>加密解密测试</strong>: 加密算法正确性</li>
+<li><strong>事件总线测试</strong>: 事件发布订阅机制</li>
+<li><strong>网络工具测试</strong>: 网络请求功能</li>
+</ul>
+<h3 id="_24">集成测试<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>文件上传测试</strong>: 云存储集成测试</li>
+<li><strong>分享功能测试</strong>: 社交分享集成测试</li>
+<li><strong>图片处理测试</strong>: 图片处理流程测试</li>
+<li><strong>端到端测试</strong>: 完整功能流程测试</li>
+</ul>
+<h3 id="_25">性能测试<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>内存泄漏测试</strong>: 长时间运行检测</li>
+<li><strong>并发性能测试</strong>: 高并发场景测试</li>
+<li><strong>文件处理测试</strong>: 大文件处理性能</li>
+<li><strong>网络性能测试</strong>: 网络请求性能</li>
+</ul>
+<h2 id="_26">最佳实践<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h2>
+<h3 id="_27">开发建议<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>工具复用</strong>: 优先使用现有工具方法</li>
+<li><strong>异常处理</strong>: 完善的异常处理机制</li>
+<li><strong>资源管理</strong>: 及时释放不需要的资源</li>
+<li><strong>性能考虑</strong>: 避免不必要的操作开销</li>
+</ol>
+<h3 id="_28">使用指南<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>按需导入</strong>: 只导入需要的工具类</li>
+<li><strong>配置优化</strong>: 合理配置各种参数</li>
+<li><strong>错误处理</strong>: 妥善处理可能的错误</li>
+<li><strong>日志记录</strong>: 记录关键操作日志</li>
+</ol>
+<h2 id="_29">总结<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h2>
+<p><code>basic_utils</code> 模块作为 OneApp 的基础工具集合，提供了丰富的开发工具和辅助功能。通过事件总线、图片处理、分享功能、加密解密等核心能力，大大简化了应用开发的复杂性。模块具有良好的性能优化和安全保护机制，能够满足各种开发场景的需求。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight", "search.share", "header.autohide", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+      
+        <script src="../assets/js/mermaid.js"></script>
+      
+    
+  </body>
+</html>

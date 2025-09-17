@@ -1,0 +1,4163 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="OneApp Flutter应用完整技术架构设计和模块说明">
+      
+      
+        <meta name="author" content="OneApp Team">
+      
+      
+      
+        <link rel="prev" href="amap_flutter_location.html">
+      
+      
+        <link rel="next" href="app_avatar.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>高德搜索 - OneApp 架构设计文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#amap_flutter_search_-" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-header__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OneApp 架构设计文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              高德搜索
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  架构设计文档
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../main_app.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  主应用架构
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../debug_tools.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  调试工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../account/index.html" class="md-tabs__link">
+          
+  
+  
+  账户模块
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../after_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  售后服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  车辆服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_uis/index.html" class="md-tabs__link">
+          
+  
+  
+  基础UI组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_utils/index.html" class="md-tabs__link">
+          
+  
+  
+  基础工具库
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../car_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  汽车销售
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/index.html" class="md-tabs__link">
+          
+  
+  
+  社区功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../membership/index.html" class="md-tabs__link">
+          
+  
+  
+  会员服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../service_component/index.html" class="md-tabs__link">
+          
+  
+  
+  服务组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../setting/index.html" class="md-tabs__link">
+          
+  
+  
+  设置功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../touch_point/index.html" class="md-tabs__link">
+          
+  
+  
+  触点模块
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-nav__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    OneApp 架构设计文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构设计文档
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main_app.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主应用架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug_tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    调试工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    账户模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            账户模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/clr_account.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR账户服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/jverify.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    极光验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    售后服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            售后服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/clr_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR售后服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/oneapp_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    售后应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            车辆服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ai_chat_assistant.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI聊天助手
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="amap_flutter_location.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德定位
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    高德搜索
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="amap_flutter_search.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德搜索
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心功能">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_poi" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. POI 搜索
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 路线规划
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 地址解析
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 距离计算
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      架构设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心组件
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_poi_poisearchmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. POI 搜索管理器 (PoiSearchManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_routesearchmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 路线规划管理器 (RouteSearchManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_geocodemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 地理编码管理器 (GeocodeManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_distancecalculator" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 距离计算器 (DistanceCalculator)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poi" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      地址模型
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 接口
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API 接口">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 搜索接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线规划接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      地理编码接口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poi_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 搜索配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用示例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="使用示例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poi_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 搜索示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      周边搜索示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线规划示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      地理编码示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      输入提示示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索优化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      错误处理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="错误处理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索错误类型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      错误处理示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索结果缓存
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      配额管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配额管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 配额监控
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      版本历史
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="版本历史">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v31221" class="md-nav__link">
+    <span class="md-ellipsis">
+      v3.1.22+1 (当前版本)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v3121" class="md-nav__link">
+    <span class="md-ellipsis">
+      v3.1.21
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      内部依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      外部依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_avatar.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用头像
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_car.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_carwatcher.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆监控
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_charging.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    充电服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_composer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用组合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_maintenance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    维修保养
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    订单管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_rpa.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_vur.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    VUR服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="car_services.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clr_avatarcore.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR虚拟形象
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clr_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR订单服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clr_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clr_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="kit_rpa_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="one_app_cache_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    缓存插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ui_avatarx.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    头像UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础UI组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            基础UI组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/basic_uis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/general_ui_component.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    通用组件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_basic.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_business.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI业务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具库
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/base_mvvm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MVVM基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_config.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础配置
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_logger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    日志系统
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_network.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网络基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_platform.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    平台基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_push.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推送基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_utils.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/flutter_downloader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    下载器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/flutter_plugin_mtpush_private.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MT推送
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    汽车销售
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            汽车销售
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../car_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    社区功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            社区功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    会员服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            会员服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../membership/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    服务组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            服务组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../service_component/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    设置功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            设置功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setting/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    触点模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            触点模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../touch_point/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心功能">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_poi" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. POI 搜索
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 路线规划
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 地址解析
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 距离计算
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      架构设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心组件
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_poi_poisearchmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. POI 搜索管理器 (PoiSearchManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_routesearchmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 路线规划管理器 (RouteSearchManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_geocodemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 地理编码管理器 (GeocodeManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_distancecalculator" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 距离计算器 (DistanceCalculator)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poi" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      地址模型
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 接口
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API 接口">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 搜索接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线规划接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      地理编码接口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#poi_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 搜索配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用示例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="使用示例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#poi_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      POI 搜索示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      周边搜索示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线规划示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      地理编码示例
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      输入提示示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索优化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      路线优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      错误处理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="错误处理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索错误类型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      错误处理示例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      搜索结果缓存
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      配额管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配额管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 配额监控
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      版本历史
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="版本历史">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v31221" class="md-nav__link">
+    <span class="md-ellipsis">
+      v3.1.22+1 (当前版本)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v3121" class="md-nav__link">
+    <span class="md-ellipsis">
+      v3.1.21
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      内部依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      外部依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="amap_flutter_search_-">AMap Flutter Search - 高德地图搜索插件<a class="headerlink" href="#amap_flutter_search_-" title="Permanent link">&para;</a></h1>
+<h2 id="_1">模块概述<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><code>amap_flutter_search</code> 是 OneApp 中基于高德地图 SDK 的搜索服务插件，提供了全面的地理信息搜索功能，包括 POI 搜索、路线规划、地址解析等服务。该插件为车辆导航、位置查找、路径规划等功能提供了强大的搜索能力支持。</p>
+<h2 id="_2">核心功能<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="1_poi">1. POI 搜索<a class="headerlink" href="#1_poi" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>关键词搜索</strong>：基于关键词的兴趣点搜索</li>
+<li><strong>周边搜索</strong>：指定位置周边的 POI 搜索</li>
+<li><strong>分类搜索</strong>：按类别筛选的 POI 搜索</li>
+<li><strong>详情查询</strong>：获取 POI 的详细信息</li>
+</ul>
+<h3 id="2">2. 路线规划<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>驾车路线</strong>：多种驾车路径规划策略</li>
+<li><strong>步行路线</strong>：行人路径规划</li>
+<li><strong>骑行路线</strong>：骑行路径规划</li>
+<li><strong>公交路线</strong>：公共交通路径规划</li>
+<li><strong>货车路线</strong>：货车专用路径规划</li>
+</ul>
+<h3 id="3">3. 地址解析<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>地理编码</strong>：地址转换为坐标</li>
+<li><strong>逆地理编码</strong>：坐标转换为地址</li>
+<li><strong>输入提示</strong>：地址输入智能提示</li>
+<li><strong>行政区查询</strong>：行政区域信息查询</li>
+</ul>
+<h3 id="4">4. 距离计算<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>直线距离</strong>：两点间直线距离计算</li>
+<li><strong>驾车距离</strong>：实际驾车距离和时间</li>
+<li><strong>步行距离</strong>：步行距离和时间</li>
+<li><strong>批量计算</strong>：批量距离矩阵计算</li>
+</ul>
+<h2 id="_3">技术架构<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">架构设计<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌─────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│            应用层                    │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   (app_navigation, app_car)         │
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├─────────────────────────────────────┤
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│      AMap Flutter Search           │
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│  ┌──────────┬──────────┬──────────┐ │
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│  │ POI搜索  │ 路线规划 │ 地址解析 │ │
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│  ├──────────┼──────────┼──────────┤ │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│  │ 距离计算 │ 缓存管理 │ 数据处理 │ │
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  └──────────┴──────────┴──────────┘ │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├─────────────────────────────────────┤
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│         高德地图 Search SDK         │
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│  ┌──────────┬──────────┬──────────┐ │
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│  │ Android  │   iOS    │ 搜索引擎 │ │
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│  └──────────┴──────────┴──────────┘ │
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>├─────────────────────────────────────┤
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│            网络服务层                │
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│      (REST API, WebService)         │
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>└─────────────────────────────────────┘
+</span></code></pre></div>
+<h3 id="_5">核心组件<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="1_poi_poisearchmanager">1. POI 搜索管理器 (PoiSearchManager)<a class="headerlink" href="#1_poi_poisearchmanager" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">AMapPoiSearchManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="c1">// 关键词搜索</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">searchByKeyword</span><span class="p">(</span><span class="n">PoiKeywordSearchOption</span><span class="w"> </span><span class="n">option</span><span class="p">);</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="c1">// 周边搜索</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">searchNearby</span><span class="p">(</span><span class="n">PoiNearbySearchOption</span><span class="w"> </span><span class="n">option</span><span class="p">);</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="c1">// ID 搜索</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">PoiItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">searchById</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">poiId</span><span class="p">);</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="c1">// 分类搜索</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">searchByCategory</span><span class="p">(</span><span class="n">PoiCategorySearchOption</span><span class="w"> </span><span class="n">option</span><span class="p">);</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="2_routesearchmanager">2. 路线规划管理器 (RouteSearchManager)<a class="headerlink" href="#2_routesearchmanager" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">AMapRouteSearchManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="c1">// 驾车路线规划</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">DriveRouteResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateDriveRoute</span><span class="p">(</span><span class="n">DriveRouteQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="c1">// 步行路线规划</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">WalkRouteResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateWalkRoute</span><span class="p">(</span><span class="n">WalkRouteQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="c1">// 骑行路线规划</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">RideRouteResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateRideRoute</span><span class="p">(</span><span class="n">RideRouteQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="c1">// 公交路线规划</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">BusRouteResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateBusRoute</span><span class="p">(</span><span class="n">BusRouteQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="c1">// 货车路线规划</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">TruckRouteResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateTruckRoute</span><span class="p">(</span><span class="n">TruckRouteQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="3_geocodemanager">3. 地理编码管理器 (GeocodeManager)<a class="headerlink" href="#3_geocodemanager" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">AMapGeocodeManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="c1">// 地理编码</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">GeocodeResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">geocode</span><span class="p">(</span><span class="n">GeocodeQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="c1">// 逆地理编码</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">RegeocodeResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reverseGeocode</span><span class="p">(</span><span class="n">RegeocodeQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="c1">// 输入提示</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">TipItem</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">inputTips</span><span class="p">(</span><span class="n">InputTipsQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="c1">// 行政区查询</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">DistrictResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">searchDistrict</span><span class="p">(</span><span class="n">DistrictQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="4_distancecalculator">4. 距离计算器 (DistanceCalculator)<a class="headerlink" href="#4_distancecalculator" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">AMapDistanceCalculator</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="c1">// 计算两点距离</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">DistanceResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateDistance</span><span class="p">(</span><span class="n">DistanceQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="c1">// 批量距离计算</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">DistanceResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">calculateDistances</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">DistanceQuery</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queries</span><span class="p">);</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="c1">// 路径距离计算</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">RouteDistanceResult</span><span class="o">&gt;</span><span class="w"> </span><span class="n">calculateRouteDistance</span><span class="p">(</span><span class="n">RouteDistanceQuery</span><span class="w"> </span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_6">数据模型<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="poi">POI 模型<a class="headerlink" href="#poi" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PoiItem</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">poiId</span><span class="p">;</span><span class="w">           </span><span class="c1">// POI ID</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">title</span><span class="p">;</span><span class="w">           </span><span class="c1">// POI 名称</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">snippet</span><span class="p">;</span><span class="w">         </span><span class="c1">// POI 描述</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">LatLng</span><span class="w"> </span><span class="n">latLng</span><span class="p">;</span><span class="w">         </span><span class="c1">// POI 坐标</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">distance</span><span class="p">;</span><span class="w">        </span><span class="c1">// 距离</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">tel</span><span class="p">;</span><span class="w">            </span><span class="c1">// 电话</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">postcode</span><span class="p">;</span><span class="w">       </span><span class="c1">// 邮编</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">website</span><span class="p">;</span><span class="w">        </span><span class="c1">// 网站</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">email</span><span class="p">;</span><span class="w">          </span><span class="c1">// 邮箱</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">province</span><span class="p">;</span><span class="w">       </span><span class="c1">// 省份</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">city</span><span class="p">;</span><span class="w">           </span><span class="c1">// 城市</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">district</span><span class="p">;</span><span class="w">       </span><span class="c1">// 区县</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">address</span><span class="p">;</span><span class="w">        </span><span class="c1">// 地址</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">direction</span><span class="p">;</span><span class="w">      </span><span class="c1">// 方向</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">businessArea</span><span class="p">;</span><span class="w">   </span><span class="c1">// 商圈</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">typeCode</span><span class="p">;</span><span class="w">       </span><span class="c1">// 类型编码</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">typeDes</span><span class="p">;</span><span class="w">        </span><span class="c1">// 类型描述</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Photo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">photos</span><span class="p">;</span><span class="w">    </span><span class="c1">// 照片列表</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shopID</span><span class="p">;</span><span class="w">   </span><span class="c1">// 商铺ID</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">IndoorData</span><span class="w"> </span><span class="n">indoorData</span><span class="p">;</span><span class="w"> </span><span class="c1">// 室内数据</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="p">}</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PoiResult</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">PoiItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pois</span><span class="p">;</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pageCount</span><span class="p">;</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">totalCount</span><span class="p">;</span>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">SearchBound</span><span class="w"> </span><span class="n">searchBound</span><span class="p">;</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PoiQuery</span><span class="w"> </span><span class="n">query</span><span class="p">;</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_7">路线模型<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">DriveRouteResult</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DrivePath</span><span class="o">&gt;</span><span class="w"> </span><span class="n">paths</span><span class="p">;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">RouteQuery</span><span class="w"> </span><span class="n">startPos</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">RouteQuery</span><span class="w"> </span><span class="n">targetPos</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">RouteQuery</span><span class="o">&gt;</span><span class="w"> </span><span class="n">viaPoints</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">taxiCost</span><span class="p">;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">}</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="kd">class</span><span class="w"> </span><span class="nc">DrivePath</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">strategy</span><span class="p">;</span><span class="w">        </span><span class="c1">// 策略</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">distance</span><span class="p">;</span><span class="w">          </span><span class="c1">// 距离（米）</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">duration</span><span class="p">;</span><span class="w">          </span><span class="c1">// 时长（秒）</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">tolls</span><span class="p">;</span><span class="w">          </span><span class="c1">// 过路费</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">tollDistance</span><span class="p">;</span><span class="w">   </span><span class="c1">// 收费距离</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">totalTrafficLights</span><span class="p">;</span><span class="w"> </span><span class="c1">// 红绿灯数</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DriveStep</span><span class="o">&gt;</span><span class="w"> </span><span class="n">steps</span><span class="p">;</span><span class="w"> </span><span class="c1">// 路径段</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">TMC</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmcs</span><span class="p">;</span><span class="w">       </span><span class="c1">// 路况信息</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="p">}</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="kd">class</span><span class="w"> </span><span class="nc">DriveStep</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">instruction</span><span class="p">;</span><span class="w">    </span><span class="c1">// 行驶指示</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">orientation</span><span class="p">;</span><span class="w">    </span><span class="c1">// 方向</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">road</span><span class="p">;</span><span class="w">          </span><span class="c1">// 道路名称</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">distance</span><span class="p">;</span><span class="w">         </span><span class="c1">// 距离</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">duration</span><span class="p">;</span><span class="w">         </span><span class="c1">// 时长</span>
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">LatLng</span><span class="o">&gt;</span><span class="w"> </span><span class="n">polyline</span><span class="p">;</span><span class="w"> </span><span class="c1">// 路径坐标</span>
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">action</span><span class="p">;</span><span class="w">        </span><span class="c1">// 导航动作</span>
+</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">assistantAction</span><span class="p">;</span><span class="w"> </span><span class="c1">// 辅助动作</span>
+</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_8">地址模型<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">RegeocodeResult</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">RegeocodeAddress</span><span class="w"> </span><span class="n">regeocodeAddress</span><span class="p">;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">PoiItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pois</span><span class="p">;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Road</span><span class="o">&gt;</span><span class="w"> </span><span class="n">roads</span><span class="p">;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">RoadInter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">roadInters</span><span class="p">;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">AoiItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aois</span><span class="p">;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="kd">class</span><span class="w"> </span><span class="nc">RegeocodeAddress</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">formattedAddress</span><span class="p">;</span><span class="w"> </span><span class="c1">// 格式化地址</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">country</span><span class="p">;</span><span class="w">         </span><span class="c1">// 国家</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">province</span><span class="p">;</span><span class="w">        </span><span class="c1">// 省份</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">city</span><span class="p">;</span><span class="w">           </span><span class="c1">// 城市</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">district</span><span class="p">;</span><span class="w">       </span><span class="c1">// 区县</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">township</span><span class="p">;</span><span class="w">       </span><span class="c1">// 乡镇</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">neighborhood</span><span class="p">;</span><span class="w">   </span><span class="c1">// 社区</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">building</span><span class="p">;</span><span class="w">       </span><span class="c1">// 建筑</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">adcode</span><span class="p">;</span><span class="w">         </span><span class="c1">// 区域编码</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">citycode</span><span class="p">;</span><span class="w">       </span><span class="c1">// 城市编码</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">StreetNumber</span><span class="o">&gt;</span><span class="w"> </span><span class="n">streetNumbers</span><span class="p">;</span><span class="w"> </span><span class="c1">// 门牌信息</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="api">API 接口<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<h3 id="poi_1">POI 搜索接口<a class="headerlink" href="#poi_1" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">PoiSearchService</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="c1">// 关键词搜索</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">searchByKeyword</span><span class="p">(</span><span class="n">PoiKeywordSearchRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="c1">// 周边搜索</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">searchNearby</span><span class="p">(</span><span class="n">PoiNearbySearchRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="c1">// 多边形搜索</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">searchInPolygon</span><span class="p">(</span><span class="n">PoiPolygonSearchRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="c1">// POI 详情</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">PoiItem</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getPoiDetail</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">poiId</span><span class="p">);</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_9">路线规划接口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">RouteSearchService</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="c1">// 驾车路线规划</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">DriveRouteResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">planDriveRoute</span><span class="p">(</span><span class="n">DriveRouteRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="c1">// 步行路线规划</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">WalkRouteResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">planWalkRoute</span><span class="p">(</span><span class="n">WalkRouteRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="c1">// 骑行路线规划</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">RideRouteResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">planRideRoute</span><span class="p">(</span><span class="n">RideRouteRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span><span class="c1">// 公交路线规划</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">BusRouteResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">planBusRoute</span><span class="p">(</span><span class="n">BusRouteRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_10">地理编码接口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">GeocodeService</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="c1">// 地理编码</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">GeocodeResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">geocode</span><span class="p">(</span><span class="n">GeocodeRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="c1">// 逆地理编码</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">RegeocodeResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">reverseGeocode</span><span class="p">(</span><span class="n">RegeocodeRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">  </span><span class="c1">// 输入提示</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">TipItem</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">getInputTips</span><span class="p">(</span><span class="n">InputTipsRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">  </span><span class="c1">// 行政区搜索</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">DistrictResult</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">searchDistrict</span><span class="p">(</span><span class="n">DistrictRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_11">配置管理<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">搜索配置<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">SearchConfig</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">apiKey</span><span class="p">;</span><span class="w">           </span><span class="c1">// API 密钥</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">timeoutMs</span><span class="p">;</span><span class="w">          </span><span class="c1">// 超时时间</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxRetries</span><span class="p">;</span><span class="w">         </span><span class="c1">// 最大重试次数</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableCache</span><span class="p">;</span><span class="w">       </span><span class="c1">// 是否启用缓存</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">cacheExpireTime</span><span class="p">;</span><span class="w">    </span><span class="c1">// 缓存过期时间</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">language</span><span class="p">;</span><span class="w">        </span><span class="c1">// 语言设置</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">region</span><span class="p">;</span><span class="w">          </span><span class="c1">// 区域设置</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SearchConfig</span><span class="w"> </span><span class="n">defaultConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SearchConfig</span><span class="p">(</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="nl">apiKey:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="nl">timeoutMs:</span><span class="w"> </span><span class="m">30000</span><span class="p">,</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">    </span><span class="nl">maxRetries:</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">    </span><span class="nl">enableCache:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">    </span><span class="nl">cacheExpireTime:</span><span class="w"> </span><span class="m">3600</span><span class="p">,</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">    </span><span class="nl">language:</span><span class="w"> </span><span class="s1">&#39;zh-CN&#39;</span><span class="p">,</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="w">    </span><span class="nl">region:</span><span class="w"> </span><span class="s1">&#39;CN&#39;</span><span class="p">,</span>
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">  </span><span class="p">);</span>
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="poi_2">POI 搜索配置<a class="headerlink" href="#poi_2" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PoiSearchConfig</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pageSize</span><span class="p">;</span><span class="w">           </span><span class="c1">// 每页结果数</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxPage</span><span class="p">;</span><span class="w">           </span><span class="c1">// 最大页数</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">city</span><span class="p">;</span><span class="w">           </span><span class="c1">// 搜索城市</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">types</span><span class="p">;</span><span class="w">          </span><span class="c1">// 搜索类型</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">extensions</span><span class="p">;</span><span class="w">       </span><span class="c1">// 是否返回扩展信息</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">sortrule</span><span class="p">;</span><span class="w">       </span><span class="c1">// 排序规则</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PoiSearchConfig</span><span class="w"> </span><span class="n">defaultConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PoiSearchConfig</span><span class="p">(</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">    </span><span class="nl">pageSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="nl">maxPage:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">    </span><span class="nl">city:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">    </span><span class="nl">types:</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">    </span><span class="nl">extensions:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">    </span><span class="nl">sortrule:</span><span class="w"> </span><span class="s1">&#39;distance&#39;</span><span class="p">,</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">  </span><span class="p">);</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_13">使用示例<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="poi_3">POI 搜索示例<a class="headerlink" href="#poi_3" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// 关键词搜索</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">searchOption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PoiKeywordSearchOption</span><span class="p">(</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nl">keyword:</span><span class="w"> </span><span class="s1">&#39;加油站&#39;</span><span class="p">,</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nl">city:</span><span class="w"> </span><span class="s1">&#39;北京&#39;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nl">pageSize:</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="nl">pageNum:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span><span class="nl">extensions:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="p">);</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="kd">final</span><span class="w"> </span><span class="n">poiResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapPoiSearchManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">searchByKeyword</span><span class="p">(</span><span class="n">searchOption</span><span class="p">);</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">poi</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">poiResult</span><span class="p">.</span><span class="n">pois</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;POI 名称: </span><span class="si">${</span><span class="n">poi</span><span class="p">.</span><span class="n">title</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;POI 地址: </span><span class="si">${</span><span class="n">poi</span><span class="p">.</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;POI 距离: </span><span class="si">${</span><span class="n">poi</span><span class="p">.</span><span class="n">distance</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;POI 坐标: </span><span class="si">${</span><span class="n">poi</span><span class="p">.</span><span class="n">latLng</span><span class="p">.</span><span class="n">latitude</span><span class="si">}</span><span class="s1">, </span><span class="si">${</span><span class="n">poi</span><span class="p">.</span><span class="n">latLng</span><span class="p">.</span><span class="n">longitude</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_14">周边搜索示例<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// 周边搜索</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">nearbyOption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PoiNearbySearchOption</span><span class="p">(</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nl">keyword:</span><span class="w"> </span><span class="s1">&#39;餐厅&#39;</span><span class="p">,</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="nl">center:</span><span class="w"> </span><span class="n">LatLng</span><span class="p">(</span><span class="m">39.9042</span><span class="p">,</span><span class="w"> </span><span class="m">116.4074</span><span class="p">),</span><span class="w"> </span><span class="c1">// 搜索中心点</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span><span class="nl">radius:</span><span class="w"> </span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="c1">// 搜索半径 1000 米</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="nl">pageSize:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">  </span><span class="nl">pageNum:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="p">);</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="kd">final</span><span class="w"> </span><span class="n">nearbyResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapPoiSearchManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">searchNearby</span><span class="p">(</span><span class="n">nearbyOption</span><span class="p">);</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="n">print</span><span class="p">(</span><span class="s1">&#39;附近餐厅数量: </span><span class="si">${</span><span class="n">nearbyResult</span><span class="p">.</span><span class="n">pois</span><span class="p">.</span><span class="n">length</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">restaurant</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">nearbyResult</span><span class="p">.</span><span class="n">pois</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;餐厅: </span><span class="si">${</span><span class="n">restaurant</span><span class="p">.</span><span class="n">title</span><span class="si">}</span><span class="s1"> - </span><span class="si">${</span><span class="n">restaurant</span><span class="p">.</span><span class="n">distance</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_15">路线规划示例<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// 驾车路线规划</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">driveQuery</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriveRouteQuery</span><span class="p">(</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="nl">fromPoint:</span><span class="w"> </span><span class="n">RouteQuery</span><span class="p">(</span><span class="m">39.9042</span><span class="p">,</span><span class="w"> </span><span class="m">116.4074</span><span class="p">),</span><span class="w"> </span><span class="c1">// 起点</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="nl">toPoint:</span><span class="w"> </span><span class="n">RouteQuery</span><span class="p">(</span><span class="m">39.9015</span><span class="p">,</span><span class="w"> </span><span class="m">116.3974</span><span class="p">),</span><span class="w">   </span><span class="c1">// 终点</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">DriveMode</span><span class="p">.</span><span class="n">fastest</span><span class="p">,</span><span class="w"> </span><span class="c1">// 最快路线</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span><span class="nl">avoidhighspeed:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">   </span><span class="c1">// 不避开高速</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">  </span><span class="nl">avoidtolls:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">       </span><span class="c1">// 不避开收费</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">  </span><span class="nl">avoidtrafficjam:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">   </span><span class="c1">// 避开拥堵</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="p">);</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="kd">final</span><span class="w"> </span><span class="n">driveResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapRouteSearchManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">calculateDriveRoute</span><span class="p">(</span><span class="n">driveQuery</span><span class="p">);</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driveResult</span><span class="p">.</span><span class="n">paths</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driveResult</span><span class="p">.</span><span class="n">paths</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;驾车距离: </span><span class="si">${</span><span class="n">path</span><span class="p">.</span><span class="n">distance</span><span class="si">}</span><span class="s1"> 米&#39;</span><span class="p">);</span>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;预计时间: </span><span class="si">${</span><span class="n">path</span><span class="p">.</span><span class="n">duration</span><span class="si">}</span><span class="s1"> 秒&#39;</span><span class="p">);</span>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;过路费: </span><span class="si">${</span><span class="n">path</span><span class="p">.</span><span class="n">tolls</span><span class="si">}</span><span class="s1"> 元&#39;</span><span class="p">);</span>
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>
+</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">path</span><span class="p">.</span><span class="n">steps</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-20"><a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;导航指示: </span><span class="si">${</span><span class="n">step</span><span class="p">.</span><span class="n">instruction</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-15-21"><a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;道路: </span><span class="si">${</span><span class="n">step</span><span class="p">.</span><span class="n">road</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-15-22"><a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a><span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;距离: </span><span class="si">${</span><span class="n">step</span><span class="p">.</span><span class="n">distance</span><span class="si">}</span><span class="s1"> 米&#39;</span><span class="p">);</span>
+</span><span id="__span-15-23"><a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-15-24"><a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_16">地理编码示例<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// 地址转坐标</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">geocodeQuery</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GeocodeQuery</span><span class="p">(</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span><span class="nl">locationName:</span><span class="w"> </span><span class="s1">&#39;北京市朝阳区望京SOHO&#39;</span><span class="p">,</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">  </span><span class="nl">city:</span><span class="w"> </span><span class="s1">&#39;北京&#39;</span><span class="p">,</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="p">);</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="kd">final</span><span class="w"> </span><span class="n">geocodeResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapGeocodeManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">geocode</span><span class="p">(</span><span class="n">geocodeQuery</span><span class="p">);</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">geocodeResult</span><span class="p">.</span><span class="n">geocodeAddressList</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geocodeResult</span><span class="p">.</span><span class="n">geocodeAddressList</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;地址坐标: </span><span class="si">${</span><span class="n">address</span><span class="p">.</span><span class="n">latLonPoint</span><span class="p">.</span><span class="n">latitude</span><span class="si">}</span><span class="s1">, </span><span class="si">${</span><span class="n">address</span><span class="p">.</span><span class="n">latLonPoint</span><span class="p">.</span><span class="n">longitude</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="p">}</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1">// 坐标转地址</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="kd">final</span><span class="w"> </span><span class="n">regeocodeQuery</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RegeocodeQuery</span><span class="p">(</span>
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">  </span><span class="nl">latLonPoint:</span><span class="w"> </span><span class="n">LatLng</span><span class="p">(</span><span class="m">39.9915</span><span class="p">,</span><span class="w"> </span><span class="m">116.4684</span><span class="p">),</span>
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">  </span><span class="nl">radius:</span><span class="w"> </span><span class="m">200.0</span><span class="p">,</span>
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="w">  </span><span class="nl">extensions:</span><span class="w"> </span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="p">);</span>
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="kd">final</span><span class="w"> </span><span class="n">regeocodeResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapGeocodeManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">reverseGeocode</span><span class="p">(</span><span class="n">regeocodeQuery</span><span class="p">);</span>
+</span><span id="__span-16-22"><a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a><span class="n">print</span><span class="p">(</span><span class="s1">&#39;格式化地址: </span><span class="si">${</span><span class="n">regeocodeResult</span><span class="p">.</span><span class="n">regeocodeAddress</span><span class="p">.</span><span class="n">formattedAddress</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="_17">输入提示示例<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// 地址输入提示</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">tipsQuery</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InputTipsQuery</span><span class="p">(</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span><span class="nl">keyword:</span><span class="w"> </span><span class="s1">&#39;王府井&#39;</span><span class="p">,</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">  </span><span class="nl">city:</span><span class="w"> </span><span class="s1">&#39;北京&#39;</span><span class="p">,</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">  </span><span class="nl">datatype:</span><span class="w"> </span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">);</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="kd">final</span><span class="w"> </span><span class="n">tipsList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapGeocodeManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">inputTips</span><span class="p">(</span><span class="n">tipsQuery</span><span class="p">);</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">tip</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">tipsList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;提示: </span><span class="si">${</span><span class="n">tip</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;地址: </span><span class="si">${</span><span class="n">tip</span><span class="p">.</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tip</span><span class="p">.</span><span class="n">point</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;坐标: </span><span class="si">${</span><span class="n">tip</span><span class="p">.</span><span class="n">point</span><span class="o">!</span><span class="p">.</span><span class="n">latitude</span><span class="si">}</span><span class="s1">, </span><span class="si">${</span><span class="n">tip</span><span class="p">.</span><span class="n">point</span><span class="o">!</span><span class="p">.</span><span class="n">longitude</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_18">测试策略<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<h3 id="_19">单元测试<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">group</span><span class="p">(</span><span class="s1">&#39;AMapSearch Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should search POI by keyword&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="c1">// Given</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">searchOption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PoiKeywordSearchOption</span><span class="p">(</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">      </span><span class="nl">keyword:</span><span class="w"> </span><span class="s1">&#39;测试POI&#39;</span><span class="p">,</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">      </span><span class="nl">city:</span><span class="w"> </span><span class="s1">&#39;北京&#39;</span><span class="p">,</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">    </span><span class="c1">// When</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapPoiSearchManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">searchByKeyword</span><span class="p">(</span><span class="n">searchOption</span><span class="p">);</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">    </span><span class="c1">// Then</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">pois</span><span class="p">,</span><span class="w"> </span><span class="n">isNotEmpty</span><span class="p">);</span>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">pois</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;测试POI&#39;</span><span class="p">));</span>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="w">  </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should calculate drive route&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-18"><a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a><span class="w">    </span><span class="c1">// Given</span>
+</span><span id="__span-18-19"><a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DriveRouteQuery</span><span class="p">(</span>
+</span><span id="__span-18-20"><a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a><span class="w">      </span><span class="nl">fromPoint:</span><span class="w"> </span><span class="n">RouteQuery</span><span class="p">(</span><span class="m">39.9042</span><span class="p">,</span><span class="w"> </span><span class="m">116.4074</span><span class="p">),</span>
+</span><span id="__span-18-21"><a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a><span class="w">      </span><span class="nl">toPoint:</span><span class="w"> </span><span class="n">RouteQuery</span><span class="p">(</span><span class="m">39.9015</span><span class="p">,</span><span class="w"> </span><span class="m">116.3974</span><span class="p">),</span>
+</span><span id="__span-18-22"><a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-18-23"><a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a>
+</span><span id="__span-18-24"><a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a><span class="w">    </span><span class="c1">// When</span>
+</span><span id="__span-18-25"><a id="__codelineno-18-25" name="__codelineno-18-25" href="#__codelineno-18-25"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapRouteSearchManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">calculateDriveRoute</span><span class="p">(</span><span class="n">query</span><span class="p">);</span>
+</span><span id="__span-18-26"><a id="__codelineno-18-26" name="__codelineno-18-26" href="#__codelineno-18-26"></a>
+</span><span id="__span-18-27"><a id="__codelineno-18-27" name="__codelineno-18-27" href="#__codelineno-18-27"></a><span class="w">    </span><span class="c1">// Then</span>
+</span><span id="__span-18-28"><a id="__codelineno-18-28" name="__codelineno-18-28" href="#__codelineno-18-28"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">paths</span><span class="p">,</span><span class="w"> </span><span class="n">isNotEmpty</span><span class="p">);</span>
+</span><span id="__span-18-29"><a id="__codelineno-18-29" name="__codelineno-18-29" href="#__codelineno-18-29"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">paths</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="n">greaterThan</span><span class="p">(</span><span class="m">0</span><span class="p">));</span>
+</span><span id="__span-18-30"><a id="__codelineno-18-30" name="__codelineno-18-30" href="#__codelineno-18-30"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-18-31"><a id="__codelineno-18-31" name="__codelineno-18-31" href="#__codelineno-18-31"></a><span class="p">});</span>
+</span></code></pre></div>
+<h3 id="_20">集成测试<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Search Integration Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;complete search flow&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span><span class="c1">// 1. 搜索 POI</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">pois</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">searchNearbyPois</span><span class="p">(</span><span class="s1">&#39;加油站&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">currentLocation</span><span class="p">);</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">    </span><span class="c1">// 2. 选择目标 POI</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">targetPoi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pois</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">    </span><span class="c1">// 3. 规划路线</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">route</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">planRouteToDestination</span><span class="p">(</span><span class="n">currentLocation</span><span class="p">,</span><span class="w"> </span><span class="n">targetPoi</span><span class="p">.</span><span class="n">latLng</span><span class="p">);</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">    </span><span class="c1">// 4. 验证结果</span>
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">route</span><span class="p">.</span><span class="n">paths</span><span class="p">,</span><span class="w"> </span><span class="n">isNotEmpty</span><span class="p">);</span>
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">route</span><span class="p">.</span><span class="n">paths</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">steps</span><span class="p">,</span><span class="w"> </span><span class="n">isNotEmpty</span><span class="p">);</span>
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="p">});</span>
+</span></code></pre></div>
+<h2 id="_21">性能优化<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<h3 id="_22">搜索优化<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>搜索缓存</strong>：缓存常用搜索结果</li>
+<li><strong>预测搜索</strong>：基于历史预测用户搜索</li>
+<li><strong>分页加载</strong>：大结果集分页加载</li>
+<li><strong>搜索建议</strong>：智能搜索建议减少请求</li>
+</ul>
+<h3 id="_23">路线优化<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>路线缓存</strong>：缓存常用路线规划结果</li>
+<li><strong>增量更新</strong>：只更新路线变化部分</li>
+<li><strong>压缩传输</strong>：压缩路线数据减少传输量</li>
+<li><strong>多线程处理</strong>：并行处理多个路线请求</li>
+</ul>
+<h2 id="_24">错误处理<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<h3 id="_25">搜索错误类型<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">enum</span><span class="w"> </span><span class="n">SearchErrorType</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span><span class="n">networkError</span><span class="p">,</span><span class="w">         </span><span class="c1">// 网络错误</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">  </span><span class="n">apiKeyInvalid</span><span class="p">,</span><span class="w">       </span><span class="c1">// API Key 无效</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">  </span><span class="n">quotaExceeded</span><span class="p">,</span><span class="w">       </span><span class="c1">// 配额超限</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">  </span><span class="n">invalidParameter</span><span class="p">,</span><span class="w">    </span><span class="c1">// 参数无效</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">  </span><span class="n">noResult</span><span class="p">,</span><span class="w">           </span><span class="c1">// 无搜索结果</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">  </span><span class="n">serverError</span><span class="p">,</span><span class="w">        </span><span class="c1">// 服务器错误</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">  </span><span class="n">timeout</span><span class="w">             </span><span class="c1">// 请求超时</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="p">}</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="kd">class</span><span class="w"> </span><span class="nc">SearchException</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">SearchErrorType</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">message</span><span class="p">;</span>
+</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">errorCode</span><span class="p">;</span>
+</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>
+</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">SearchException</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="n">errorCode</span><span class="p">]);</span>
+</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_26">错误处理示例<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">AMapPoiSearchManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">searchByKeyword</span><span class="p">(</span><span class="n">searchOption</span><span class="p">);</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">  </span><span class="c1">// 处理搜索结果</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="p">}</span><span class="w"> </span><span class="kd">on</span><span class="w"> </span><span class="n">SearchException</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">  </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">SearchErrorType</span><span class="p">.</span><span class="nl">networkError:</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">      </span><span class="n">showErrorDialog</span><span class="p">(</span><span class="s1">&#39;网络连接失败，请检查网络设置&#39;</span><span class="p">);</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">      </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">SearchErrorType</span><span class="p">.</span><span class="nl">noResult:</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">      </span><span class="n">showInfoDialog</span><span class="p">(</span><span class="s1">&#39;未找到相关结果，请尝试其他关键词&#39;</span><span class="p">);</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="w">      </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">SearchErrorType</span><span class="p">.</span><span class="nl">quotaExceeded:</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="w">      </span><span class="n">showErrorDialog</span><span class="p">(</span><span class="s1">&#39;搜索次数已达上限，请稍后再试&#39;</span><span class="p">);</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="w">      </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="w">    </span><span class="k">default</span><span class="o">:</span>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="w">      </span><span class="n">showErrorDialog</span><span class="p">(</span><span class="s1">&#39;搜索失败: </span><span class="si">${</span><span class="n">e</span><span class="p">.</span><span class="n">message</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="w">  </span><span class="n">showErrorDialog</span><span class="p">(</span><span class="s1">&#39;未知错误: </span><span class="si">$</span><span class="n">e</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_27">缓存策略<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h2>
+<h3 id="_28">搜索结果缓存<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">SearchCache</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxCacheSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1000</span><span class="p">;</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">cacheExpiration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">hours:</span><span class="w"> </span><span class="m">1</span><span class="p">);</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">  </span><span class="c1">// 缓存 POI 搜索结果</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cachePoiResult</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">PoiResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="w">  </span><span class="c1">// 获取缓存的 POI 结果</span>
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">PoiResult</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getCachedPoiResult</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">);</span>
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>
+</span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a><span class="w">  </span><span class="c1">// 缓存路线规划结果</span>
+</span><span id="__span-22-12"><a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cacheRouteResult</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">DriveRouteResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+</span><span id="__span-22-13"><a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>
+</span><span id="__span-22-14"><a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="w">  </span><span class="c1">// 获取缓存的路线结果</span>
+</span><span id="__span-22-15"><a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">DriveRouteResult</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">getCachedRouteResult</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">key</span><span class="p">);</span>
+</span><span id="__span-22-16"><a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>
+</span><span id="__span-22-17"><a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a><span class="w">  </span><span class="c1">// 清理过期缓存</span>
+</span><span id="__span-22-18"><a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cleanExpiredCache</span><span class="p">();</span>
+</span><span id="__span-22-19"><a id="__codelineno-22-19" name="__codelineno-22-19" href="#__codelineno-22-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_29">配额管理<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h2>
+<h3 id="api_1">API 配额监控<a class="headerlink" href="#api_1" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">QuotaManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">  </span><span class="c1">// 获取当前配额使用情况</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">QuotaInfo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getCurrentQuota</span><span class="p">();</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">  </span><span class="c1">// 检查是否可以发起请求</span>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">canMakeRequest</span><span class="p">(</span><span class="n">RequestType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="w">  </span><span class="c1">// 记录请求使用</span>
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">recordRequest</span><span class="p">(</span><span class="n">RequestType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="w">  </span><span class="c1">// 获取配额重置时间</span>
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getQuotaResetTime</span><span class="p">();</span>
+</span><span id="__span-23-13"><a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a><span class="p">}</span>
+</span><span id="__span-23-14"><a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a>
+</span><span id="__span-23-15"><a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a><span class="kd">class</span><span class="w"> </span><span class="nc">QuotaInfo</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-23-16"><a id="__codelineno-23-16" name="__codelineno-23-16" href="#__codelineno-23-16"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dailyLimit</span><span class="p">;</span><span class="w">      </span><span class="c1">// 日限额</span>
+</span><span id="__span-23-17"><a id="__codelineno-23-17" name="__codelineno-23-17" href="#__codelineno-23-17"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dailyUsed</span><span class="p">;</span><span class="w">       </span><span class="c1">// 日使用量</span>
+</span><span id="__span-23-18"><a id="__codelineno-23-18" name="__codelineno-23-18" href="#__codelineno-23-18"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">monthlyLimit</span><span class="p">;</span><span class="w">    </span><span class="c1">// 月限额</span>
+</span><span id="__span-23-19"><a id="__codelineno-23-19" name="__codelineno-23-19" href="#__codelineno-23-19"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">monthlyUsed</span><span class="p">;</span><span class="w">     </span><span class="c1">// 月使用量</span>
+</span><span id="__span-23-20"><a id="__codelineno-23-20" name="__codelineno-23-20" href="#__codelineno-23-20"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTime</span><span class="w"> </span><span class="n">resetTime</span><span class="p">;</span><span class="w">  </span><span class="c1">// 重置时间</span>
+</span><span id="__span-23-21"><a id="__codelineno-23-21" name="__codelineno-23-21" href="#__codelineno-23-21"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_30">版本历史<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h2>
+<h3 id="v31221">v3.1.22+1 (当前版本)<a class="headerlink" href="#v31221" title="Permanent link">&para;</a></h3>
+<ul>
+<li>支持最新的高德地图 API</li>
+<li>新增货车路线规划功能</li>
+<li>优化搜索性能和准确性</li>
+<li>修复路线规划稳定性问题</li>
+</ul>
+<h3 id="v3121">v3.1.21<a class="headerlink" href="#v3121" title="Permanent link">&para;</a></h3>
+<ul>
+<li>支持室内 POI 搜索</li>
+<li>新增批量距离计算</li>
+<li>优化内存使用</li>
+<li>改进错误处理机制</li>
+</ul>
+<h2 id="_31">依赖关系<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h2>
+<h3 id="_32">内部依赖<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>amap_flutter_base</code>: 高德地图基础库</li>
+<li><code>basic_network</code>: 网络请求服务</li>
+<li><code>basic_storage</code>: 本地存储服务</li>
+</ul>
+<h3 id="_33">外部依赖<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>dio</code>: HTTP 客户端</li>
+<li><code>cached_network_image</code>: 图片缓存</li>
+<li><code>sqflite</code>: 本地数据库</li>
+</ul>
+<h2 id="_34">总结<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h2>
+<p><code>amap_flutter_search</code> 作为高德地图搜索服务的 Flutter 插件，为 OneApp 提供了全面的地理信息搜索能力。通过集成 POI 搜索、路线规划、地理编码、距离计算等功能，该插件能够满足车辆导航、位置服务、路径规划等多种业务需求。</p>
+<p>插件在设计上充分考虑了性能优化、缓存管理、错误处理、配额控制等关键因素，确保在提供高质量搜索服务的同时，保持良好的用户体验和系统稳定性。这为 OneApp 的车联网和导航服务提供了强大的技术支撑。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight", "search.share", "header.autohide", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+      
+        <script src="../assets/js/mermaid.js"></script>
+      
+    
+  </body>
+</html>

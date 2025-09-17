@@ -1,0 +1,3475 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="OneApp Flutter应用完整技术架构设计和模块说明">
+      
+      
+        <meta name="author" content="OneApp Team">
+      
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>OneApp Popup - 弹窗管理模块 - OneApp 架构设计文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/css/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#oneapp_popup_-" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-header__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OneApp 架构设计文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              OneApp Popup - 弹窗管理模块
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  架构设计文档
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../main_app.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  主应用架构
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../debug_tools.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  调试工具
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../account/index.html" class="md-tabs__link">
+          
+  
+  
+  账户模块
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../after_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  售后服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../app_car/index.html" class="md-tabs__link">
+          
+  
+  
+  车辆服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_uis/index.html" class="md-tabs__link">
+          
+  
+  
+  基础UI组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../basic_utils/index.html" class="md-tabs__link">
+          
+  
+  
+  基础工具库
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../car_sales/index.html" class="md-tabs__link">
+          
+  
+  
+  汽车销售
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/index.html" class="md-tabs__link">
+          
+  
+  
+  社区功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../membership/index.html" class="md-tabs__link">
+          
+  
+  
+  会员服务
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  服务组件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../setting/index.html" class="md-tabs__link">
+          
+  
+  
+  设置功能
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../touch_point/index.html" class="md-tabs__link">
+          
+  
+  
+  触点模块
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="OneApp 架构设计文档" class="md-nav__button md-logo" aria-label="OneApp 架构设计文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    OneApp 架构设计文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../OneApp%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构设计文档
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main_app.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    主应用架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug_tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    调试工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    账户模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            账户模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/clr_account.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR账户服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../account/jverify.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    极光验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    售后服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            售后服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/clr_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR售后服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../after_sales/oneapp_after_sales.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    售后应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            车辆服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/ai_chat_assistant.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI聊天助手
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/amap_flutter_location.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德定位
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/amap_flutter_search.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    高德搜索
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_avatar.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用头像
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_car.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_carwatcher.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆监控
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_charging.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    充电服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_composer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    应用组合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_maintenance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    维修保养
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    订单管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_rpa.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_vur.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    VUR服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/app_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/car_services.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    车辆服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_avatarcore.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR虚拟形象
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_order.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR订单服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_touchgo.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR TouchGo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/clr_wallbox.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLR Wallbox
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/kit_rpa_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RPA插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/one_app_cache_plugin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    缓存插件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_car/ui_avatarx.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    头像UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础UI组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            基础UI组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/basic_uis.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础UI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/general_ui_component.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    通用组件
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_basic.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_uis/ui_business.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UI业务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具库
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具库
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/base_mvvm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MVVM基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_config.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础配置
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_logger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    日志系统
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_network.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网络基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_platform.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    平台基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_push.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推送基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/basic_utils.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/flutter_downloader.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    下载器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic_utils/flutter_plugin_mtpush_private.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MT推送
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    汽车销售
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            汽车销售
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../car_sales/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    社区功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            社区功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    会员服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            会员服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../membership/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    服务组件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            服务组件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    设置功能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            设置功能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setting/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_15" >
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    触点模块
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            触点模块
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../touch_point/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概览
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块概述
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心功能
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心功能">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 统一弹窗管理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 弹窗优先级控制
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 弹窗样式定制
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 弹窗生命周期
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      技术架构
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="技术架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      架构设计
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      核心组件
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="核心组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_popupmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. 弹窗管理器 (PopupManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_popupqueuecontroller" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. 弹窗队列控制器 (PopupQueueController)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_popupstylemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. 弹窗样式管理器 (PopupStyleManager)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_popuplifecyclemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. 弹窗生命周期管理器 (PopupLifecycleManager)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗样式模型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗选项模型
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      API 接口
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API 接口">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗管理接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗样式接口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      主题配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用示例
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="使用示例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本弹窗显示
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      吐司消息
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      底部弹窗
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      自定义弹窗样式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      弹窗队列管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      测试策略
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="测试策略">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      单元测试
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      集成测试
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      渲染优化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      队列优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      版本历史
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="版本历史">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v0312" class="md-nav__link">
+    <span class="md-ellipsis">
+      v0.3.1+2 (当前版本)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v030" class="md-nav__link">
+    <span class="md-ellipsis">
+      v0.3.0
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      依赖关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      内部依赖
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      外部依赖
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="oneapp_popup_-">OneApp Popup - 弹窗管理模块<a class="headerlink" href="#oneapp_popup_-" title="Permanent link">&para;</a></h1>
+<h2 id="_1">模块概述<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><code>oneapp_popup</code> 是 OneApp 的统一弹窗管理模块，提供了全局弹窗管理、优先级控制、样式定制和生命周期管理等功能。该模块确保应用中所有弹窗的一致性体验，避免弹窗冲突，并提供灵活的弹窗展示策略。</p>
+<h2 id="_2">核心功能<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="1">1. 统一弹窗管理<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>全局队列</strong>：统一管理所有弹窗显示队列</li>
+<li><strong>弹窗注册</strong>：注册和管理不同类型的弹窗</li>
+<li><strong>显示控制</strong>：控制弹窗的显示和隐藏</li>
+<li><strong>状态管理</strong>：跟踪弹窗的显示状态</li>
+</ul>
+<h3 id="2">2. 弹窗优先级控制<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>优先级排序</strong>：按优先级排序弹窗显示顺序</li>
+<li><strong>抢占机制</strong>：高优先级弹窗抢占显示</li>
+<li><strong>队列管理</strong>：智能管理弹窗等待队列</li>
+<li><strong>冲突解决</strong>：解决弹窗显示冲突</li>
+</ul>
+<h3 id="3">3. 弹窗样式定制<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>主题适配</strong>：自动适配应用主题</li>
+<li><strong>样式继承</strong>：支持样式继承和覆盖</li>
+<li><strong>动画效果</strong>：丰富的弹窗动画效果</li>
+<li><strong>响应式设计</strong>：适配不同屏幕尺寸</li>
+</ul>
+<h3 id="4">4. 弹窗生命周期<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>生命周期钩子</strong>：完整的生命周期回调</li>
+<li><strong>自动销毁</strong>：弹窗自动销毁机制</li>
+<li><strong>内存管理</strong>：防止内存泄漏</li>
+<li><strong>状态恢复</strong>：应用重启后状态恢复</li>
+</ul>
+<h2 id="_3">技术架构<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">架构设计<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌─────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│            应用界面层                │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│         (Application UI)            │
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>├─────────────────────────────────────┤
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│         OneApp Popup                │
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│  ┌──────────┬──────────┬──────────┐ │
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│  │ 弹窗管理 │ 队列控制 │ 样式系统 │ │
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│  ├──────────┼──────────┼──────────┤ │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│  │ 生命周期 │ 事件系统 │ 动画引擎 │ │
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  └──────────┴──────────┴──────────┘ │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>├─────────────────────────────────────┤
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│           UI 渲染层                 │
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│  ┌──────────┬──────────┬──────────┐ │
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│  │ Overlay  │ Dialog   │ BottomSheet │
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│  └──────────┴──────────┴──────────┘ │
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>├─────────────────────────────────────┤
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>│          Flutter Framework          │
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>│         (Widget System)             │
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>└─────────────────────────────────────┘
+</span></code></pre></div>
+<h3 id="_5">核心组件<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="1_popupmanager">1. 弹窗管理器 (PopupManager)<a class="headerlink" href="#1_popupmanager" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="c1">// 显示弹窗</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">T</span><span class="o">?&gt;</span><span class="w"> </span><span class="n">show</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Popup</span><span class="w"> </span><span class="n">popup</span><span class="p">);</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="c1">// 隐藏弹窗</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hide</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">popupId</span><span class="p">);</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="c1">// 隐藏所有弹窗</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hideAll</span><span class="p">();</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="c1">// 获取当前弹窗</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="n">Popup</span><span class="o">?</span><span class="w"> </span><span class="n">getCurrentPopup</span><span class="p">();</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="c1">// 获取弹窗队列</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Popup</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getPopupQueue</span><span class="p">();</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="2_popupqueuecontroller">2. 弹窗队列控制器 (PopupQueueController)<a class="headerlink" href="#2_popupqueuecontroller" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupQueueController</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="c1">// 添加弹窗到队列</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">enqueue</span><span class="p">(</span><span class="n">Popup</span><span class="w"> </span><span class="n">popup</span><span class="p">);</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="c1">// 从队列移除弹窗</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">dequeue</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">popupId</span><span class="p">);</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="c1">// 按优先级排序队列</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">sortByPriority</span><span class="p">();</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="c1">// 处理下一个弹窗</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">processNext</span><span class="p">();</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="3_popupstylemanager">3. 弹窗样式管理器 (PopupStyleManager)<a class="headerlink" href="#3_popupstylemanager" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupStyleManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="c1">// 应用弹窗主题</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="n">PopupTheme</span><span class="w"> </span><span class="n">applyTheme</span><span class="p">(</span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">style</span><span class="p">,</span><span class="w"> </span><span class="n">AppTheme</span><span class="w"> </span><span class="n">theme</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="c1">// 创建弹窗样式</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">createStyle</span><span class="p">(</span><span class="n">PopupType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="c1">// 自定义样式</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">customizeStyle</span><span class="p">(</span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">base</span><span class="p">,</span><span class="w"> </span><span class="n">StyleOverrides</span><span class="w"> </span><span class="n">overrides</span><span class="p">);</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="c1">// 获取默认样式</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">getDefaultStyle</span><span class="p">(</span><span class="n">PopupType</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="4_popuplifecyclemanager">4. 弹窗生命周期管理器 (PopupLifecycleManager)<a class="headerlink" href="#4_popuplifecyclemanager" title="Permanent link">&para;</a></h4>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupLifecycleManager</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="c1">// 注册生命周期监听器</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">registerLifecycleListener</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">popupId</span><span class="p">,</span><span class="w"> </span><span class="n">PopupLifecycleListener</span><span class="w"> </span><span class="n">listener</span><span class="p">);</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="c1">// 触发生命周期事件</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">triggerLifecycleEvent</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">popupId</span><span class="p">,</span><span class="w"> </span><span class="n">PopupLifecycleEvent</span><span class="w"> </span><span class="n">event</span><span class="p">);</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="c1">// 清理弹窗资源</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">cleanupPopup</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">popupId</span><span class="p">);</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="c1">// 恢复弹窗状态</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">restorePopupState</span><span class="p">();</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_6">数据模型<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_7">弹窗模型<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">Popup</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupType</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Widget</span><span class="w"> </span><span class="n">content</span><span class="p">;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupPriority</span><span class="w"> </span><span class="n">priority</span><span class="p">;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupStyle</span><span class="o">?</span><span class="w"> </span><span class="n">style</span><span class="p">;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupOptions</span><span class="w"> </span><span class="n">options</span><span class="p">;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTime</span><span class="w"> </span><span class="n">createdAt</span><span class="p">;</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="o">?</span><span class="w"> </span><span class="n">autoHideDelay</span><span class="p">;</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">PopupAction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">actions</span><span class="p">;</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">}</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="n">enum</span><span class="w"> </span><span class="n">PopupType</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span><span class="n">dialog</span><span class="p">,</span><span class="w">        </span><span class="c1">// 对话框</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">  </span><span class="n">bottomSheet</span><span class="p">,</span><span class="w">   </span><span class="c1">// 底部弹窗</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">  </span><span class="n">toast</span><span class="p">,</span><span class="w">         </span><span class="c1">// 吐司消息</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">  </span><span class="n">overlay</span><span class="p">,</span><span class="w">       </span><span class="c1">// 覆盖层</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">  </span><span class="n">modal</span><span class="p">,</span><span class="w">         </span><span class="c1">// 模态框</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">  </span><span class="n">banner</span><span class="p">,</span><span class="w">        </span><span class="c1">// 横幅</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">  </span><span class="n">snackbar</span><span class="w">      </span><span class="c1">// 快捷消息</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="p">}</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="n">enum</span><span class="w"> </span><span class="n">PopupPriority</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">  </span><span class="n">low</span><span class="p">,</span><span class="w">          </span><span class="c1">// 低优先级</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">  </span><span class="n">normal</span><span class="p">,</span><span class="w">       </span><span class="c1">// 普通优先级</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">  </span><span class="n">high</span><span class="p">,</span><span class="w">         </span><span class="c1">// 高优先级</span>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">  </span><span class="n">critical</span><span class="p">,</span><span class="w">     </span><span class="c1">// 关键优先级</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">  </span><span class="n">emergency</span><span class="w">     </span><span class="c1">// 紧急优先级</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_8">弹窗样式模型<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupStyle</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="o">?</span><span class="w"> </span><span class="n">backgroundColor</span><span class="p">;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">BorderRadius</span><span class="o">?</span><span class="w"> </span><span class="n">borderRadius</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="o">?</span><span class="w"> </span><span class="n">padding</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="o">?</span><span class="w"> </span><span class="n">margin</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">BoxShadow</span><span class="o">?</span><span class="w"> </span><span class="n">shadow</span><span class="p">;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">TextStyle</span><span class="o">?</span><span class="w"> </span><span class="n">textStyle</span><span class="p">;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupAnimation</span><span class="o">?</span><span class="w"> </span><span class="n">animation</span><span class="p">;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Alignment</span><span class="o">?</span><span class="w"> </span><span class="n">alignment</span><span class="p">;</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Size</span><span class="o">?</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">barrierDismissible</span><span class="p">;</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">}</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupAnimation</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">AnimationType</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">duration</span><span class="p">;</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Curve</span><span class="w"> </span><span class="n">curve</span><span class="p">;</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Offset</span><span class="o">?</span><span class="w"> </span><span class="n">slideDirection</span><span class="p">;</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">double</span><span class="o">?</span><span class="w"> </span><span class="n">scaleStart</span><span class="p">;</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="p">}</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="n">enum</span><span class="w"> </span><span class="n">AnimationType</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">  </span><span class="n">fade</span><span class="p">,</span><span class="w">         </span><span class="c1">// 淡入淡出</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="w">  </span><span class="n">slide</span><span class="p">,</span><span class="w">        </span><span class="c1">// 滑动</span>
+</span><span id="__span-6-25"><a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="w">  </span><span class="n">scale</span><span class="p">,</span><span class="w">        </span><span class="c1">// 缩放</span>
+</span><span id="__span-6-26"><a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="w">  </span><span class="n">rotate</span><span class="p">,</span><span class="w">       </span><span class="c1">// 旋转</span>
+</span><span id="__span-6-27"><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="w">  </span><span class="n">bounce</span><span class="p">,</span><span class="w">       </span><span class="c1">// 弹跳</span>
+</span><span id="__span-6-28"><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="w">  </span><span class="n">none</span><span class="w">          </span><span class="c1">// 无动画</span>
+</span><span id="__span-6-29"><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_9">弹窗选项模型<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupOptions</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">barrierDismissible</span><span class="p">;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Color</span><span class="o">?</span><span class="w"> </span><span class="n">barrierColor</span><span class="p">;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">barrierLabel</span><span class="p">;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">useRootNavigator</span><span class="p">;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">RouteSettings</span><span class="o">?</span><span class="w"> </span><span class="n">routeSettings</span><span class="p">;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Offset</span><span class="o">?</span><span class="w"> </span><span class="n">anchorPoint</span><span class="p">;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupGravity</span><span class="w"> </span><span class="n">gravity</span><span class="p">;</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="o">?</span><span class="w"> </span><span class="n">showDuration</span><span class="p">;</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="o">?</span><span class="w"> </span><span class="n">hideDuration</span><span class="p">;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="p">}</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="n">enum</span><span class="w"> </span><span class="n">PopupGravity</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">  </span><span class="n">center</span><span class="p">,</span><span class="w">       </span><span class="c1">// 居中</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span><span class="n">top</span><span class="p">,</span><span class="w">          </span><span class="c1">// 顶部</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span><span class="n">bottom</span><span class="p">,</span><span class="w">       </span><span class="c1">// 底部</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">  </span><span class="n">left</span><span class="p">,</span><span class="w">         </span><span class="c1">// 左侧</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">  </span><span class="n">right</span><span class="p">,</span><span class="w">        </span><span class="c1">// 右侧</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">  </span><span class="n">topLeft</span><span class="p">,</span><span class="w">      </span><span class="c1">// 左上</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">  </span><span class="n">topRight</span><span class="p">,</span><span class="w">     </span><span class="c1">// 右上</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">  </span><span class="n">bottomLeft</span><span class="p">,</span><span class="w">   </span><span class="c1">// 左下</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">  </span><span class="n">bottomRight</span><span class="w">   </span><span class="c1">// 右下</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="api">API 接口<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<h3 id="_10">弹窗管理接口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">PopupService</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="c1">// 显示弹窗</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">T</span><span class="o">?&gt;&gt;</span><span class="w"> </span><span class="n">showPopup</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ShowPopupRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="c1">// 隐藏弹窗</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">hidePopup</span><span class="p">(</span><span class="n">HidePopupRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="c1">// 获取弹窗状态</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">PopupStatus</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getPopupStatus</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">popupId</span><span class="p">);</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="c1">// 清理弹窗</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">clearPopups</span><span class="p">(</span><span class="n">ClearPopupsRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_11">弹窗样式接口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">PopupStyleService</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="c1">// 获取弹窗主题</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">PopupTheme</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">getPopupTheme</span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">themeId</span><span class="p">);</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="c1">// 更新弹窗样式</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">updatePopupStyle</span><span class="p">(</span><span class="n">UpdateStyleRequest</span><span class="w"> </span><span class="n">request</span><span class="p">);</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="c1">// 获取样式模板</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="n">ApiResponse</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">PopupStyleTemplate</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">getStyleTemplates</span><span class="p">();</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_12">配置管理<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">弹窗配置<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupConfig</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxConcurrentPopups</span><span class="p">;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="n">defaultAnimationDuration</span><span class="p">;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enableGlobalQueue</span><span class="p">;</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">autoHideOnAppBackground</span><span class="p">;</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">PopupType</span><span class="p">,</span><span class="w"> </span><span class="n">PopupTypeConfig</span><span class="o">&gt;</span><span class="w"> </span><span class="n">typeConfigs</span><span class="p">;</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupTheme</span><span class="w"> </span><span class="n">defaultTheme</span><span class="p">;</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PopupConfig</span><span class="w"> </span><span class="n">defaultConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PopupConfig</span><span class="p">(</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="nl">maxConcurrentPopups:</span><span class="w"> </span><span class="m">3</span><span class="p">,</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="nl">defaultAnimationDuration:</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">300</span><span class="p">),</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="nl">enableGlobalQueue:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">    </span><span class="nl">autoHideOnAppBackground:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">    </span><span class="nl">typeConfigs:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">      </span><span class="n">PopupType</span><span class="p">.</span><span class="nl">dialog:</span><span class="w"> </span><span class="n">PopupTypeConfig</span><span class="p">(</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">        </span><span class="nl">maxInstances:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">        </span><span class="nl">defaultPriority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">high</span><span class="p">,</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">      </span><span class="n">PopupType</span><span class="p">.</span><span class="nl">toast:</span><span class="w"> </span><span class="n">PopupTypeConfig</span><span class="p">(</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">        </span><span class="nl">maxInstances:</span><span class="w"> </span><span class="m">5</span><span class="p">,</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">        </span><span class="nl">defaultPriority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">low</span><span class="p">,</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">    </span><span class="nl">defaultTheme:</span><span class="w"> </span><span class="n">PopupTheme</span><span class="p">.</span><span class="n">defaultTheme</span><span class="p">,</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">  </span><span class="p">);</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_14">主题配置<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">PopupTheme</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">dialogStyle</span><span class="p">;</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">toastStyle</span><span class="p">;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">bottomSheetStyle</span><span class="p">;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">PopupStyle</span><span class="w"> </span><span class="n">overlayStyle</span><span class="p">;</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">PopupStyle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">customStyles</span><span class="p">;</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">  </span><span class="kd">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PopupTheme</span><span class="w"> </span><span class="n">defaultTheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PopupTheme</span><span class="p">(</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="nl">dialogStyle:</span><span class="w"> </span><span class="n">PopupStyle</span><span class="p">(</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">      </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">      </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8.0</span><span class="p">),</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16.0</span><span class="p">),</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">      </span><span class="nl">animation:</span><span class="w"> </span><span class="n">PopupAnimation</span><span class="p">(</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">        </span><span class="nl">type:</span><span class="w"> </span><span class="n">AnimationType</span><span class="p">.</span><span class="n">scale</span><span class="p">,</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">        </span><span class="nl">duration:</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">300</span><span class="p">),</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="w">    </span><span class="nl">toastStyle:</span><span class="w"> </span><span class="n">PopupStyle</span><span class="p">(</span>
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="w">      </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black87</span><span class="p">,</span>
+</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="w">      </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">24.0</span><span class="p">),</span>
+</span><span id="__span-11-21"><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">symmetric</span><span class="p">(</span><span class="nl">horizontal:</span><span class="w"> </span><span class="m">16.0</span><span class="p">,</span><span class="w"> </span><span class="nl">vertical:</span><span class="w"> </span><span class="m">8.0</span><span class="p">),</span>
+</span><span id="__span-11-22"><a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="w">      </span><span class="nl">animation:</span><span class="w"> </span><span class="n">PopupAnimation</span><span class="p">(</span>
+</span><span id="__span-11-23"><a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="w">        </span><span class="nl">type:</span><span class="w"> </span><span class="n">AnimationType</span><span class="p">.</span><span class="n">slide</span><span class="p">,</span>
+</span><span id="__span-11-24"><a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="w">        </span><span class="nl">duration:</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">200</span><span class="p">),</span>
+</span><span id="__span-11-25"><a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-11-26"><a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-11-27"><a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="w">  </span><span class="p">);</span>
+</span><span id="__span-11-28"><a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="_15">使用示例<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">基本弹窗显示<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// 显示对话框</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">show</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;confirm_dialog&#39;</span><span class="p">,</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">dialog</span><span class="p">,</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">high</span><span class="p">,</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">AlertDialog</span><span class="p">(</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">      </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;确认操作&#39;</span><span class="p">),</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">      </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;是否确认执行此操作？&#39;</span><span class="p">),</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">      </span><span class="nl">actions:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">        </span><span class="n">TextButton</span><span class="p">(</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pop</span><span class="p">(</span><span class="kc">false</span><span class="p">),</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;取消&#39;</span><span class="p">),</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">        </span><span class="n">TextButton</span><span class="p">(</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">          </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pop</span><span class="p">(</span><span class="kc">true</span><span class="p">),</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">          </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;确认&#39;</span><span class="p">),</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="w">      </span><span class="p">],</span>
+</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-12-21"><a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-12-22"><a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a><span class="p">);</span>
+</span><span id="__span-12-23"><a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>
+</span><span id="__span-12-24"><a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-25"><a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;用户确认操作&#39;</span><span class="p">);</span>
+</span><span id="__span-12-26"><a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="_17">吐司消息<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// 显示成功消息</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">show</span><span class="p">(</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;success_toast&#39;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">toast</span><span class="p">,</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">normal</span><span class="p">,</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">      </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">16.0</span><span class="p">),</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">      </span><span class="nl">decoration:</span><span class="w"> </span><span class="n">BoxDecoration</span><span class="p">(</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">        </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">green</span><span class="p">,</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">        </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">8.0</span><span class="p">),</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Row</span><span class="p">(</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">        </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">          </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">check</span><span class="p">,</span><span class="w"> </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">),</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">          </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">width:</span><span class="w"> </span><span class="m">8.0</span><span class="p">),</span>
+</span><span id="__span-13-18"><a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="w">          </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;操作成功&#39;</span><span class="p">,</span><span class="w"> </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">)),</span>
+</span><span id="__span-13-19"><a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="w">        </span><span class="p">],</span>
+</span><span id="__span-13-20"><a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-13-21"><a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-13-22"><a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="w">    </span><span class="nl">options:</span><span class="w"> </span><span class="n">PopupOptions</span><span class="p">(</span>
+</span><span id="__span-13-23"><a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a><span class="w">      </span><span class="nl">gravity:</span><span class="w"> </span><span class="n">PopupGravity</span><span class="p">.</span><span class="n">top</span><span class="p">,</span>
+</span><span id="__span-13-24"><a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="w">      </span><span class="nl">barrierDismissible:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-13-25"><a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-13-26"><a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="w">    </span><span class="nl">autoHideDelay:</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">seconds:</span><span class="w"> </span><span class="m">3</span><span class="p">),</span>
+</span><span id="__span-13-27"><a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-13-28"><a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="_18">底部弹窗<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// 显示底部选择弹窗</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">selectedOption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">show</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">(</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;bottom_sheet_options&#39;</span><span class="p">,</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">bottomSheet</span><span class="p">,</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">normal</span><span class="p">,</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">      </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">      </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">        </span><span class="n">ListTile</span><span class="p">(</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">          </span><span class="nl">leading:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">camera</span><span class="p">),</span>
+</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;拍照&#39;</span><span class="p">),</span>
+</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">          </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;camera&#39;</span><span class="p">),</span>
+</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">        </span><span class="n">ListTile</span><span class="p">(</span>
+</span><span id="__span-14-16"><a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="w">          </span><span class="nl">leading:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">photo_library</span><span class="p">),</span>
+</span><span id="__span-14-17"><a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;从相册选择&#39;</span><span class="p">),</span>
+</span><span id="__span-14-18"><a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="w">          </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;gallery&#39;</span><span class="p">),</span>
+</span><span id="__span-14-19"><a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-14-20"><a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="w">        </span><span class="n">ListTile</span><span class="p">(</span>
+</span><span id="__span-14-21"><a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="w">          </span><span class="nl">leading:</span><span class="w"> </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">cancel</span><span class="p">),</span>
+</span><span id="__span-14-22"><a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="w">          </span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;取消&#39;</span><span class="p">),</span>
+</span><span id="__span-14-23"><a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="w">          </span><span class="nl">onTap:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Navigator</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pop</span><span class="p">(</span><span class="kc">null</span><span class="p">),</span>
+</span><span id="__span-14-24"><a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a><span class="w">        </span><span class="p">),</span>
+</span><span id="__span-14-25"><a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="w">      </span><span class="p">],</span>
+</span><span id="__span-14-26"><a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-14-27"><a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a><span class="w">    </span><span class="nl">style:</span><span class="w"> </span><span class="n">PopupStyle</span><span class="p">(</span>
+</span><span id="__span-14-28"><a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a><span class="w">      </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">white</span><span class="p">,</span>
+</span><span id="__span-14-29"><a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a><span class="w">      </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">vertical</span><span class="p">(</span><span class="nl">top:</span><span class="w"> </span><span class="n">Radius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">16.0</span><span class="p">)),</span>
+</span><span id="__span-14-30"><a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-14-31"><a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-14-32"><a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a><span class="p">);</span>
+</span><span id="__span-14-33"><a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a>
+</span><span id="__span-14-34"><a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="n">print</span><span class="p">(</span><span class="s1">&#39;用户选择: </span><span class="si">$</span><span class="n">selectedOption</span><span class="s1">&#39;</span><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="_19">自定义弹窗样式<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// 创建自定义样式弹窗</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">customStyle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PopupStyle</span><span class="p">(</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="nl">backgroundColor:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">.</span><span class="n">shade50</span><span class="p">,</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="nl">borderRadius:</span><span class="w"> </span><span class="n">BorderRadius</span><span class="p">.</span><span class="n">circular</span><span class="p">(</span><span class="m">12.0</span><span class="p">),</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="nl">padding:</span><span class="w"> </span><span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">20.0</span><span class="p">),</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span><span class="nl">shadow:</span><span class="w"> </span><span class="n">BoxShadow</span><span class="p">(</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">black26</span><span class="p">,</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="nl">blurRadius:</span><span class="w"> </span><span class="m">10.0</span><span class="p">,</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span><span class="nl">offset:</span><span class="w"> </span><span class="n">Offset</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">  </span><span class="nl">animation:</span><span class="w"> </span><span class="n">PopupAnimation</span><span class="p">(</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">AnimationType</span><span class="p">.</span><span class="n">bounce</span><span class="p">,</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">    </span><span class="nl">duration:</span><span class="w"> </span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span><span class="w"> </span><span class="m">500</span><span class="p">),</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="w">    </span><span class="nl">curve:</span><span class="w"> </span><span class="n">Curves</span><span class="p">.</span><span class="n">elasticOut</span><span class="p">,</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="p">);</span>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">show</span><span class="p">(</span>
+</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-15-20"><a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;custom_popup&#39;</span><span class="p">,</span>
+</span><span id="__span-15-21"><a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">modal</span><span class="p">,</span>
+</span><span id="__span-15-22"><a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">high</span><span class="p">,</span>
+</span><span id="__span-15-23"><a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a><span class="w">    </span><span class="nl">style:</span><span class="w"> </span><span class="n">customStyle</span><span class="p">,</span>
+</span><span id="__span-15-24"><a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Container</span><span class="p">(</span>
+</span><span id="__span-15-25"><a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a><span class="w">      </span><span class="nl">width:</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+</span><span id="__span-15-26"><a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a><span class="w">      </span><span class="nl">child:</span><span class="w"> </span><span class="n">Column</span><span class="p">(</span>
+</span><span id="__span-15-27"><a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a><span class="w">        </span><span class="nl">mainAxisSize:</span><span class="w"> </span><span class="n">MainAxisSize</span><span class="p">.</span><span class="n">min</span><span class="p">,</span>
+</span><span id="__span-15-28"><a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a><span class="w">        </span><span class="nl">children:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-15-29"><a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a><span class="w">          </span><span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">info</span><span class="p">,</span><span class="w"> </span><span class="nl">size:</span><span class="w"> </span><span class="m">48</span><span class="p">,</span><span class="w"> </span><span class="nl">color:</span><span class="w"> </span><span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">),</span>
+</span><span id="__span-15-30"><a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a><span class="w">          </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+</span><span id="__span-15-31"><a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a><span class="w">          </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;自定义弹窗&#39;</span><span class="p">,</span><span class="w"> </span><span class="nl">style:</span><span class="w"> </span><span class="n">TextStyle</span><span class="p">(</span><span class="nl">fontSize:</span><span class="w"> </span><span class="m">18</span><span class="p">,</span><span class="w"> </span><span class="nl">fontWeight:</span><span class="w"> </span><span class="n">FontWeight</span><span class="p">.</span><span class="n">bold</span><span class="p">)),</span>
+</span><span id="__span-15-32"><a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a><span class="w">          </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">8</span><span class="p">),</span>
+</span><span id="__span-15-33"><a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a><span class="w">          </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;这是一个自定义样式的弹窗示例&#39;</span><span class="p">),</span>
+</span><span id="__span-15-34"><a id="__codelineno-15-34" name="__codelineno-15-34" href="#__codelineno-15-34"></a><span class="w">          </span><span class="n">SizedBox</span><span class="p">(</span><span class="nl">height:</span><span class="w"> </span><span class="m">16</span><span class="p">),</span>
+</span><span id="__span-15-35"><a id="__codelineno-15-35" name="__codelineno-15-35" href="#__codelineno-15-35"></a><span class="w">          </span><span class="n">ElevatedButton</span><span class="p">(</span>
+</span><span id="__span-15-36"><a id="__codelineno-15-36" name="__codelineno-15-36" href="#__codelineno-15-36"></a><span class="w">            </span><span class="nl">onPressed:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">hide</span><span class="p">(</span><span class="s1">&#39;custom_popup&#39;</span><span class="p">),</span>
+</span><span id="__span-15-37"><a id="__codelineno-15-37" name="__codelineno-15-37" href="#__codelineno-15-37"></a><span class="w">            </span><span class="nl">child:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;关闭&#39;</span><span class="p">),</span>
+</span><span id="__span-15-38"><a id="__codelineno-15-38" name="__codelineno-15-38" href="#__codelineno-15-38"></a><span class="w">          </span><span class="p">),</span>
+</span><span id="__span-15-39"><a id="__codelineno-15-39" name="__codelineno-15-39" href="#__codelineno-15-39"></a><span class="w">        </span><span class="p">],</span>
+</span><span id="__span-15-40"><a id="__codelineno-15-40" name="__codelineno-15-40" href="#__codelineno-15-40"></a><span class="w">      </span><span class="p">),</span>
+</span><span id="__span-15-41"><a id="__codelineno-15-41" name="__codelineno-15-41" href="#__codelineno-15-41"></a><span class="w">    </span><span class="p">),</span>
+</span><span id="__span-15-42"><a id="__codelineno-15-42" name="__codelineno-15-42" href="#__codelineno-15-42"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-15-43"><a id="__codelineno-15-43" name="__codelineno-15-43" href="#__codelineno-15-43"></a><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="_20">弹窗队列管理<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// 批量添加弹窗到队列</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">popups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;popup_1&#39;</span><span class="p">,</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">toast</span><span class="p">,</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">low</span><span class="p">,</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;消息1&#39;</span><span class="p">),</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;popup_2&#39;</span><span class="p">,</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">dialog</span><span class="p">,</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">high</span><span class="p">,</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;重要消息&#39;</span><span class="p">),</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="w">  </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;popup_3&#39;</span><span class="p">,</span>
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">    </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">toast</span><span class="p">,</span>
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="w">    </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">normal</span><span class="p">,</span>
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;消息3&#39;</span><span class="p">),</span>
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="w">  </span><span class="p">),</span>
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="p">];</span>
+</span><span id="__span-16-22"><a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>
+</span><span id="__span-16-23"><a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="c1">// 按优先级添加到队列</span>
+</span><span id="__span-16-24"><a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">popup</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">popups</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-25"><a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a><span class="w">  </span><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">popup</span><span class="p">);</span>
+</span><span id="__span-16-26"><a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a><span class="p">}</span>
+</span><span id="__span-16-27"><a id="__codelineno-16-27" name="__codelineno-16-27" href="#__codelineno-16-27"></a>
+</span><span id="__span-16-28"><a id="__codelineno-16-28" name="__codelineno-16-28" href="#__codelineno-16-28"></a><span class="c1">// 监听弹窗队列变化</span>
+</span><span id="__span-16-29"><a id="__codelineno-16-29" name="__codelineno-16-29" href="#__codelineno-16-29"></a><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">onQueueChanged</span><span class="p">.</span><span class="n">listen</span><span class="p">((</span><span class="n">queue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-30"><a id="__codelineno-16-30" name="__codelineno-16-30" href="#__codelineno-16-30"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;当前队列长度: </span><span class="si">${</span><span class="n">queue</span><span class="p">.</span><span class="n">length</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+</span><span id="__span-16-31"><a id="__codelineno-16-31" name="__codelineno-16-31" href="#__codelineno-16-31"></a><span class="p">});</span>
+</span></code></pre></div>
+<h2 id="_21">测试策略<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<h3 id="_22">单元测试<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">group</span><span class="p">(</span><span class="s1">&#39;PopupManager Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should show popup successfully&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">    </span><span class="c1">// Given</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">popupManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PopupManager</span><span class="p">();</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">popup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Popup</span><span class="p">(</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">      </span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;test_popup&#39;</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">      </span><span class="nl">type:</span><span class="w"> </span><span class="n">PopupType</span><span class="p">.</span><span class="n">dialog</span><span class="p">,</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">      </span><span class="nl">content:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Test&#39;</span><span class="p">),</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">    </span><span class="p">);</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">    </span><span class="c1">// When</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">popupManager</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="n">popup</span><span class="p">);</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="w">    </span><span class="c1">// Then</span>
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">popupManager</span><span class="p">.</span><span class="n">getCurrentPopup</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;test_popup&#39;</span><span class="p">);</span>
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a><span class="w">  </span><span class="n">test</span><span class="p">(</span><span class="s1">&#39;should manage popup queue by priority&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a><span class="w">    </span><span class="c1">// Given</span>
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">queueController</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PopupQueueController</span><span class="p">();</span>
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">lowPriorityPopup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Popup</span><span class="p">(</span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;low&#39;</span><span class="p">,</span><span class="w"> </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">low</span><span class="p">);</span>
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">highPriorityPopup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Popup</span><span class="p">(</span><span class="nl">id:</span><span class="w"> </span><span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="w"> </span><span class="nl">priority:</span><span class="w"> </span><span class="n">PopupPriority</span><span class="p">.</span><span class="n">high</span><span class="p">);</span>
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>
+</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a><span class="w">    </span><span class="c1">// When</span>
+</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a><span class="w">    </span><span class="n">queueController</span><span class="p">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">lowPriorityPopup</span><span class="p">);</span>
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a><span class="w">    </span><span class="n">queueController</span><span class="p">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">highPriorityPopup</span><span class="p">);</span>
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a><span class="w">    </span><span class="n">queueController</span><span class="p">.</span><span class="n">sortByPriority</span><span class="p">();</span>
+</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>
+</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a><span class="w">    </span><span class="c1">// Then</span>
+</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queueController</span><span class="p">.</span><span class="n">getQueue</span><span class="p">();</span>
+</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">queue</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;high&#39;</span><span class="p">);</span>
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">queue</span><span class="p">.</span><span class="n">last</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;low&#39;</span><span class="p">);</span>
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a><span class="p">});</span>
+</span></code></pre></div>
+<h3 id="_23">集成测试<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Popup Integration Tests&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="n">testWidgets</span><span class="p">(</span><span class="s1">&#39;popup display flow&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">tester</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="c1">// 1. 显示弹窗</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">PopupManager</span><span class="p">.</span><span class="n">instance</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="n">testPopup</span><span class="p">);</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">    </span><span class="c1">// 2. 验证弹窗显示</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;test_popup&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsOneWidget</span><span class="p">);</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="c1">// 3. 点击关闭按钮</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">tap</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;close_button&#39;</span><span class="p">)));</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">    </span><span class="kd">await</span><span class="w"> </span><span class="n">tester</span><span class="p">.</span><span class="n">pumpAndSettle</span><span class="p">();</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">    </span><span class="c1">// 4. 验证弹窗关闭</span>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">    </span><span class="n">expect</span><span class="p">(</span><span class="n">find</span><span class="p">.</span><span class="n">byKey</span><span class="p">(</span><span class="n">Key</span><span class="p">(</span><span class="s1">&#39;test_popup&#39;</span><span class="p">)),</span><span class="w"> </span><span class="n">findsNothing</span><span class="p">);</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="p">});</span>
+</span></code></pre></div>
+<h2 id="_24">性能优化<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h2>
+<h3 id="_25">渲染优化<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>懒加载</strong>：弹窗内容懒加载</li>
+<li><strong>复用机制</strong>：弹窗组件复用</li>
+<li><strong>动画优化</strong>：高效的动画实现</li>
+<li><strong>内存管理</strong>：及时释放弹窗资源</li>
+</ul>
+<h3 id="_26">队列优化<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>智能调度</strong>：智能弹窗调度算法</li>
+<li><strong>优先级合并</strong>：相同优先级弹窗合并</li>
+<li><strong>批量处理</strong>：批量处理弹窗队列</li>
+<li><strong>负载控制</strong>：控制同时显示的弹窗数量</li>
+</ul>
+<h2 id="_27">版本历史<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h2>
+<h3 id="v0312">v0.3.1+2 (当前版本)<a class="headerlink" href="#v0312" title="Permanent link">&para;</a></h3>
+<ul>
+<li>新增弹窗主题系统</li>
+<li>优化动画性能</li>
+<li>支持自定义弹窗样式</li>
+<li>修复内存泄漏问题</li>
+</ul>
+<h3 id="v030">v0.3.0<a class="headerlink" href="#v030" title="Permanent link">&para;</a></h3>
+<ul>
+<li>重构弹窗管理架构</li>
+<li>新增优先级队列系统</li>
+<li>支持多种弹窗类型</li>
+<li>改进生命周期管理</li>
+</ul>
+<h2 id="_28">依赖关系<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h2>
+<h3 id="_29">内部依赖<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>basic_theme</code>: 主题管理系统</li>
+<li><code>basic_utils</code>: 工具类库</li>
+<li><code>basic_logger</code>: 日志记录</li>
+</ul>
+<h3 id="_30">外部依赖<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>flutter/material</code>: Material 设计组件</li>
+<li><code>flutter/cupertino</code>: iOS 风格组件</li>
+<li><code>rxdart</code>: 响应式编程支持</li>
+</ul>
+<h2 id="_31">总结<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h2>
+<p><code>oneapp_popup</code> 模块为 OneApp 提供了完整的弹窗管理解决方案。通过统一的弹窗管理、智能的优先级控制、灵活的样式定制和完善的生命周期管理，该模块确保了应用中所有弹窗的一致性体验，提高了用户界面的专业性和用户体验的流畅性。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "navigation.tracking", "search.suggest", "search.highlight", "search.share", "header.autohide", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+      
+        <script src="../assets/js/mermaid.js"></script>
+      
+    
+  </body>
+</html>
