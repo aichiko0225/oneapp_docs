@@ -7,18 +7,39 @@
 - **clr_account**: 账户服务 SDK，提供账户相关的核心服务接口
 - **jverify**: 极验验证 Flutter 插件，提供安全验证功能
 
-## 模块结构
+## 真实项目结构
+
+基于实际的 `oneapp_account` 项目结构：
 
 ```
 oneapp_account/
-├── lib/                        # Flutter 主要代码
-├── clr_account/               # 账户服务 SDK 子模块
-├── jverify/                   # 极验验证插件子模块
-├── assets/                    # 资源文件
-│   ├── icons/                # 图标资源
-│   └── images/               # 图片资源
-├── pubspec.yaml              # 依赖配置
-└── README.md                 # 项目说明
+├── lib/
+│   ├── account.dart              # 主要导出文件
+│   ├── account_api.dart          # API接口定义
+│   ├── account_third_bind.dart   # 第三方绑定
+│   ├── module_constants.dart     # 模块常量
+│   ├── generated/                # 代码生成文件
+│   ├── l10n/                     # 国际化文件
+│   └── src/                      # 源代码目录
+│       ├── account_dependency.dart  # 依赖配置
+│       ├── blocs/                # BLoC状态管理
+│       │   ├── personal_center/  # 个人中心BLoC
+│       │   ├── garage/          # 车库管理BLoC
+│       │   ├── vehicle_info/    # 车辆信息BLoC
+│       │   ├── phone_sign_in/   # 手机登录BLoC
+│       │   ├── bind_vehicle_new/ # 绑车流程BLoC
+│       │   ├── qr_hu_confirm/   # 二维码确认BLoC
+│       │   └── ...              # 其他业务BLoC
+│       ├── pages/                # 页面组件
+│       ├── model/                # 数据模型
+│       ├── utils/                # 工具类
+│       ├── constants/            # 常量定义
+│       ├── route_dp.dart         # 路由配置
+│       └── route_export.dart     # 路由导出
+├── clr_account/                  # 账户连接层服务
+├── jverify/                      # 极验验证插件
+├── assets/                       # 资源文件
+└── pubspec.yaml                  # 依赖配置
 ```
 
 ## 子模块文档
@@ -28,40 +49,61 @@ oneapp_account/
 
 ## 主要功能
 
-### 账户管理
-- 用户注册
-- 用户登录/登出
-- 密码管理
-- 个人信息管理
-- 账户安全设置
+### 真实实现的功能模块
+基于实际项目代码，账户模块包含以下已实现的功能：
 
-### 认证服务
-- 手机号验证
-- 邮箱验证
-- 身份认证
-- 权限验证
+#### 1. 用户认证和登录
+- **手机号登录** (`phone_sign_in/`) - 支持手机号密码登录
+- **验证码验证** (`verification_code_input/`) - 短信验证码确认
+- **第三方登录** (`third_sign_in/`) - 第三方账户集成
+- **二维码登录确认** (`qr_hu_confirm/`) - 车机登录确认功能
 
-### 安全验证
-- 极验验证集成
-- 验证码服务
-- 安全检查
+#### 2. 个人信息管理
+- **个人中心** (`personal_center/`) - 用户信息展示和管理
+- **个人资料** (`personal_intro/`) - 个人信息编辑
+- **头像管理** - 用户头像上传和设置
+- **手机号更新** (`update_phone/`) - 更换绑定手机号
 
-## 技术架构
+#### 3. 车辆管理
+- **车库管理** (`garage/`) - 车辆列表和管理
+- **车辆信息** (`vehicle_info/`) - 车辆详细信息查看
+- **绑车流程** (`bind_vehicle_new/`) - 新车绑定流程
+- **车辆授权** (`vehicle_auth/`) - 车辆访问权限管理
+- **车牌设置** (`plate_no_edit/`) - 车牌号码编辑
 
-### 状态管理
-- 基于 Provider 的状态管理
-- 用户登录状态持久化
-- 账户信息缓存
+#### 4. 扫码功能
+- **二维码扫描** (`qr_scan/`) - 通用二维码扫描
+- **扫码登录** (`scan_login_hu/`) - 扫码登录车机功能
+- **绑车二维码** - 车辆绑定二维码处理
 
-### 网络服务
-- 基于 basic_network 的网络请求
-- 账户相关 API 接口封装
-- 错误处理和重试机制
+#### 5. 账户安全
+- **账户注销** (`cancel_account/`) - 用户账户注销流程
+- **短信认证** (`sms_auth/`) - 安全操作短信验证
+- **用户协议** (`agreement/`) - 用户协议和隐私政策
 
-### 数据存储
-- 用户信息本地存储
-- 登录凭证安全存储
-- 偏好设置持久化
+## 真实技术架构
+
+### 模块依赖
+基于实际 `pubspec.yaml` 的真实依赖：
+
+```yaml
+dependencies:
+  # 核心框架
+  basic_modular: ^0.2.3           # 模块化框架
+  basic_modular_route: ^0.2.1     # 路由管理
+  basic_network: ^0.2.3+4         # 网络请求
+  basic_storage: ^0.2.2           # 本地存储
+  
+  # 业务依赖
+  clr_account: ^0.2.24            # 账户服务SDK (本地路径)
+  car_vehicle: ^0.6.4+1           # 车辆服务
+  app_consent: ^0.2.19            # 用户同意管理
+  
+  # 工具依赖
+  dartz: ^0.10.1                  # 函数式编程
+  freezed_annotation: ^2.2.0      # 不可变类生成
+  flutter_contacts: ^1.1.5        # 联系人服务
+```
 
 ## 依赖关系
 

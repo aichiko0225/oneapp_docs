@@ -1,845 +1,513 @@
-# Basic Config - 配置管理模块文档
+# Basic Config - 基础配置管理模块文档
 
 ## 模块概述
 
-`basic_config` 是 OneApp 基础工具模块群中的配置管理核心模块，提供统一的应用配置管理、环境切换、远程配置下发、配置缓存等功能。该模块支持多环境配置、动态配置更新、配置版本管理等特性，为整个应用提供灵活的配置管理能力。
+`basic_config` 是 OneApp 基础工具模块群中的配置管理模块，提供了应用配置的统一管理、API服务管控、版本控制等功能。该模块采用领域驱动设计(DDD)架构，支持动态配置更新、服务白名单管理和API访问控制。
 
 ### 基本信息
 - **模块名称**: basic_config
-- **版本**: 0.2.2
-- **仓库**: https://gitlab-rd0.maezia.com/dssomobile/oneapp/dssomobile-oneapp-basic-config
-- **Flutter 版本**: >=2.5.0
-- **Dart 版本**: >=2.16.2 <4.0.0
+- **模块路径**: oneapp_basic_utils/basic_config
+- **类型**: Flutter Package Module
+- **架构模式**: DDD (Domain Driven Design)
+- **主要功能**: 配置管理、API服务管控、版本管理
+
+### 核心特性
+- **API服务管控**: 基于正则表达式的API路径匹配和访问控制
+- **服务白名单**: 支持白名单机制，允许特定服务绕过管控
+- **动态配置更新**: 支持运行时更新服务规则列表
+- **版本管理**: 内置版本比较和管理功能
+- **缓存优化**: 使用LRU缓存提升查询性能
+- **项目隔离**: 支持多项目代码隔离的配置管理
 
 ## 目录结构
 
 ```
 basic_config/
 ├── lib/
-│   ├── basic_config.dart         # 主导出文件
-│   └── src/                      # 源代码目录
-│       ├── config/               # 配置核心实现
-│       ├── providers/            # 配置提供者
-│       ├── models/               # 数据模型
-│       ├── storage/              # 配置存储
-│       ├── parsers/              # 配置解析器
-│       └── utils/                # 工具类
-├── pubspec.yaml                  # 依赖配置
-└── README.md                     # 项目说明
+│   ├── basic_config.dart           # 模块入口文件
+│   └── src/
+│       ├── constants/              # 常量定义
+│       │   └── module_constant.dart
+│       ├── dependency/             # 依赖注入
+│       │   └── i_config_deps.dart
+│       ├── domains/                # 领域层
+│       │   ├── basic_config_facade.dart      # 配置门面服务
+│       │   ├── entities/           # 实体对象
+│       │   │   ├── config_service_failures.dart
+│       │   │   ├── config_versions.dart
+│       │   │   └── project_services.dart
+│       │   ├── interfaces/         # 接口定义
+│       │   │   └── app_api_services_interface.dart
+│       │   └── value_objects/      # 值对象
+│       │       └── project_code.dart
+│       └── infrastructure/         # 基础设施层
+│           └── repositories/
+│               └── app_api_seervices_repository.dart
+└── pubspec.yaml                    # 依赖配置
 ```
 
-## 核心功能模块
+## 核心架构组件
 
-### 1. 配置管理器核心
+### 1. 版本管理 (Version)
 
-#### 配置管理器实现
+提供语义化版本号的解析和比较功能：
+
 ```dart
-// 配置管理器核心类
-class BasicConfigManager {
-  static BasicConfigManager? _instance;
-  static BasicConfigManager get instance => _instance ??= BasicConfigManager._internal();
+mixin Version {
+  /// 转成字符串格式
+  String get toStr => '$major.$minor.$revision';
+
+  /// 版本比较 - 大于
+  bool greaterThan(Version other) {
+    if (major > other.major) return true;
+    if (minor > other.minor && major == other.major) return true;
+    if (revision > other.revision && 
+        major == other.major && 
+        minor == other.minor) return true;
+    return false;
+  }
+
+  /// 主版本号
+  int get major;
+  /// 次版本号  
+  int get minor;
+  /// 修订版本号
+  int get revision;
+
+  @override
+  String toString() => toStr;
+
+  /// 解析版本字符串 (格式: x.x.x)
+  static Version parseFrom(String versionStr) {
+    final split = versionStr.split('.');
+    if (split.length != 3) {
+      throw UnsupportedError('parse version From $versionStr failed');
+    }
+    
+    final int major = int.parse(split[0]);
+    final int minor = int.parse(split[1]);
+    final int revision = int.parse(split[2]);
+    
+    return _VersionImpl(major, minor, revision);
+  }
+}
+```
+
+### 2. 项目服务实体 (ProjectServicesDo)
+
+定义单个项目的服务配置信息：
+
+```dart
+class ProjectServicesDo {
+  /// 构造函数
+  /// [projectCode] 项目编号
+  /// [ruleList] api path 正则规则
+  /// [disableServiceList] 下架的服务列表
+  ProjectServicesDo({
+    required this.projectCode,
+    required this.ruleList,
+    required this.disableServiceList,
+  }) : _ruleListRegex = ruleList.map(RegExp.new).toList(growable: false);
+
+  /// 项目编号
+  final ProjectCodeVo projectCode;
   
-  BasicConfigManager._internal();
+  /// 该项目对应的规则列表
+  final List<String> ruleList;
   
-  final Map<String, ConfigProvider> _providers = {};
-  final ConfigStorage _storage = ConfigStorage();
-  final ConfigCache _cache = ConfigCache();
-  Environment _currentEnvironment = Environment.production;
+  /// 对应正则表达式
+  final List<RegExp> _ruleListRegex;
   
-  // 初始化配置管理器
-  Future<void> initialize({
-    required Environment environment,
-    List<ConfigProvider>? providers,
-    Map<String, dynamic>? defaultConfigs,
+  /// 下架的服务
+  final List<String> disableServiceList;
+
+  /// 检查路径是否匹配规则
+  bool isMatchBy(String s) {
+    bool match = false;
+    for (final rule in _ruleListRegex) {
+      match = rule.hasMatch(s);
+      if (match) break;
+    }
+    return match;
+  }
+}
+```
+
+### 3. 应用项目管理 (AppProjectsDo)
+
+管理所有项目的服务配置：
+
+```dart
+class AppProjectsDo {
+  /// 构造函数
+  AppProjectsDo(this.version, this.projects) {
+    for (final project in projects) {
+      _projectsMap[project.projectCode.id] = project;
+    }
+  }
+
+  /// 版本号
+  final int version;
+  
+  /// app所有项目的信息
+  List<ProjectServicesDo> projects;
+  
+  /// 项目映射表
+  final Map<String, ProjectServicesDo> _projectsMap = {};
+
+  /// 根据项目代码查找项目
+  ProjectServicesDo? findBy(String projectCode) => _projectsMap[projectCode];
+
+  /// 检查服务是否已下架
+  bool isServiceDisabled({
+    required String projectCode,
+    required String service,
+  }) {
+    try {
+      final project = _projectsMap[projectCode];
+      project!.disableServiceList.firstWhere((e) => e == service);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// 获取所有项目编号
+  List<String> getProjectCodes() => _projectsMap.keys.toList(growable: false);
+}
+```
+
+### 4. 基础配置门面 (BasicConfigFacade)
+
+核心配置管理服务，采用单例模式：
+
+```dart
+abstract class IBasicConfigFacade {
+  /// 初始化配置
+  Future<Either<ConfigServiceFailures, Unit>> initialize({
+    required String versionOfConnectivity,
+    String jsonServiceList = '',
+    List<String> whiteServiceList = const [],
+    IBasicConfigDeps? deps,
+  });
+
+  /// 检查API是否命中管控规则
+  Either<ConfigServiceFailures, bool> queryApiIfHit({
+    String projectCode = '',
+    String url = '',
+  });
+
+  /// 检查API是否在白名单
+  bool queryApiIfInWhiteList({required String url});
+
+  /// 主动更新服务规则列表
+  Future<bool> updateServiceList({List<String> projectCodes = const []});
+
+  /// 检查服务是否下架
+  bool isServiceDisabled({
+    required String projectCode,
+    required String service,
+  });
+
+  /// 根据项目代码查询项目信息
+  Either<ConfigServiceFailures, ProjectServicesDo> queryProjectBy({
+    String projectCode = '',
+  });
+
+  /// 获取当前连接版本
+  Version get currConnVersion;
+}
+
+/// 全局配置对象
+IBasicConfigFacade basicConfigFacade = BasicConfigFacadeImpl();
+```
+
+### 5. 具体实现 (BasicConfigFacadeImpl)
+
+```dart
+class BasicConfigFacadeImpl implements IBasicConfigFacade {
+  BasicConfigFacadeImpl({IAppApiServiceRepo? appApiServiceRepo})
+      : _apiServiceRepo = appApiServiceRepo ?? ApiServiceListRepository();
+
+  static const String _tag = 'BasicConfigFacadeImpl';
+  
+  final IAppApiServiceRepo _apiServiceRepo;
+  IBasicConfigDeps _deps = const DefaultConfigDeps();
+  final _cache = LruCache<String, bool>(storage: InMemoryStorage(20));
+  late Version _connVersion;
+
+  @override
+  Future<Either<ConfigServiceFailures, Unit>> initialize({
+    required String versionOfConnectivity,
+    String jsonServiceList = '',
+    List<String> whiteServiceList = const [],
+    IBasicConfigDeps? deps,
   }) async {
-    _currentEnvironment = environment;
-    
-    // 初始化存储
-    await _storage.initialize();
-    
-    // 注册默认配置提供者
-    _providers['local'] = LocalConfigProvider();
-    _providers['remote'] = RemoteConfigProvider();
-    _providers['asset'] = AssetConfigProvider();
-    
-    // 注册自定义配置提供者
-    if (providers != null) {
-      for (final provider in providers) {
-        _providers[provider.name] = provider;
-        await provider.initialize();
-      }
-    }
-    
-    // 加载默认配置
-    if (defaultConfigs != null) {
-      await _loadDefaultConfigs(defaultConfigs);
-    }
-    
-    // 从存储中加载配置
-    await _loadConfigsFromStorage();
-    
-    // 从远程加载配置
-    await _loadRemoteConfigs();
-  }
-  
-  // 获取配置值
-  T? get<T>(String key, {T? defaultValue}) {
-    // 首先从缓存中获取
-    final cachedValue = _cache.get<T>(key);
-    if (cachedValue != null) {
-      return cachedValue;
-    }
-    
-    // 按优先级从配置提供者获取
-    final providers = _getProvidersInPriority();
-    for (final provider in providers) {
-      final value = provider.get<T>(key);
-      if (value != null) {
-        _cache.set(key, value);
-        return value;
-      }
-    }
-    
-    return defaultValue;
-  }
-  
-  // 设置配置值
-  Future<void> set<T>(String key, T value, {bool persistent = true}) async {
-    // 更新缓存
-    _cache.set(key, value);
-    
-    // 持久化存储
-    if (persistent) {
-      await _storage.set(key, value);
-    }
-    
-    // 通知配置变更
-    _notifyConfigChanged(key, value);
-  }
-  
-  // 批量更新配置
-  Future<void> updateConfigs(Map<String, dynamic> configs, {bool persistent = true}) async {
-    for (final entry in configs.entries) {
-      await set(entry.key, entry.value, persistent: persistent);
-    }
-  }
-  
-  // 刷新远程配置
-  Future<void> refreshRemoteConfigs() async {
-    final remoteProvider = _providers['remote'] as RemoteConfigProvider?;
-    if (remoteProvider != null) {
-      await remoteProvider.refresh();
-      _cache.clear(); // 清除缓存以使用新配置
-    }
-  }
-  
-  // 获取环境特定的配置
-  T? getEnvironmentConfig<T>(String key, {T? defaultValue}) {
-    final envKey = '${_currentEnvironment.name}.$key';
-    return get<T>(envKey, defaultValue: get<T>(key, defaultValue: defaultValue));
-  }
-  
-  // 监听配置变更
-  Stream<ConfigChangeEvent> get configChanges => _configChangesController.stream;
-  final StreamController<ConfigChangeEvent> _configChangesController = 
-      StreamController.broadcast();
-  
-  void _notifyConfigChanged(String key, dynamic value) {
-    _configChangesController.add(ConfigChangeEvent(key, value));
-  }
-  
-  List<ConfigProvider> _getProvidersInPriority() {
-    return [
-      _providers['remote']!,
-      _providers['local']!,
-      _providers['asset']!,
-    ];
-  }
-}
+    if (deps != null) _deps = deps;
+    _connVersion = Version.parseFrom(versionOfConnectivity);
 
-// 环境枚举
-enum Environment {
-  development,
-  testing,
-  staging,
-  production;
-  
-  String get name {
-    switch (this) {
-      case Environment.development:
-        return 'dev';
-      case Environment.testing:
-        return 'test';
-      case Environment.staging:
-        return 'staging';
-      case Environment.production:
-        return 'prod';
-    }
-  }
-}
-
-// 配置变更事件
-class ConfigChangeEvent {
-  final String key;
-  final dynamic value;
-  final DateTime timestamp;
-  
-  ConfigChangeEvent(this.key, this.value) : timestamp = DateTime.now();
-}
-```
-
-### 2. 配置提供者
-
-#### 远程配置提供者
-```dart
-// 远程配置提供者
-class RemoteConfigProvider implements ConfigProvider {
-  final NetworkService _networkService;
-  final ConfigStorage _storage;
-  final Duration _refreshInterval;
-  Timer? _refreshTimer;
-  Map<String, dynamic> _configs = {};
-  
-  RemoteConfigProvider({
-    required NetworkService networkService,
-    required ConfigStorage storage,
-    Duration refreshInterval = const Duration(hours: 1),
-  }) : _networkService = networkService,
-       _storage = storage,
-       _refreshInterval = refreshInterval;
-  
-  @override
-  String get name => 'remote';
-  
-  @override
-  Future<void> initialize() async {
-    // 从本地存储加载缓存的远程配置
-    _configs = await _storage.getAll('remote_config') ?? {};
-    
-    // 启动定时刷新
-    _startPeriodicRefresh();
-    
-    // 立即执行一次刷新
-    await refresh();
-  }
-  
-  @override
-  T? get<T>(String key) {
-    final value = _configs[key];
-    if (value == null) return null;
-    
-    try {
-      return value as T;
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  @override
-  Future<void> set<T>(String key, T value) async {
-    _configs[key] = value;
-    await _storage.set('remote_config.$key', value);
-  }
-  
-  // 刷新远程配置
-  Future<void> refresh() async {
-    try {
-      final response = await _networkService.get(
-        path: '/api/v1/configs',
-        queryParameters: {
-          'app_version': await _getAppVersion(),
-          'platform': Platform.isAndroid ? 'android' : 'ios',
-          'environment': BasicConfigManager.instance._currentEnvironment.name,
-        },
-      );
-      
-      response.fold(
-        (failure) {
-          BasicLogger.instance.warning('Failed to fetch remote configs: ${failure.message}');
-        },
-        (data) async {
-          final remoteConfigs = data['configs'] as Map<String, dynamic>? ?? {};
-          
-          // 检查配置版本
-          final remoteVersion = data['version'] as String?;
-          final localVersion = await _storage.get('remote_config_version');
-          
-          if (remoteVersion != null && remoteVersion != localVersion) {
-            // 更新配置
-            _configs = remoteConfigs;
-            await _storage.setAll('remote_config', _configs);
-            await _storage.set('remote_config_version', remoteVersion);
-            
-            BasicLogger.instance.info('Remote configs updated to version: $remoteVersion');
-          }
-        },
-      );
-    } catch (e) {
-      BasicLogger.instance.error('Error refreshing remote configs', error: e);
-    }
-  }
-  
-  void _startPeriodicRefresh() {
-    _refreshTimer = Timer.periodic(_refreshInterval, (_) => refresh());
-  }
-  
-  @override
-  Future<void> dispose() async {
-    _refreshTimer?.cancel();
-  }
-}
-```
-
-#### 本地配置提供者
-```dart
-// 本地配置提供者
-class LocalConfigProvider implements ConfigProvider {
-  final ConfigStorage _storage;
-  Map<String, dynamic> _configs = {};
-  
-  LocalConfigProvider({required ConfigStorage storage}) : _storage = storage;
-  
-  @override
-  String get name => 'local';
-  
-  @override
-  Future<void> initialize() async {
-    _configs = await _storage.getAll('local_config') ?? {};
-  }
-  
-  @override
-  T? get<T>(String key) {
-    final value = _configs[key];
-    if (value == null) return null;
-    
-    try {
-      return value as T;
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  @override
-  Future<void> set<T>(String key, T value) async {
-    _configs[key] = value;
-    await _storage.set('local_config.$key', value);
-  }
-  
-  @override
-  Future<void> dispose() async {
-    // 本地配置无需清理
-  }
-}
-```
-
-#### 资产配置提供者
-```dart
-// 资产配置提供者
-class AssetConfigProvider implements ConfigProvider {
-  Map<String, dynamic> _configs = {};
-  
-  @override
-  String get name => 'asset';
-  
-  @override
-  Future<void> initialize() async {
-    await _loadAssetConfigs();
-  }
-  
-  Future<void> _loadAssetConfigs() async {
-    try {
-      // 加载默认配置文件
-      final defaultConfigJson = await rootBundle.loadString('assets/config/default.json');
-      final defaultConfig = jsonDecode(defaultConfigJson) as Map<String, dynamic>;
-      
-      // 加载环境特定配置
-      final environment = BasicConfigManager.instance._currentEnvironment.name;
-      try {
-        final envConfigJson = await rootBundle.loadString('assets/config/$environment.json');
-        final envConfig = jsonDecode(envConfigJson) as Map<String, dynamic>;
-        
-        // 合并配置
-        _configs = {...defaultConfig, ...envConfig};
-      } catch (e) {
-        // 环境特定配置文件不存在，使用默认配置
-        _configs = defaultConfig;
-      }
-    } catch (e) {
-      BasicLogger.instance.error('Failed to load asset configs', error: e);
-      _configs = {};
-    }
-  }
-  
-  @override
-  T? get<T>(String key) {
-    return _getNestedValue<T>(_configs, key);
-  }
-  
-  @override
-  Future<void> set<T>(String key, T value) async {
-    // 资产配置是只读的
-    throw UnsupportedError('Asset configs are read-only');
-  }
-  
-  // 获取嵌套配置值
-  T? _getNestedValue<T>(Map<String, dynamic> map, String key) {
-    final keys = key.split('.');
-    dynamic current = map;
-    
-    for (final k in keys) {
-      if (current is Map<String, dynamic> && current.containsKey(k)) {
-        current = current[k];
-      } else {
-        return null;
-      }
-    }
-    
-    try {
-      return current as T;
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  @override
-  Future<void> dispose() async {
-    // 资产配置无需清理
-  }
-}
-```
-
-### 3. 配置存储
-
-#### 配置存储实现
-```dart
-// 配置存储实现
-class ConfigStorage {
-  final BasicStorage _storage = BasicStorage.instance;
-  static const String _configPrefix = 'config_';
-  
-  Future<void> initialize() async {
-    await _storage.initialize();
-  }
-  
-  // 设置配置值
-  Future<void> set<T>(String key, T value) async {
-    final storageKey = '$_configPrefix$key';
-    
-    if (value is String) {
-      await _storage.setString(storageKey, value);
-    } else if (value is int) {
-      await _storage.setInt(storageKey, value);
-    } else if (value is double) {
-      await _storage.setDouble(storageKey, value);
-    } else if (value is bool) {
-      await _storage.setBool(storageKey, value);
-    } else {
-      // 复杂对象序列化为 JSON
-      final jsonValue = jsonEncode(value);
-      await _storage.setString(storageKey, jsonValue);
-    }
-  }
-  
-  // 获取配置值
-  Future<T?> get<T>(String key) async {
-    final storageKey = '$_configPrefix$key';
-    
-    if (T == String) {
-      return await _storage.getString(storageKey) as T?;
-    } else if (T == int) {
-      return await _storage.getInt(storageKey) as T?;
-    } else if (T == double) {
-      return await _storage.getDouble(storageKey) as T?;
-    } else if (T == bool) {
-      return await _storage.getBool(storageKey) as T?;
-    } else {
-      // 复杂对象从 JSON 反序列化
-      final jsonValue = await _storage.getString(storageKey);
-      if (jsonValue != null) {
-        try {
-          return jsonDecode(jsonValue) as T;
-        } catch (e) {
-          return null;
-        }
-      }
-      return null;
-    }
-  }
-  
-  // 批量设置配置
-  Future<void> setAll(String namespace, Map<String, dynamic> configs) async {
-    for (final entry in configs.entries) {
-      await set('$namespace.${entry.key}', entry.value);
-    }
-  }
-  
-  // 批量获取配置
-  Future<Map<String, dynamic>?> getAll(String namespace) async {
-    final configs = <String, dynamic>{};
-    final keys = await _storage.getKeys();
-    final namespacePrefix = '$_configPrefix$namespace.';
-    
-    for (final key in keys) {
-      if (key.startsWith(namespacePrefix)) {
-        final configKey = key.substring(namespacePrefix.length);
-        final value = await _storage.getString(key);
-        if (value != null) {
-          try {
-            configs[configKey] = jsonDecode(value);
-          } catch (e) {
-            configs[configKey] = value;
-          }
-        }
-      }
-    }
-    
-    return configs.isNotEmpty ? configs : null;
-  }
-  
-  // 删除配置
-  Future<void> remove(String key) async {
-    final storageKey = '$_configPrefix$key';
-    await _storage.remove(storageKey);
-  }
-  
-  // 清除所有配置
-  Future<void> clear() async {
-    final keys = await _storage.getKeys();
-    for (final key in keys) {
-      if (key.startsWith(_configPrefix)) {
-        await _storage.remove(key);
-      }
-    }
-  }
-}
-```
-
-### 4. 配置缓存
-
-#### 内存缓存实现
-```dart
-// 配置缓存实现
-class ConfigCache {
-  final Map<String, CacheItem> _cache = {};
-  final Duration _defaultTtl;
-  Timer? _cleanupTimer;
-  
-  ConfigCache({
-    Duration defaultTtl = const Duration(minutes: 30),
-  }) : _defaultTtl = defaultTtl {
-    _startCleanupTimer();
-  }
-  
-  // 设置缓存
-  void set<T>(String key, T value, {Duration? ttl}) {
-    final expiry = DateTime.now().add(ttl ?? _defaultTtl);
-    _cache[key] = CacheItem(value, expiry);
-  }
-  
-  // 获取缓存
-  T? get<T>(String key) {
-    final item = _cache[key];
-    if (item == null) return null;
-    
-    if (item.isExpired) {
-      _cache.remove(key);
-      return null;
-    }
-    
-    try {
-      return item.value as T;
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  // 清除缓存
-  void clear() {
-    _cache.clear();
-  }
-  
-  // 清除过期缓存
-  void clearExpired() {
-    final now = DateTime.now();
-    _cache.removeWhere((key, item) => item.expiry.isBefore(now));
-  }
-  
-  void _startCleanupTimer() {
-    _cleanupTimer = Timer.periodic(Duration(minutes: 5), (_) {
-      clearExpired();
-    });
-  }
-  
-  void dispose() {
-    _cleanupTimer?.cancel();
-    _cache.clear();
-  }
-}
-
-// 缓存项
-class CacheItem {
-  final dynamic value;
-  final DateTime expiry;
-  
-  CacheItem(this.value, this.expiry);
-  
-  bool get isExpired => DateTime.now().isAfter(expiry);
-}
-```
-
-### 5. 配置模型
-
-#### 配置接口和模型
-```dart
-// 配置提供者接口
-abstract class ConfigProvider {
-  String get name;
-  
-  Future<void> initialize();
-  T? get<T>(String key);
-  Future<void> set<T>(String key, T value);
-  Future<void> dispose();
-}
-
-// 应用配置模型
-class AppConfig {
-  final String apiBaseUrl;
-  final String environment;
-  final bool debugMode;
-  final int requestTimeout;
-  final int maxRetries;
-  final Map<String, dynamic> features;
-  final ThemeConfig theme;
-  final SecurityConfig security;
-  
-  const AppConfig({
-    required this.apiBaseUrl,
-    required this.environment,
-    required this.debugMode,
-    required this.requestTimeout,
-    required this.maxRetries,
-    required this.features,
-    required this.theme,
-    required this.security,
-  });
-  
-  factory AppConfig.fromJson(Map<String, dynamic> json) {
-    return AppConfig(
-      apiBaseUrl: json['api_base_url'] ?? '',
-      environment: json['environment'] ?? 'production',
-      debugMode: json['debug_mode'] ?? false,
-      requestTimeout: json['request_timeout'] ?? 30000,
-      maxRetries: json['max_retries'] ?? 3,
-      features: json['features'] ?? {},
-      theme: ThemeConfig.fromJson(json['theme'] ?? {}),
-      security: SecurityConfig.fromJson(json['security'] ?? {}),
+    // 初始化api管控配置列表
+    final r = await _apiServiceRepo.initialize(
+      deps: _deps,
+      jsonServiceList: jsonServiceList,
+      whiteServiceList: whiteServiceList,
     );
-  }
-}
 
-// 主题配置模型
-class ThemeConfig {
-  final String primaryColor;
-  final String accentColor;
-  final String fontFamily;
-  final double fontSize;
-  final bool darkMode;
-  
-  const ThemeConfig({
-    required this.primaryColor,
-    required this.accentColor,
-    required this.fontFamily,
-    required this.fontSize,
-    required this.darkMode,
-  });
-  
-  factory ThemeConfig.fromJson(Map<String, dynamic> json) {
-    return ThemeConfig(
-      primaryColor: json['primary_color'] ?? '#007AFF',
-      accentColor: json['accent_color'] ?? '#FF3B30',
-      fontFamily: json['font_family'] ?? 'system',
-      fontSize: (json['font_size'] ?? 16.0).toDouble(),
-      darkMode: json['dark_mode'] ?? false,
-    );
+    return r ? right(unit) : left(ConfigServiceFailures(
+      errorCodeConfigServiceInvalidLocalServiceList,
+      'initialize failed',
+    ));
   }
-}
 
-// 安全配置模型
-class SecurityConfig {
-  final bool enableEncryption;
-  final bool enableCertificatePinning;
-  final List<String> trustedCertificates;
-  final int sessionTimeout;
-  final bool enableBiometric;
-  
-  const SecurityConfig({
-    required this.enableEncryption,
-    required this.enableCertificatePinning,
-    required this.trustedCertificates,
-    required this.sessionTimeout,
-    required this.enableBiometric,
-  });
-  
-  factory SecurityConfig.fromJson(Map<String, dynamic> json) {
-    return SecurityConfig(
-      enableEncryption: json['enable_encryption'] ?? true,
-      enableCertificatePinning: json['enable_certificate_pinning'] ?? false,
-      trustedCertificates: List<String>.from(json['trusted_certificates'] ?? []),
-      sessionTimeout: json['session_timeout'] ?? 1800,
-      enableBiometric: json['enable_biometric'] ?? false,
-    );
+  @override
+  Either<ConfigServiceFailures, bool> queryApiIfHit({
+    String projectCode = '',
+    String url = '',
+  }) {
+    final appProject = _apiServiceRepo.appProject;
+    if (appProject == null) {
+      return left(ConfigServiceFailures(
+        errorCodeConfigServiceEmptyServiceList,
+        'empty service list',
+      ));
+    }
+
+    final findBy = appProject.findBy(projectCode);
+    if (findBy == null) return right(false);
+
+    // 使用缓存优化查询性能
+    final hitCache = _cache.get(url);
+    if (hitCache == null) {
+      final matchBy = findBy.isMatchBy(url);
+      _cache.set(url, matchBy);
+      return right(matchBy);
+    }
+
+    return right(hitCache);
   }
+
+  // 其他方法实现...
 }
 ```
 
-## 使用示例
+## 使用指南
 
-### 基本配置管理
+### 1. 初始化配置
+
 ```dart
-// 初始化配置管理器
-await BasicConfigManager.instance.initialize(
-  environment: Environment.production,
-  defaultConfigs: {
-    'api_base_url': 'https://api.oneapp.com',
-    'debug_mode': false,
-    'request_timeout': 30000,
-  },
+import 'package:basic_config/basic_config.dart';
+
+// 初始化基础配置
+await basicConfigFacade.initialize(
+  versionOfConnectivity: '1.0.0',
+  jsonServiceList: jsonConfigData,
+  whiteServiceList: ['api/health', 'api/version'],
+);
+```
+
+### 2. API访问控制
+
+```dart
+// 检查API是否命中管控规则
+final result = basicConfigFacade.queryApiIfHit(
+  projectCode: 'oneapp_main',
+  url: '/api/user/profile',
 );
 
-// 获取配置值
-final apiUrl = BasicConfigManager.instance.get<String>('api_base_url');
-final debugMode = BasicConfigManager.instance.get<bool>('debug_mode', defaultValue: false);
-final timeout = BasicConfigManager.instance.get<int>('request_timeout', defaultValue: 30000);
-
-// 设置配置值
-await BasicConfigManager.instance.set('user_preference', 'dark_mode');
-
-// 获取环境特定配置
-final devApiUrl = BasicConfigManager.instance.getEnvironmentConfig<String>('api_base_url');
-
-// 监听配置变更
-BasicConfigManager.instance.configChanges.listen((event) {
-  print('Config changed: ${event.key} = ${event.value}');
-});
-```
-
-### 高级配置使用
-```dart
-// 加载应用配置
-class AppConfigService {
-  static AppConfig? _appConfig;
-  
-  static Future<void> initialize() async {
-    final configJson = BasicConfigManager.instance.get<Map<String, dynamic>>('app_config');
-    if (configJson != null) {
-      _appConfig = AppConfig.fromJson(configJson);
+result.fold(
+  (failure) => print('查询失败: ${failure.message}'),
+  (isHit) => {
+    if (isHit) {
+      print('API被管控，需要特殊处理')
+    } else {
+      print('API正常访问')
     }
-  }
-  
-  static AppConfig get config => _appConfig ?? _getDefaultConfig();
-  
-  static AppConfig _getDefaultConfig() {
-    return AppConfig(
-      apiBaseUrl: 'https://api.oneapp.com',
-      environment: 'production',
-      debugMode: false,
-      requestTimeout: 30000,
-      maxRetries: 3,
-      features: {},
-      theme: ThemeConfig.fromJson({}),
-      security: SecurityConfig.fromJson({}),
-    );
-  }
-}
+  },
+);
+```
 
-// 特性开关管理
-class FeatureToggle {
-  static bool isEnabled(String feature) {
-    final features = BasicConfigManager.instance.get<Map<String, dynamic>>('features') ?? {};
-    return features[feature] == true;
-  }
-  
-  static Future<void> enableFeature(String feature) async {
-    final features = BasicConfigManager.instance.get<Map<String, dynamic>>('features') ?? {};
-    features[feature] = true;
-    await BasicConfigManager.instance.set('features', features);
-  }
+### 3. 白名单检查
+
+```dart
+// 检查API是否在白名单
+bool inWhiteList = basicConfigFacade.queryApiIfInWhiteList(
+  url: '/api/health'
+);
+
+if (inWhiteList) {
+  // 白名单API，直接放行
+  print('白名单API，允许访问');
 }
 ```
 
-## 依赖管理
+### 4. 服务状态检查
 
-### 核心依赖
-- **flutter**: Flutter SDK
-- **basic_modular**: 模块化框架
-- **basic_network**: 网络请求服务
-- **basic_storage**: 本地存储服务
+```dart
+// 检查服务是否下架
+bool isDisabled = basicConfigFacade.isServiceDisabled(
+  projectCode: 'oneapp_main',
+  service: 'user_profile',
+);
 
-### 工具依赖
-- **json_annotation**: JSON 序列化注解
-- **dartz**: 函数式编程支持
-- **path_provider**: 文件路径管理
+if (isDisabled) {
+  // 服务已下架，显示维护页面
+  showMaintenancePage();
+}
+```
 
-### 开发依赖
-- **flutter_test**: 测试框架
+### 5. 动态更新配置
 
-## 配置文件结构
+```dart
+// 更新服务规则列表
+bool updateSuccess = await basicConfigFacade.updateServiceList(
+  projectCodes: ['oneapp_main', 'oneapp_car'],
+);
 
-### 默认配置文件 (assets/config/default.json)
+if (updateSuccess) {
+  print('配置更新成功');
+}
+```
+
+### 6. 版本管理
+
+```dart
+// 版本解析和比较
+Version currentVersion = Version.parseFrom('1.2.3');
+Version newVersion = Version.parseFrom('1.2.4');
+
+if (newVersion.greaterThan(currentVersion)) {
+  print('发现新版本: ${newVersion.toStr}');
+  // 执行更新逻辑
+}
+```
+
+## 配置文件格式
+
+### 服务配置JSON格式
+
 ```json
 {
-  "api_base_url": "https://api.oneapp.com",
-  "request_timeout": 30000,
-  "max_retries": 3,
-  "debug_mode": false,
-  "features": {
-    "dark_mode": true,
-    "biometric_auth": false,
-    "offline_mode": true
-  },
-  "theme": {
-    "primary_color": "#007AFF",
-    "accent_color": "#FF3B30",
-    "font_family": "system",
-    "font_size": 16.0
-  },
-  "security": {
-    "enable_encryption": true,
-    "session_timeout": 1800,
-    "enable_biometric": false
-  }
+  "version": 1,
+  "projects": [
+    {
+      "projectCode": "oneapp_main",
+      "ruleList": [
+        "^/api/user/.*",
+        "^/api/payment/.*"
+      ],
+      "disableServiceList": [
+        "old_payment_service",
+        "deprecated_user_api"
+      ]
+    },
+    {
+      "projectCode": "oneapp_car",
+      "ruleList": [
+        "^/api/vehicle/.*",
+        "^/api/charging/.*"
+      ],
+      "disableServiceList": []
+    }
+  ]
 }
 ```
 
-### 开发环境配置 (assets/config/dev.json)
-```json
-{
-  "api_base_url": "https://dev-api.oneapp.com",
-  "debug_mode": true,
-  "features": {
-    "debug_tools": true,
-    "mock_data": true
-  }
-}
+## 依赖配置
+
+### pubspec.yaml 关键依赖
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # 函数式编程支持
+  dartz: ^0.10.1
+  
+  # 基础日志模块
+  basic_logger:
+    path: ../basic_logger
+    
+  # 基础存储模块  
+  basic_storage:
+    path: ../basic_storage
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
 ```
+
+## 架构设计原则
+
+### 1. DDD分层架构
+- **Domain层**: 包含业务实体、值对象和领域服务
+- **Infrastructure层**: 处理数据持久化和外部服务调用
+- **Application层**: 通过Facade模式提供应用服务
+
+### 2. 函数式编程
+- 使用`dartz`包提供的`Either`类型处理错误
+- 避免异常抛出，通过类型系统表达可能的失败情况
+
+### 3. 依赖注入
+- 通过接口定义依赖，支持测试替换
+- 使用抽象类定义服务边界
 
 ## 性能优化
 
-### 配置缓存策略
-- 内存缓存常用配置
-- 设置合理的 TTL
-- 定期清理过期缓存
+### 1. 缓存策略
+- 使用LRU缓存存储API匹配结果
+- 缓存大小限制为20个条目，避免内存过度使用
 
-### 网络优化
-- 批量获取远程配置
-- 增量更新配置
-- 配置版本管理
+### 2. 正则表达式优化
+- 预编译正则表达式，避免重复编译开销
+- 使用不可变列表存储编译后的正则
 
-### 存储优化
-- 压缩大型配置数据
-- 异步读写操作
-- 分类存储配置
+### 3. 查询优化
+- 使用Map结构优化项目查找性能
+- 短路求值减少不必要的匹配操作
 
-## 总结
+## 最佳实践
 
-`basic_config` 模块为 OneApp 提供了强大而灵活的配置管理能力，支持多环境配置、远程配置下发、配置缓存等特性。通过统一的配置管理接口，简化了应用配置的使用和维护，提高了开发效率和运维灵活性。
+### 1. 错误处理
+```dart
+// 推荐：使用Either处理可能的错误
+final result = basicConfigFacade.queryApiIfHit(
+  projectCode: projectCode,
+  url: url,
+);
+
+result.fold(
+  (failure) => handleFailure(failure),
+  (success) => handleSuccess(success),
+);
+
+// 不推荐：使用try-catch
+try {
+  final result = riskyOperation();
+  handleSuccess(result);
+} catch (e) {
+  handleError(e);
+}
+```
+
+### 2. 配置管理
+- 在应用启动时初始化配置
+- 定期检查和更新远程配置
+- 为关键服务提供降级策略
+
+### 3. 测试策略
+- 使用依赖注入进行单元测试
+- 模拟网络请求测试异常情况
+- 验证缓存行为的正确性
+
+## 问题排查
+
+### 常见问题
+1. **初始化失败**: 检查配置JSON格式和依赖注入设置
+2. **正则匹配异常**: 验证规则列表中的正则表达式语法
+3. **缓存不生效**: 确认URL格式一致性
+
+### 调试技巧
+- 启用详细日志查看配置加载过程
+- 使用`basicConfigTag`过滤相关日志
+- 检查版本解析是否符合x.x.x格式

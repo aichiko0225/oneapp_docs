@@ -7,36 +7,39 @@
 ### 基本信息
 - **模块名称**: ui_basic
 - **版本**: 0.2.45
-- **描述**: 基础UI组件库
+- **仓库**: https://gitlab-rd0.maezia.com/dssomobile/oneapp/dssomobile-oneapp-ui-basic
 - **Flutter 版本**: >=1.17.0
 - **Dart 版本**: >=2.17.0 <4.0.0
+- **发布服务器**: http://175.24.250.68:4000/
 
 ## 功能特性
 
 ### 核心功能
+基于实际项目的UI组件库，包含丰富的组件和第三方集成。
+
 1. **基础组件库**
-   - 按钮组件（Button、IconButton、FloatingActionButton）
-   - 输入组件（TextField、TextFormField、Checkbox、Radio）
-   - 展示组件（Card、ListTile、Chip、Badge）
-   - 导航组件（AppBar、TabBar、BottomNavigationBar）
+   - 按钮组件（OneIconButton、CommonButton）
+   - 输入组件（BasicTextField、BasicMultiTextField、VehiclePlateField）
+   - 展示组件（OneTag、OneCard、ProgressWidget）
+   - 导航组件（CommonTitleBar、CommonTabbar）
 
-2. **布局容器**
-   - 响应式布局容器
-   - 网格布局组件
-   - 弹性布局组件
-   - 自定义布局容器
+2. **交互组件**
+   - 上拉下拉刷新（pull_to_refresh集成）
+   - 轮播图组件（OneSwiper、carousel_slider集成）
+   - 对话框和弹窗（OneDialogX、CommonBottomSheet）
+   - 加载指示器（LoadingWidget、CommonLoadingWidget）
 
-3. **交互组件**
-   - 上拉下拉刷新
-   - 轮播图组件
-   - 对话框和弹窗
-   - 加载指示器
+3. **多媒体组件**
+   - 图片组件（GlinettImage、ImageWidget、CachedNetworkImage集成）
+   - 扫码组件（QrScannerWidget、flutter_scankit集成）
+   - 相机组件（CameraWidget、camera集成）
+   - SVG支持（flutter_svg集成）
 
-4. **富文本支持**
-   - HTML富文本渲染
-   - 文本样式定制
-   - 链接和图片支持
-   - 自定义标签解析
+4. **富文本和图表**
+   - HTML富文本渲染（flutter_html集成）
+   - 图表组件（OneChart、fl_chart集成）
+   - ECharts集成（FlutterEcharts）
+   - 评分组件（RatingWidget、flutter_rating_bar集成）
 
 ## 技术架构
 
@@ -57,599 +60,305 @@ lib/
 
 ### 依赖关系
 
+基于实际项目的pubspec.yaml配置，展示真实的依赖架构。
+
 #### 框架依赖
-- `basic_network: ^0.2.3+4` - 网络通信基础
-- `provider: ^6.0.5` - 状态管理
-- `rxdart: ^0.27.7` - 响应式编程
+```yaml
+# 核心框架依赖
+dependencies:
+  basic_network: ^0.2.3+4      # 网络通信基础
+  basic_modular: ^0.2.3        # 模块化框架
+  basic_modular_route: ^0.2.1  # 路由管理
+  basic_intl_flutter: ^0.2.2+1 # 国际化支持
+  basic_theme_core: ^0.2.5     # 主题核心
+  ui_basic_annotation: ^0.2.0  # UI框架注解
+```
 
-#### UI相关依赖
-- `flutter_html: ^3.0.0-beta.2` - HTML富文本渲染
-- `badges: ^3.1.1` - 角标组件
-- `pull_to_refresh: ^2.0.0` - 上拉下拉刷新
-- `fluttertoast: ^8.2.5` - 提示组件
+#### UI和交互依赖
+```yaml
+# UI组件和交互依赖
+dependencies:
+  provider: ^6.0.5             # 状态管理
+  flutter_html: ^3.0.0-beta.2 # HTML富文本渲染
+  badges: ^3.1.1               # 角标组件
+  pull_to_refresh: ^2.0.0      # 上拉下拉刷新
+  carousel_slider: ^4.2.1      # 轮播图组件
+  cached_network_image: ^3.3.0 # 缓存网络图片
+  flutter_svg: ^2.0.6          # SVG图片支持
+  flutter_smart_dialog: ^4.9.1 # 智能对话框
+  visibility_detector: ^0.4.0+2# 可见性检测
+  fl_chart: ^0.x.x             # 图表组件
+```
 
-#### 工具依赖
-- `dartz: ^0.10.1` - 函数式编程
-- `kt_dart: ^1.1.0` - Kotlin风格扩展
-- `collection: ^1.16.0` - 集合工具
+#### 多媒体和工具依赖
+```yaml
+# 多媒体和工具依赖
+dependencies:
+  camera: ^0.10.5+2            # 相机功能
+  image_picker: ^1.1.2         # 图片选择
+  image_cropper: ^9.1.0        # 图片裁剪
+  flutter_image_compress: ^2.0.3# 图片压缩
+  flutter_scankit: 2.0.3+1    # 扫码工具
+  url_launcher: ^6.1.11       # URL跳转
+  flutter_rating_bar: ^4.0.1   # 评分组件
+  sprintf: ^7.0.0              # 字符串格式化
+  dartz: ^0.10.1               # 函数式编程
+  rxdart: ^0.27.7              # 响应式编程
+```
 
 ## 核心组件分析
 
 ### 1. 模块入口 (`ui_basic.dart`)
 
+基于真实项目的模块导出结构，包含大量第三方库集成和自定义组件。
+
 **功能职责**:
-- 统一导出所有UI组件
-- 组件主题配置
-- 全局样式设置
+- 统一导出所有UI组件和第三方库
+- 集成badge、cached_network_image、flutter_html等核心UI库
+- 导出自定义组件如OneColors、OneTextStyle、OneIcons
+- 提供car_func_block等车辆相关UI组件
 
-### 2. 基础组件 (`src/components/`)
-
-#### 按钮组件
 ```dart
-class BasicButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final ButtonType type;
-  final ButtonSize size;
-  final bool isLoading;
-  final Widget? icon;
+// 实际的模块导出结构（ui_basic.dart）
+library ui_basic;
 
-  const BasicButton({
-    Key? key,
-    required this.text,
-    this.onPressed,
-    this.type = ButtonType.primary,
-    this.size = ButtonSize.medium,
-    this.isLoading = false,
-    this.icon,
-  }) : super(key: key);
+// 第三方UI库集成
+export 'package:badges/badges.dart';
+export 'package:cached_network_image/cached_network_image.dart';
+export 'package:flutter_html/flutter_html.dart';
+export 'package:flutter_svg/flutter_svg.dart';
+export 'package:visibility_detector/visibility_detector.dart';
+export 'package:bottom_sheet/bottom_sheet.dart';
+export 'package:fl_chart/fl_chart.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: _getButtonStyle(context),
-      child: isLoading 
-          ? _buildLoadingIndicator()
-          : _buildButtonContent(),
-    );
-  }
+// 自定义组件导出
+export 'src/colors/colors.dart' show OneColors;
+export 'src/fonts/fonts.dart' show OneTextStyle, TextFont, OneBasicText;
+export 'src/icon/icon.dart' show OneIcons;
 
-  ButtonStyle _getButtonStyle(BuildContext context) {
-    switch (type) {
-      case ButtonType.primary:
-        return ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-        );
-      case ButtonType.secondary:
-        return ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey[200],
-          foregroundColor: Colors.black87,
-        );
-      case ButtonType.outline:
-        return OutlinedButton.styleFrom(
-          side: BorderSide(color: Theme.of(context).primaryColor),
-        );
-    }
-  }
-}
+// UI组件导出
+export 'src/components/appbar/common_title_bar.dart';
+export 'src/components/button/buttons.dart';
+export 'src/components/dialog/dialog_export.dart';
+export 'src/components/loading/loading_widget.dart';
+export 'src/components/text_field/basic_text_field.dart';
+export 'src/components/cards/cards_export.dart';
 
-enum ButtonType { primary, secondary, outline }
-enum ButtonSize { small, medium, large }
+// 车辆功能组件
+export 'src/car_func_block/car_func_block_class.dart';
+export 'src/car_func_block/car_func_block_manager.dart';
+
+// 工具类导出
+export 'src/utils/qr_scanner_util/qr_scanner_util.dart';
+export 'src/utils/image_util/image_util.dart';
+export 'src/utils/launcher/launch_util.dart';
 ```
 
-#### 输入组件
+### 2. 主题颜色系统 (`src/colors/colors.dart`)
+
+基于主题核心框架的动态颜色系统，支持主题切换和自定义颜色。
+
 ```dart
-class BasicTextField extends StatelessWidget {
-  final String? labelText;
-  final String? hintText;
-  final String? helperText;
-  final String? errorText;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final FormFieldValidator<String>? validator;
-  final TextInputType keyboardType;
-  final bool obscureText;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
+// 实际的颜色系统实现
+class OneColors {
+  /// 主题色 Primary Color
+  static Color get primary =>
+      theme.ofStandard().themeData?.appColors?.primary ??
+      const Color(0xFFEED484);
 
-  const BasicTextField({
-    Key? key,
-    this.labelText,
-    this.hintText,
-    this.helperText,
-    this.errorText,
-    this.controller,
-    this.onChanged,
-    this.validator,
-    this.keyboardType = TextInputType.text,
-    this.obscureText = false,
-    this.prefixIcon,
-    this.suffixIcon,
-  }) : super(key: key);
+  /// 背景色 Bgc
+  static Color get bgc =>
+      theme.ofStandard().themeData?.appColors?.backgroundColors.bgc ??
+      const Color(0xFFFFFFFF);
 
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      onChanged: onChanged,
-      validator: validator,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: hintText,
-        helperText: helperText,
-        errorText: errorText,
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-      ),
-    );
-  }
+  /// 背景色 辅助1-5
+  static Color get bgcSub1 =>
+      theme.ofStandard().themeData?.appColors?.backgroundColors.bgcSub1 ??
+      const Color(0xFFFFFFFF);
+  // ... 更多背景色变体
+
+  /// 动态主题获取
+  static ITheme get theme => uiBasicPlatformInfoDeps.theme != null
+      ? uiBasicPlatformInfoDeps.theme!
+      : DefaultTheme(
+          DefaultStandardResource(),
+          DefaultUiKitResource(),
+        );
 }
 ```
 
-### 3. 布局容器 (`src/containers/`)
+### 4. 按钮组件 (`src/components/button/buttons.dart`)
 
-#### 响应式容器
+基于真实项目的按钮组件实现，支持多种按钮类型和状态管理。
+
 ```dart
-class ResponsiveContainer extends StatelessWidget {
-  final Widget child;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final double? maxWidth;
-  final BoxDecoration? decoration;
+// 实际的按钮状态枚举
+enum BtnLoadingStatus {
+  /// 初始化
+  idle,
+  /// 加载中
+  loading,
+}
 
-  const ResponsiveContainer({
-    Key? key,
+/// 按钮类型枚举
+enum BtnType {
+  /// TextButton
+  text,
+  /// ElevatedButton
+  elevated,
+  /// OutlineButton
+  outline,
+}
+
+/// 实际的图标按钮组件
+class OneIconButton extends StatelessWidget {
+  const OneIconButton({
     required this.child,
-    this.padding,
-    this.margin,
-    this.maxWidth,
-    this.decoration,
+    this.iconSize,
+    this.cubit,
+    this.onPress,
+    this.style,
+    Key? key,
   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final effectiveMaxWidth = maxWidth ?? _getMaxWidth(screenWidth);
-
-    return Container(
-      width: double.infinity,
-      margin: margin,
-      decoration: decoration,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: effectiveMaxWidth),
-          child: Padding(
-            padding: padding ?? _getDefaultPadding(screenWidth),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-
-  double _getMaxWidth(double screenWidth) {
-    if (screenWidth > 1200) return 1200;
-    if (screenWidth > 768) return screenWidth * 0.9;
-    return double.infinity;
-  }
-
-  EdgeInsets _getDefaultPadding(double screenWidth) {
-    if (screenWidth > 768) return const EdgeInsets.all(24);
-    return const EdgeInsets.all(16);
-  }
-}
-```
-
-### 4. 交互组件 (`src/interactions/`)
-
-#### 上拉下拉刷新组件
-```dart
-class BasicRefreshView extends StatefulWidget {
-  final Future<void> Function() onRefresh;
-  final Future<void> Function()? onLoading;
+  /// 按钮内容
   final Widget child;
-  final bool enablePullUp;
-  final bool enablePullDown;
-
-  const BasicRefreshView({
-    Key? key,
-    required this.onRefresh,
-    this.onLoading,
-    required this.child,
-    this.enablePullUp = true,
-    this.enablePullDown = true,
-  }) : super(key: key);
-
-  @override
-  State<BasicRefreshView> createState() => _BasicRefreshViewState();
-}
-
-class _BasicRefreshViewState extends State<BasicRefreshView> {
-  final RefreshController _refreshController = RefreshController();
+  /// 字体大小
+  final double? iconSize;
+  /// 状态管理
+  final OneIconButtonCubit? cubit;
+  /// 点击回调
+  final VoidCallback? onPress;
+  /// 样式配置
+  final ButtonStyle? style;
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
-      controller: _refreshController,
-      enablePullDown: widget.enablePullDown,
-      enablePullUp: widget.enablePullUp,
-      onRefresh: _onRefresh,
-      onLoading: _onLoading,
-      header: const WaterDropMaterialHeader(),
-      footer: const ClassicFooter(),
-      child: widget.child,
-    );
+    // 实际的按钮实现逻辑
+    // 支持状态管理和样式定制
   }
+}
 
-  void _onRefresh() async {
-    try {
-      await widget.onRefresh();
-      _refreshController.refreshCompleted();
-    } catch (e) {
-      _refreshController.refreshFailed();
-    }
-  }
-
-  void _onLoading() async {
-    if (widget.onLoading == null) {
-      _refreshController.loadNoData();
-      return;
-    }
-
-    try {
-      await widget.onLoading!();
-      _refreshController.loadComplete();
-    } catch (e) {
-      _refreshController.loadFailed();
-    }
-  }
-
-  @override
-  void dispose() {
-    _refreshController.dispose();
-    super.dispose();
-  }
+/// 通用按钮组件
+class CommonButton extends StatelessWidget {
+  // 支持加载状态、不同按钮类型、自定义样式等
+  // 集成BLoC状态管理和主题系统
 }
 ```
 
-#### 加载指示器组件
+### 5. 文本输入组件 (`src/components/text_field/`)
+
+包含多种文本输入组件的真实实现。
+
 ```dart
-class BasicLoadingIndicator extends StatelessWidget {
-  final String? message;
-  final LoadingType type;
-  final Color? color;
-  final double size;
+// 基础文本输入字段
+export 'src/components/text_field/basic_text_field.dart';
+export 'src/components/text_field/basic_multi_text_field.dart';
+export 'src/components/text_field/clear_text_field.dart';
+export 'src/components/text_field/edit_text/edit_text.dart';
 
-  const BasicLoadingIndicator({
-    Key? key,
-    this.message,
-    this.type = LoadingType.circular,
-    this.color,
-    this.size = 40.0,
-  }) : super(key: key);
+// 特殊用途文本字段
+export 'src/components/text_field/vehicle_plate_field/vehicle_plate_field_widget.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildIndicator(context),
-        if (message != null) ...[
-          const SizedBox(height: 16),
-          Text(
-            message!,
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildIndicator(BuildContext context) {
-    final effectiveColor = color ?? Theme.of(context).primaryColor;
-
-    switch (type) {
-      case LoadingType.circular:
-        return SizedBox(
-          width: size,
-          height: size,
-          child: CircularProgressIndicator(color: effectiveColor),
-        );
-      case LoadingType.linear:
-        return SizedBox(
-          width: size * 2,
-          child: LinearProgressIndicator(color: effectiveColor),
-        );
-      case LoadingType.dots:
-        return _buildDotsIndicator(effectiveColor);
-    }
-  }
-
-  Widget _buildDotsIndicator(Color color) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, (index) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        );
-      }),
-    );
-  }
-}
-
-enum LoadingType { circular, linear, dots }
+// 实际支持的功能：
+// - 基础文本输入
+// - 多行文本输入
+// - 带清除按钮的文本输入
+// - 车牌号输入专用组件
+// - 集成表单验证和状态管理
 ```
 
-### 5. 主题配置 (`src/themes/`)
+### 7. 第三方UI库集成
 
-#### 基础主题配置
+ui_basic模块集成了大量优秀的第三方UI库，提供开箱即用的功能。
+
 ```dart
-class BasicTheme {
-  static ThemeData get lightTheme {
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF1976D2),
-        brightness: Brightness.light,
-      ),
-      appBarTheme: const AppBarTheme(
-        centerTitle: true,
-        elevation: 0,
-        scrolledUnderElevation: 1,
-      ),
-      cardTheme: CardTheme(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 12,
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-      ),
-    );
-  }
+// 图标和标记组件
+export 'package:badges/badges.dart';              // 角标组件
+export 'package:font_awesome_flutter/font_awesome_flutter.dart'; // FontAwesome图标
 
-  static ThemeData get darkTheme {
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF1976D2),
-        brightness: Brightness.dark,
-      ),
-      // ... 暗色主题配置
-    );
-  }
-}
+// 图片和多媒体
+export 'package:cached_network_image/cached_network_image.dart'; // 缓存网络图片
+export 'package:flutter_svg/flutter_svg.dart';    // SVG支持
+export 'package:dd_js_util/dd_js_util.dart';      // 九宫格图片选择
+
+// 富文本和格式化
+export 'package:flutter_html/flutter_html.dart';  // HTML渲染
+export 'package:sprintf/sprintf.dart';            // 字符串格式化
+export 'package:auto_size_text/auto_size_text.dart'; // 自适应文本
+
+// 交互组件
+export 'package:bottom_sheet/bottom_sheet.dart';  // 底部弹出框
+export 'package:visibility_detector/visibility_detector.dart'; // 可见性检测
+export 'package:extended_tabs/extended_tabs.dart'; // 扩展Tab组件
+
+// 图表组件
+export 'package:fl_chart/fl_chart.dart';          // Flutter图表库
+
+// 轮播组件  
+export 'package:flutter_swiper_null_safety_flutter3/flutter_swiper_null_safety_flutter3.dart';
 ```
 
-## 组件使用示例
+### 8. 工具类组件 (`src/utils/`)
 
-### 基础使用示例
+丰富的工具类支持，涵盖图片处理、扫码、启动器等功能。
+
 ```dart
-class BasicComponentsExample extends StatefulWidget {
-  @override
-  _BasicComponentsExampleState createState() => _BasicComponentsExampleState();
-}
+// 图片相关工具
+export 'src/utils/image_util/image_util.dart';
+export 'src/utils/image_solution/image_solution_tools.dart';
+export 'src/utils/image_cropper_util/nativate_image_cropper.dart';
 
-class _BasicComponentsExampleState extends State<BasicComponentsExample> {
-  final TextEditingController _textController = TextEditingController();
-  bool _isLoading = false;
+// 扫码相关
+export 'src/utils/qr_processor/qr_processor.dart';
+export 'src/utils/qr_scanner_util/qr_scanner_util.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Basic Components')),
-      body: ResponsiveContainer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 输入框示例
-            BasicTextField(
-              labelText: '用户名',
-              hintText: '请输入用户名',
-              controller: _textController,
-              prefixIcon: Icon(Icons.person),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '请输入用户名';
-                }
-                return null;
-              },
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // 按钮示例
-            BasicButton(
-              text: '登录',
-              type: ButtonType.primary,
-              isLoading: _isLoading,
-              onPressed: () => _handleLogin(),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // 卡片示例
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '通知',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text('这是一条重要通知内容'),
-                  ],
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // 加载指示器示例
-            if (_isLoading)
-              const BasicLoadingIndicator(
-                message: '正在登录...',
-                type: LoadingType.circular,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
+// 系统交互
+export 'src/utils/launcher/launch_util.dart';     // URL启动器
+export 'src/utils/imm/custom_imm.dart';           // 输入法管理
 
-  void _handleLogin() async {
-    setState(() {
-      _isLoading = true;
-    });
+// 订单管理
+export 'src/utils/order_category_manager/order_category_factory.dart';
+export 'src/utils/order_category_manager/order_category_manager.dart';
 
-    // 模拟登录请求
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    // 显示结果
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('登录成功')),
-    );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-}
+// 其他工具
+export 'src/utils/keep_alive.dart';               // KeepAlive包装器
+export 'src/utils/widget_utils.dart';             // Widget工具类
+export 'src/utils/methods.dart' show formatDate;  // 格式化方法
 ```
 
-### 高级组件示例
+### 9. 特色组件
+
+针对OneApp应用特点开发的专用组件。
+
 ```dart
-class AdvancedComponentsExample extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Advanced Components')),
-      body: BasicRefreshView(
-        onRefresh: () async {
-          // 刷新数据
-          await Future.delayed(const Duration(seconds: 1));
-        },
-        onLoading: () async {
-          // 加载更多数据
-          await Future.delayed(const Duration(seconds: 1));
-        },
-        child: ListView.builder(
-          itemCount: 20,
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading: CircleAvatar(
-                child: Text('${index + 1}'),
-              ),
-              title: Text('项目 ${index + 1}'),
-              subtitle: Text('这是项目 ${index + 1} 的描述'),
-              trailing: Badge(
-                label: Text('${index % 5 + 1}'),
-                child: const Icon(Icons.notifications),
-              ),
-              onTap: () {
-                // 处理点击事件
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-```
+// 车牌号相关
+export 'src/components/one_license_plate_number/one_license_plate_number.dart';
+export 'src/components/text_field/vehicle_plate_field/vehicle_plate_field_widget.dart';
 
-## 自定义主题
+// 车辆HVAC相关
+export 'src/components/widgets/car_hvac_other_widget.dart';
 
-### 主题定制示例
-```dart
-class CustomThemeExample extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Custom Theme Example',
-      theme: _buildCustomTheme(),
-      home: MyHomePage(),
-    );
-  }
+// 香氛组件
+export 'src/components/fragrance/fragrance_widget.dart';
 
-  ThemeData _buildCustomTheme() {
-    const primaryColor = Color(0xFF6C5CE7);
-    const secondaryColor = Color(0xFFA29BFE);
+// 步进器组件
+export 'src/components/stepper/stepper_widget.dart';
 
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        secondary: secondaryColor,
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-      ),
-      cardTheme: CardTheme(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-    );
-  }
-}
+// 验证码组件
+export 'src/components/verification_code/verification_box.dart';
+export 'src/components/verification_code/code_widget.dart';
+
+// 时间选择器
+export 'src/components/time_picker/common_time_picker.dart';
+export 'src/components/time_picker/ym_time_picker.dart';
+
+// 可扩展GridView
+export 'src/components/gridview/expandable_gridview.dart';
+
+// 瀑布流ScrollView
+export 'src/components/widgets/staggered_scrollview_widget.dart';
+export 'src/components/widgets/reorderable_staggered_scroll_view_widget.dart';
 ```
 
 ## 性能优化

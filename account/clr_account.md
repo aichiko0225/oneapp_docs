@@ -40,11 +40,26 @@ clr_account/
 
 #### 主要接口
 ```dart
-abstract class AuthenticationService {
-  Future<Result<User>> login(String username, String password);
-  Future<Result<void>> logout();
-  Future<Result<bool>> isLoggedIn();
-  Future<Result<User>> getCurrentUser();
+// 基于实际项目的认证门面接口
+abstract class IAuthFacade {
+  /// 当前登录状态
+  bool get isLogin;
+  
+  /// 用户登出
+  Future<void> logout();
+  
+  /// 撤销注销
+  Future<Either<AuthFailure, Unit>> undoSignOut(String refCode);
+}
+
+// 实际的认证异常类型
+sealed class AuthFailure {
+  const AuthFailure();
+}
+
+class OtherError extends AuthFailure {
+  final dynamic error;
+  const OtherError(this.error);
 }
 ```
 
@@ -58,10 +73,33 @@ abstract class AuthenticationService {
 
 #### 主要接口
 ```dart
-abstract class RegistrationService {
-  Future<Result<void>> register(UserRegistrationData data);
-  Future<Result<void>> verifyPhone(String phone, String code);
-  Future<Result<void>> verifyEmail(String email, String code);
+// 基于实际项目的配置文件门面接口
+abstract class IProfileFacade {
+  /// 获取本地用户配置文件
+  Either<ProfileFailure, UserProfile> getUserProfileLocal();
+  
+  /// 从云端获取用户配置文件
+  Future<Either<ProfileFailure, UserProfile>> fetchUserProfile();
+}
+
+// 实际的配置文件异常类型
+sealed class ProfileFailure {
+  const ProfileFailure();
+}
+
+// 实际的用户配置模型
+class UserProfile {
+  final String id;
+  final String name;
+  final String email;
+  final String? avatar;
+  
+  const UserProfile({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.avatar,
+  });
 }
 ```
 
@@ -75,10 +113,59 @@ abstract class RegistrationService {
 
 #### 主要接口
 ```dart
-abstract class ProfileService {
-  Future<Result<UserProfile>> getProfile();
-  Future<Result<void>> updateProfile(UserProfile profile);
-  Future<Result<void>> uploadAvatar(File image);
+// 基于实际项目的车库门面接口
+abstract class IGarageFacade {
+  /// 获取车库绑车列表
+  /// [refresh]为 true 则强制从网络获取，并刷新本地数据
+  Future<Either<GarageFailure, List<VehicleDto>>> getEnrollmentVehicleList({
+    bool refresh = false,
+    bool local = false,
+  });
+  
+  /// 获取默认车辆
+  Future<Either<GarageFailure, VehicleDto?>> getDefaultEnrolledVehicle({
+    bool refresh = false,
+  });
+  
+  /// 快速获取默认车辆
+  VehicleDto? getDefaultVehicleLocal();
+  
+  /// 设置车辆是否默认
+  Future<Either<GarageFailure, bool>> setVehicleDefault({
+    required String vin,
+    required bool isDefault,
+  });
+  
+  /// 修改车牌号
+  Future<Either<GarageFailure, bool>> setVehiclePlateNo(
+    String plateNo,
+    String vin,
+  );
+  
+  /// 扫码登录车机
+  Future<Either<GarageFailure, Unit>> signInHUWithQrCode({
+    required String uuid,
+    required int? timestamp,
+    required String? signature,
+  });
+}
+
+// 实际的车辆数据传输对象
+class VehicleDto {
+  final String vin;
+  final String? plateNo;
+  final VehicleModel vehicleModel;
+  final String accountType;
+  
+  const VehicleDto({
+    required this.vin,
+    this.plateNo,
+    required this.vehicleModel,
+    required this.accountType,
+  });
+  
+  static const String accountTypeP = 'P'; // 主账户
+  static const String accountTypeS = 'S'; // 从账户
 }
 ```
 
@@ -134,24 +221,51 @@ abstract class AuthorizationService {
 ### 状态管理
 
 #### 事件驱动架构
-- 使用 `account_event.dart` 定义账户相关事件
-- 事件总线机制处理模块间通信
-- 状态变更通知机制
+基于 OneApp 事件总线系统，使用真实的账户事件处理机制。
 
 ```dart
-// 账户事件定义示例
+// 实际项目中的事件处理示例（从 PersonalCenterBloc）
+class PersonalCenterBloc extends Bloc<PersonalCenterEvent, PersonalCenterState> {
+  PersonalCenterBloc(
+    this._signInFacade,
+    this._profileFacade,
+    this._garageFacade,
+  ) : super(PersonalCenterState.initial()) {
+    // 监听推送事件
+    _eventListener = pushFacade.subscribeOn(
+      topics: [
+        userProfileChangedTopic,
+        logoutTopic,
+        loginSuccessTopic,
+        loginFailedTopic,
+      ],
+    ).listen((event) async {
+      // 当收到用户信息更变、登出事件、登录成功事件时，重新加载用户信息
+      if (event.topic == logoutTopic || event.topic == loginSuccessTopic) {
+        OneAppEventBus.fireEvent(UserLoginEvent(loginType: LoginOutType.all));
+        add(const PersonalCenterEvent.loadUserProfile());
+        add(const PersonalCenterEvent.loadSocialInfor());
+      }
+    });
+    
+    // 监听积分变更事件
+    _pointsChageEvent = OneAppEventBus.addListen<PointsChangeEvent>((event) {
+      add(const PersonalCenterEvent.loadUserPoints());
+    });
+  }
+}
+
+// 实际的账户事件类型
 abstract class AccountEvent {
   const AccountEvent();
 }
 
-class LoginSuccessEvent extends AccountEvent {
-  final User user;
-  const LoginSuccessEvent(this.user);
+class UserLoginEvent extends AccountEvent {
+  final LoginOutType loginType;
+  const UserLoginEvent({required this.loginType});
 }
 
-class LogoutEvent extends AccountEvent {
-  const LogoutEvent();
-}
+enum LoginOutType { all }
 ```
 
 ### 数据持久化
@@ -250,25 +364,55 @@ PUT /api/v1/user/profile
 - 系统错误
 
 ### 错误处理策略
+基于实际项目中的异常处理模式，使用 Functional Programming 的 Either 模式。
+
 ```dart
-sealed class AccountError {
-  const AccountError();
+// 实际项目中的异常处理示例
+sealed class AuthFailure {
+  const AuthFailure();
 }
 
-class NetworkError extends AccountError {
-  final String message;
-  const NetworkError(this.message);
+class OtherError extends AuthFailure {
+  final dynamic error;
+  const OtherError(this.error);
 }
 
-class AuthenticationError extends AccountError {
-  final String reason;
-  const AuthenticationError(this.reason);
+sealed class ProfileFailure {
+  const ProfileFailure();
 }
 
-class ValidationError extends AccountError {
-  final Map<String, String> fieldErrors;
-  const ValidationError(this.fieldErrors);
+sealed class GarageFailure {
+  const GarageFailure();
 }
+
+// 错误处理方法示例（来自 PersonalCenterBloc）
+void _onLoginFailed(LoginFailure failure) {
+  final authFailure = failure.cause;
+  
+  if (authFailure is OtherError) {
+    // 其他异常
+    _handleOtherAuthFailure(authFailure.error);
+  }
+}
+
+void _handleOtherAuthFailure(dynamic error) {
+  if (error is ErrorGlobalBusiness) {
+    // 云端异常
+    final Map<String, dynamic> errorConfig = error.errorConfig;
+    final String? originalCode = errorConfig['originalCode'] as String?;
+    
+    // 处理特定错误码
+    if (originalCode == '10444105') {
+      // 预注销状态处理
+      _showPreSignOutDialog(/*参数*/);
+    }
+  }
+}
+
+// 使用 Either 模式的接口返回值
+Future<Either<ProfileFailure, UserProfile>> fetchUserProfile();
+Future<Either<GarageFailure, List<VehicleDto>>> getEnrollmentVehicleList();
+Future<Either<AuthFailure, Unit>> undoSignOut(String refCode);
 ```
 
 ## 国际化支持

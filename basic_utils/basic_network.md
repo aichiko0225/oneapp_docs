@@ -32,145 +32,159 @@ basic_network/
 
 ### 1. HTTP 客户端封装
 
-#### Dio 客户端配置
+基于真实项目的网络引擎架构，使用工厂模式和依赖注入。
+
+#### 网络引擎初始化 (`facade.dart`)
 ```dart
-// 网络客户端配置
-class NetworkClient {
-  late Dio _dio;
-  
-  NetworkClient({
-    String? baseUrl,
-    Duration? connectTimeout,
-    Duration? receiveTimeout,
-    Duration? sendTimeout,
-  }) {
-    _dio = Dio(BaseOptions(
-      baseUrl: baseUrl ?? '',
-      connectTimeout: connectTimeout ?? Duration(seconds: 30),
-      receiveTimeout: receiveTimeout ?? Duration(seconds: 30),
-      sendTimeout: sendTimeout ?? Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Accept': 'application/json',
-      },
-    ));
-    
-    _setupInterceptors();
-  }
-  
-  void _setupInterceptors() {
-    // 请求/响应拦截器
-    _dio.interceptors.add(RequestInterceptor());
-    _dio.interceptors.add(ResponseInterceptor());
-    
-    // 错误处理拦截器
-    _dio.interceptors.add(ErrorInterceptor());
-    
-    // 日志拦截器（仅调试模式）
-    if (kDebugMode) {
-      _dio.interceptors.add(PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
-      ));
-    }
+// 实际的网络引擎初始化
+bool initNetwork({NetworkEngineOption? option, NetworkLogOutput? networkLog}) =>
+    NetworkEngineContext().init(option: option, networkLog: networkLog);
+
+/// 根据自定义option获取NetworkEngine
+RequestApi customNetworkEngine(NetworkEngineOption option) =>
+    RequestApi(NetworkEngineFactory.createBy(option));
+
+/// 统一的请求接口
+Future<T> request<T>(RequestOptions requestOptions) async =>
+    NetworkEngineContext.networkEngine.request<T>(requestOptions);
+
+/// 带回调的请求方法
+Future<void> requestWithCallback<T>(
+  RequestOptions requestOptions,
+  RequestOnSuccessCallback<T> onSuccess,
+  RequestOnErrorCallback onError,
+) async {
+  try {
+    final res = await NetworkEngineContext.networkEngine.request<T>(
+      requestOptions,
+    );
+    onSuccess(res);
+  } on ErrorBase catch (e) {
+    onError(e);
+  } catch (e) {
+    logger.e(e);
+    onError(ErrorGlobalCommon(GlobalCommonErrorType.other, e));
   }
 }
 ```
 
-#### 统一请求接口
+#### 默认网络引擎配置 (`common_options.dart`)
 ```dart
-// 统一的 HTTP 请求接口
-abstract class INetworkService {
-  Future<Result<T>> get<T>({
-    required String path,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    T Function(dynamic)? fromJson,
-  });
-  
-  Future<Result<T>> post<T>({
-    required String path,
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    T Function(dynamic)? fromJson,
-  });
-  
-  Future<Result<T>> put<T>({
-    required String path,
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    T Function(dynamic)? fromJson,
-  });
-  
-  Future<Result<T>> delete<T>({
-    required String path,
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    T Function(dynamic)? fromJson,
-  });
-}
+// 实际的默认网络引擎选项
+class DefaultNetworkEngineOption extends NetworkEngineOption {
+  final Headers _headers = Headers();
 
-// 网络服务实现
-class NetworkService implements INetworkService {
-  final NetworkClient _client;
-  
-  NetworkService(this._client);
-  
+  final BaseDtoResponseConvertor _baseDtoResponseConvertor =
+      const DefaultBaseJsonResponseConvertor();
+
+  final GlobalErrorBusinessFactory _globalBusinessErrorFactory =
+      defaultGlobalBusinessErrorFactory;
+
   @override
-  Future<Result<T>> get<T>({
-    required String path,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    T Function(dynamic)? fromJson,
-  }) async {
+  BaseDtoResponseConvertor get baseDtoConvertor => _baseDtoResponseConvertor;
+
+  @override
+  String get baseUrl => '';
+
+  @override
+  Headers get headers => _headers;
+
+  @override
+  List<Interceptor> get interceptors => [];
+
+  @override
+  ProxyConfig? get proxyConfig => null;
+
+  @override
+  int get receiveTimeout => 10000;
+
+  @override
+  int get retryTime => 3;
+
+  @override
+  int get sendTimeout => 10000;
+
+  @override
+  int get connectTimeout => 10000;
+
+  @override
+  SslConfig? get sslConfig => null;
+
+  @override
+  List<GlobalErrorHandler> get globalErrorHandlers => [];
+
+  @override
+  GlobalErrorBusinessFactory get globalErrorBusinessFactory =>
+      _globalBusinessErrorFactory;
+
+  @override
+  bool get debuggable => false;
+
+  @override
+  String get environment => 'sit';
+
+  @override
+  List<PreRequestInterceptor> get preRequestInterceptors => [];
+}
+```
+
+#### RequestApi 类实现
+```dart
+// 实际的请求API封装类
+class RequestApi {
+  RequestApi(this._engine);
+
+  final NetworkEngine _engine;
+
+  /// 异步请求，等待结果或抛出异常
+  Future<T> request<T>(RequestOptions requestOptions) async =>
+      _engine.request(requestOptions);
+
+  /// 带回调的请求方法
+  Future<void> requestWithCallback<T>(
+    RequestOptions requestOptions,
+    RequestOnSuccessCallback<T> onSuccess,
+    RequestOnErrorCallback onError,
+  ) async {
     try {
-      final response = await _client._dio.get(
-        path,
-        queryParameters: queryParameters,
+      final res = await _engine.request<T>(requestOptions);
+      onSuccess(res);
+    } on ErrorBase catch (e) {
+      onError(e);
+    } catch (e) {
+      logger.e(e);
+      onError(ErrorGlobalCommon(GlobalCommonErrorType.other, e));
+    }
+  }
+
+  /// 文件下载，带进度回调
+  Future<HttpResponse> download({
+    required dynamic savePath,
+    required RequestOptions options,
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) =>
+      _engine.download(
+        savePath: savePath,
         options: options,
+        onReceiveProgress: onReceiveProgress,
         cancelToken: cancelToken,
       );
-      
-      return _handleResponse<T>(response, fromJson);
-    } catch (e) {
-      return Left(_handleError(e));
-    }
-  }
-  
-  Result<T> _handleResponse<T>(
-    Response response,
-    T Function(dynamic)? fromJson,
-  ) {
-    if (response.statusCode! >= 200 && response.statusCode! < 300) {
-      if (fromJson != null) {
-        try {
-          final data = fromJson(response.data);
-          return Right(data);
-        } catch (e) {
-          return Left(NetworkFailure.parseError(e.toString()));
-        }
-      } else {
-        return Right(response.data as T);
-      }
-    } else {
-      return Left(NetworkFailure.httpError(
-        response.statusCode!,
-        response.statusMessage ?? '',
-      ));
-    }
-  }
+
+  /// 文件上传，带进度回调
+  Future<HttpResponse> upload({
+    required RequestOptions options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+  }) =>
+      _engine.upload(
+        options: options,
+        onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
+      );
+
+  /// 获取当前引擎配置
+  NetworkEngineOption get option => _engine.option;
 }
 ```
 
@@ -412,88 +426,106 @@ class SearchRequest with _$SearchRequest {
 
 ### 4. 错误处理系统
 
-#### 网络异常定义
+基于真实项目的多层次错误处理架构，包含全局错误、业务错误和自定义错误。
+
+#### 错误基类定义 (`model/error.dart`)
 ```dart
-// 网络异常基类
-@freezed
-class NetworkFailure with _$NetworkFailure {
-  const factory NetworkFailure.connectionError(String message) = ConnectionError;
-  const factory NetworkFailure.timeoutError(String message) = TimeoutError;
-  const factory NetworkFailure.httpError(int statusCode, String message) = HttpError;
-  const factory NetworkFailure.parseError(String message) = ParseError;
-  const factory NetworkFailure.businessError(int code, String message) = BusinessError;
-  const factory NetworkFailure.unknownError(String message) = UnknownError;
+// 实际的错误基类
+abstract class ErrorBase implements Exception {
+  /// 调用栈
+  StackTrace? stackTrace;
+
+  /// 错误消息
+  String get errorMessage;
 }
 
-// 业务异常
-class BusinessException implements Exception {
-  final int code;
-  final String message;
-  final dynamic data;
-  
-  const BusinessException(this.code, this.message, [this.data]);
-  
+/// 全局的错误基类
+abstract class ErrorGlobal extends ErrorBase {}
+
+/// 通用全局错误
+class ErrorGlobalCommon extends ErrorGlobal {
+  ErrorGlobalCommon(
+    this.errorType,
+    this._originalCause, {
+    this.httpCode,
+    this.response,
+    this.message,
+  }) {
+    stackTrace = StackTrace.current;
+  }
+
+  /// 封装的原始error
+  final dynamic _originalCause;
+
+  /// 错误类型
+  final GlobalCommonErrorType errorType;
+
+  /// http返回的值
+  final int? httpCode;
+
+  /// 返回的response
+  final HttpResponse? response;
+
+  /// 返回的消息
+  late String? message;
+
+  /// 返回原始的错误原因，如DioError
+  dynamic get originalCause => _originalCause;
+
   @override
-  String toString() => 'BusinessException($code, $message)';
+  String get errorMessage => message ?? response?.statusMessage ?? '';
+
+  @override
+  String toString() => 'ErrorGlobalCommon{_originalCause: $_originalCause, '
+      'errorType: $errorType, httpCode: $httpCode, response: $response}';
 }
 
-// 网络异常处理器
-class NetworkErrorHandler {
-  static NetworkFailure handleError(dynamic error) {
-    if (error is DioException) {
-      return _handleDioError(error);
-    } else if (error is BusinessException) {
-      return NetworkFailure.businessError(error.code, error.message);
-    } else if (error is FormatException) {
-      return NetworkFailure.parseError('数据解析失败: ${error.message}');
-    } else {
-      return NetworkFailure.unknownError(error.toString());
-    }
-  }
-  
-  static NetworkFailure _handleDioError(DioException error) {
-    switch (error.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return NetworkFailure.timeoutError('请求超时，请检查网络连接');
-      
-      case DioExceptionType.connectionError:
-        return NetworkFailure.connectionError('网络连接失败，请检查网络设置');
-      
-      case DioExceptionType.badResponse:
-        final statusCode = error.response?.statusCode ?? 0;
-        final message = _getHttpErrorMessage(statusCode);
-        return NetworkFailure.httpError(statusCode, message);
-      
-      case DioExceptionType.cancel:
-        return NetworkFailure.unknownError('请求已取消');
-      
-      default:
-        return NetworkFailure.unknownError('网络请求失败: ${error.message}');
-    }
-  }
-  
-  static String _getHttpErrorMessage(int statusCode) {
-    switch (statusCode) {
-      case 400:
-        return '请求参数错误';
-      case 401:
-        return '未授权，请重新登录';
-      case 403:
-        return '禁止访问';
-      case 404:
-        return '请求的资源不存在';
-      case 500:
-        return '服务器内部错误';
-      case 502:
-        return '网关错误';
-      case 503:
-        return '服务暂时不可用';
-      default:
-        return 'HTTP错误: $statusCode';
-    }
-  }
+/// 业务错误通用基类
+abstract class ErrorGlobalBusiness extends ErrorGlobal {
+  /// 业务错误码
+  String get businessCode;
+
+  @override
+  String get errorMessage;
+
+  /// 错误配置
+  Map<String, dynamic> get errorConfig;
+
+  @override
+  String toString() =>
+      'ErrorGlobalBusiness{businessCode:$businessCode, message:$errorMessage}';
+}
+
+/// 自定义错误
+class ErrorCustom extends ErrorBase {
+  // 自定义错误实现
+  // ...
+}
+```
+
+#### 全局错误处理器
+```dart
+// 错误工厂方法类型定义
+typedef GlobalErrorBusinessFactory = ErrorGlobalBusiness? Function(
+  BaseDtoModel model,
+);
+
+typedef CustomErrorFactory = ErrorCustom? Function(BaseDtoModel model);
+
+// 全局错误处理流程
+// 在网络引擎中自动调用错误处理器链
+// 支持自定义全局错误处理器扩展
+```
+
+#### 错误类型枚举
+```dart
+// 全局通用错误类型
+enum GlobalCommonErrorType {
+  timeout,
+  noNetwork,
+  serverError,
+  parseError,
+  other,
 }
 ```
 
@@ -634,86 +666,150 @@ class NetworkConfig {
 
 ## 使用示例
 
-### 基本用法
+基于实际项目的网络请求使用方法。
+
+### 基本初始化和使用
 ```dart
-// 初始化网络服务
-final config = NetworkConfig.forEnvironment(NetworkEnvironment.production);
-final client = NetworkClient(
-  baseUrl: config.baseUrl,
-  connectTimeout: config.connectTimeout,
-  receiveTimeout: config.receiveTimeout,
-);
-final networkService = NetworkService(client);
+// 初始化网络库
+final option = DefaultNetworkEngineOption()
+  ..baseUrl = 'https://api.oneapp.com'
+  ..debuggable = true
+  ..environment = 'production';
 
-// GET 请求
-final result = await networkService.get<List<User>>(
-  path: '/users',
-  queryParameters: {'page': 1, 'limit': 20},
-  fromJson: (data) => (data as List)
-      .map((item) => User.fromJson(item))
-      .toList(),
-);
+// 初始化默认网络引擎
+initNetwork(option: option);
 
-result.fold(
-  (failure) => print('请求失败: ${failure.toString()}'),
-  (users) => print('获取到 ${users.length} 个用户'),
-);
+// 直接使用全局方法发起请求
+try {
+  final response = await request<UserModel>(
+    RequestOptions(
+      path: '/users/profile',
+      method: 'GET',
+    ),
+  );
+  print('用户信息: ${response.name}');
+} on ErrorBase catch (e) {
+  print('请求失败: ${e.errorMessage}');
+}
+```
 
-// POST 请求
-final createResult = await networkService.post<User>(
-  path: '/users',
-  data: {
-    'name': 'John Doe',
-    'email': 'john@example.com',
+### 使用RequestApi
+```dart
+// 创建自定义网络引擎
+final customOption = DefaultNetworkEngineOption()
+  ..baseUrl = 'https://custom-api.com'
+  ..retryTime = 5
+  ..connectTimeout = 15000;
+
+final api = customNetworkEngine(customOption);
+
+// 使用回调方式处理请求
+await api.requestWithCallback<List<ArticleModel>>(
+  RequestOptions(
+    path: '/articles',
+    method: 'GET',
+    queryParameters: {'page': 1, 'limit': 20},
+  ),
+  (articles) {
+    print('获取到 ${articles.length} 篇文章');
   },
-  fromJson: (data) => User.fromJson(data),
+  (error) {
+    print('请求失败: ${error.errorMessage}');
+    
+    // 处理特定类型的错误
+    if (error is ErrorGlobalBusiness) {
+      print('业务错误码: ${error.businessCode}');
+    }
+  },
 );
 ```
 
-### 高级用法
+### 文件上传和下载
 ```dart
-// 带缓存的请求
-final cachedResult = await networkService.getWithCache<List<Article>>(
-  path: '/articles',
-  cacheKey: 'articles_list',
-  cacheDuration: Duration(minutes: 10),
-  fromJson: (data) => (data as List)
-      .map((item) => Article.fromJson(item))
-      .toList(),
-);
-
 // 文件上传
-final uploadResult = await networkService.upload<UploadResponse>(
-  path: '/upload',
-  file: File('path/to/file.jpg'),
-  fileName: 'avatar.jpg',
-  fromJson: (data) => UploadResponse.fromJson(data),
+final uploadResponse = await api.upload(
+  options: RequestOptions(
+    path: '/upload',
+    method: 'POST',
+    data: FormData.fromMap({
+      'file': await MultipartFile.fromFile('/path/to/file.jpg'),
+      'description': '头像上传',
+    }),
+  ),
+  onSendProgress: (sent, total) {
+    final progress = (sent / total * 100).toStringAsFixed(1);
+    print('上传进度: $progress%');
+  },
 );
 
-// 批量请求
-final batchResults = await Future.wait([
-  networkService.get<UserProfile>(path: '/profile'),
-  networkService.get<List<Notification>>(path: '/notifications'),
-  networkService.get<AppConfig>(path: '/config'),
-]);
+// 文件下载
+await download(
+  savePath: '/path/to/save/file.pdf',
+  options: RequestOptions(
+    path: '/download/document.pdf',
+    method: 'GET',
+  ),
+  onReceiveProgress: (received, total) {
+    final progress = (received / total * 100).toStringAsFixed(1);
+    print('下载进度: $progress%');
+  },
+);
+```
+
+### 自定义配置示例
+```dart
+// 创建带有自定义拦截器的配置
+class MyNetworkOption extends DefaultNetworkEngineOption {
+  @override
+  String get baseUrl => 'https://my-api.com';
+
+  @override
+  List<Interceptor> get interceptors => [
+    MyAuthInterceptor(),
+    MyLoggingInterceptor(),
+  ];
+
+  @override
+  List<GlobalErrorHandler> get globalErrorHandlers => [
+    MyCustomErrorHandler(),
+  ];
+
+  @override
+  bool get debuggable => kDebugMode;
+
+  @override
+  int get retryTime => 3;
+}
 ```
 
 ## 依赖管理
 
+基于实际的pubspec.yaml配置，展示真实的项目依赖关系。
+
 ### 核心依赖
-- **dio**: HTTP 客户端库
-- **http_parser**: HTTP 解析工具
-- **pretty_dio_logger**: 美化的请求日志
+```yaml
+# 实际项目依赖配置
+dependencies:
+  http_parser: ^4.0.2          # HTTP 解析工具
+  dio: ^5.7.0                  # HTTP 客户端库（核心）
+  pretty_dio_logger: ^1.3.1    # 美化的请求日志
+  freezed_annotation: ^2.2.0   # 不可变类注解
+  json_annotation: ^4.8.1      # JSON 序列化注解
 
-### 代码生成依赖
-- **freezed**: 不可变类生成
-- **json_annotation**: JSON 序列化注解
-- **json_serializable**: JSON 序列化生成器
+dev_dependencies:
+  json_serializable: ^6.7.0    # JSON 序列化生成器
+  build_runner: ^2.4.5         # 代码生成引擎
+  test: ^1.24.3                # 单元测试框架
+  coverage: ^1.6.3             # 测试覆盖率工具
+  freezed: ^2.3.5              # 不可变类生成器
+  flutter_lints: ^5.0.0        # 代码规范检查
+```
 
-### 开发依赖
-- **build_runner**: 代码生成引擎
-- **test**: 单元测试框架
-- **coverage**: 测试覆盖率工具
+### 实际的版本信息
+- **模块名称**: basic_network
+- **版本**: 0.2.3+4
+- **仓库**: https://gitlab-rd0.maezia.com/eziahz/oneapp/ezia-oneapp-basic-network
+- **Dart 版本**: >=2.17.0 <4.0.0
 
 ## 性能优化
 

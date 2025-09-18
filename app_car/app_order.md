@@ -2,14 +2,13 @@
 
 ## 模块概述
 
-`app_order` 是 OneApp 车辆模块群中的订单管理核心模块，提供完整的订单生命周期管理，包括订单创建、支付处理、状态跟踪、订单历史等功能。该模块与支付系统、账户系统深度集成，为用户提供统一的订单管理体验。
+`app_order` 是 OneApp 车辆模块群中的订单管理核心模块，提供完整的订单生命周期管理，包括订单详情查看、发票管理、退款处理、订单历史等功能。该模块与支付系统、账户系统深度集成，为用户提供统一的订单管理体验。
 
 ### 基本信息
 - **模块名称**: app_order
-- **版本**: 0.2.15+1
-- **仓库**: https://gitlab-rd0.maezia.com/dssomobile/oneapp/dssomobile-oneapp-app-order
-- **Flutter 版本**: >=3.10.0
-- **Dart 版本**: >=2.16.2 <4.0.0
+- **路径**: oneapp_app_car/app_order/
+- **依赖**: clr_order, basic_modular, basic_modular_route, ui_basic
+- **主要功能**: 订单详情、发票管理、退款处理、订单中心
 
 ## 目录结构
 
@@ -19,12 +18,22 @@ app_order/
 │   ├── app_order.dart            # 主导出文件
 │   └── src/                      # 源代码目录
 │       ├── pages/                # 订单页面
-│       ├── widgets/              # 订单组件
+│       │   ├── order_center_page.dart        # 订单中心页面
+│       │   ├── orderdetail/                  # 订单详情页面
+│       │   ├── orderlist/                    # 订单列表页面
+│       │   ├── invoice/                      # 发票相关页面
+│       │   │   ├── invoiceChooseManagePage/  # 发票选择管理
+│       │   │   ├── invoiceDetailsPage/       # 发票详情
+│       │   │   ├── invoiceHistoryCenterPage/ # 发票历史
+│       │   │   └── ...                       # 其他发票功能
+│       │   └── refunddetail/                 # 退款详情页面
+│       ├── bloc/                 # 状态管理（BLoC）
 │       ├── models/               # 数据模型
-│       ├── services/             # 服务层
-│       ├── blocs/                # 状态管理
 │       ├── utils/                # 工具类
-│       └── constants/            # 常量定义
+│       ├── constants/            # 常量定义
+│       ├── order_module.dart     # 订单模块配置
+│       ├── route_dp.dart         # 路由配置
+│       └── route_export.dart     # 路由导出
 ├── assets/                       # 静态资源
 ├── uml.puml/png/svg             # UML 设计图
 ├── pubspec.yaml                  # 依赖配置
@@ -33,971 +42,556 @@ app_order/
 
 ## 核心功能模块
 
-### 1. 订单创建与管理
+### 1. 主导出模块
 
-#### 订单创建服务
+**文件**: `lib/app_order.dart`
+
 ```dart
-// 订单创建服务
-class OrderCreationService {
-  final OrderRepository _repository;
-  final PaymentService _paymentService;
-  final AccountService _accountService;
-  final NotificationService _notificationService;
-  
-  OrderCreationService(
-    this._repository,
-    this._paymentService,
-    this._accountService,
-    this._notificationService,
-  );
-  
-  // 创建订单
-  Future<Result<Order>> createOrder({
-    required String userId,
-    required OrderType type,
-    required List<OrderItem> items,
-    required DeliveryInfo deliveryInfo,
-    String? couponCode,
-    String? notes,
-    Map<String, dynamic>? metadata,
-  }) async {
-    try {
-      // 1. 验证用户账户
-      final accountResult = await _accountService.validateAccount(userId);
-      if (accountResult.isLeft()) {
-        return Left(OrderFailure.accountValidationFailed());
-      }
-      
-      // 2. 计算订单金额
-      final pricing = await _calculateOrderPricing(
-        items: items,
-        couponCode: couponCode,
-        deliveryInfo: deliveryInfo,
-      );
-      
-      // 3. 创建订单
-      final order = Order(
-        id: generateOrderId(),
-        userId: userId,
-        type: type,
-        items: items,
-        deliveryInfo: deliveryInfo,
-        pricing: pricing,
-        status: OrderStatus.pending,
-        couponCode: couponCode,
-        notes: notes,
-        metadata: metadata,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-      
-      // 4. 保存订单
-      await _repository.createOrder(order);
-      
-      // 5. 发送订单创建通知
-      await _notificationService.sendOrderCreatedNotification(
-        userId: userId,
-        order: order,
-      );
-      
-      return Right(order);
-    } catch (e) {
-      return Left(OrderFailure.creationFailed(e.toString()));
-    }
-  }
-  
-  // 计算订单价格
-  Future<OrderPricing> _calculateOrderPricing({
-    required List<OrderItem> items,
-    String? couponCode,
-    required DeliveryInfo deliveryInfo,
-  }) async {
-    double subtotal = items.fold(0.0, (sum, item) => sum + item.totalPrice);
-    
-    // 计算优惠券折扣
-    double discount = 0.0;
-    if (couponCode != null) {
-      final coupon = await _repository.validateCoupon(couponCode);
-      if (coupon != null && coupon.isValid) {
-        discount = coupon.calculateDiscount(subtotal);
-      }
-    }
-    
-    // 计算配送费
-    double deliveryFee = await _calculateDeliveryFee(deliveryInfo, subtotal);
-    
-    // 计算税费
-    double tax = _calculateTax(subtotal - discount, deliveryInfo.address);
-    
-    double total = subtotal - discount + deliveryFee + tax;
-    
-    return OrderPricing(
-      subtotal: subtotal,
-      discount: discount,
-      deliveryFee: deliveryFee,
-      tax: tax,
-      total: total,
-    );
-  }
-  
-  // 取消订单
-  Future<Result<void>> cancelOrder({
-    required String orderId,
-    required String reason,
-    String? userId,
-  }) async {
-    try {
-      final order = await _repository.getOrderById(orderId);
-      if (order == null) {
-        return Left(OrderFailure.orderNotFound());
-      }
-      
-      // 检查取消权限
-      if (userId != null && order.userId != userId) {
-        return Left(OrderFailure.permissionDenied());
-      }
-      
-      // 检查订单状态是否允许取消
-      if (!order.canBeCancelled) {
-        return Left(OrderFailure.cannotBeCancelled());
-      }
-      
-      // 处理退款
-      if (order.isPaid) {
-        final refundResult = await _paymentService.processRefund(
-          orderId: orderId,
-          amount: order.pricing.total,
-          reason: reason,
-        );
-        
-        if (refundResult.isLeft()) {
-          return Left(OrderFailure.refundFailed());
-        }
-      }
-      
-      // 更新订单状态
-      await _repository.updateOrderStatus(
-        orderId: orderId,
-        status: OrderStatus.cancelled,
-        reason: reason,
-        updatedAt: DateTime.now(),
-      );
-      
-      return Right(unit);
-    } catch (e) {
-      return Left(OrderFailure.cancellationFailed(e.toString()));
-    }
-  }
-}
+library app_order;
+
+// 页面导出
+export 'src/pages/order_center_page.dart';
+export 'src/pages/orderdetail/orderdetail_page.dart';
+export 'src/pages/orderlist/orderlist_page.dart';
+export 'src/pages/invoice/invoiceChooseManagePage/invoiceChooseManage_page.dart';
+export 'src/pages/invoice/invoiceDetailsPage/invoiceDetails_page.dart';
+export 'src/pages/invoice/invoiceHistoryCenterPage/invoiceHistoryCenter_page.dart';
+export 'src/pages/refunddetail/refunddetail_page.dart';
+
+// 模块配置导出
+export 'src/order_module.dart';
+export 'src/route_dp.dart';
+export 'src/route_export.dart';
 ```
 
-### 2. 订单支付处理
+### 2. 订单模块配置
 
-#### 支付集成服务
+**文件**: `src/order_module.dart`
+
 ```dart
-// 订单支付服务
-class OrderPaymentService {
-  final PaymentService _paymentService;
-  final OrderRepository _repository;
-  
-  OrderPaymentService(this._paymentService, this._repository);
-  
-  // 处理订单支付
-  Future<Result<PaymentResult>> processOrderPayment({
-    required String orderId,
-    required PaymentMethod paymentMethod,
-    Map<String, dynamic>? paymentData,
-  }) async {
-    try {
-      final order = await _repository.getOrderById(orderId);
-      if (order == null) {
-        return Left(OrderFailure.orderNotFound());
-      }
-      
-      if (order.status != OrderStatus.pending) {
-        return Left(OrderFailure.orderNotPayable());
-      }
-      
-      // 创建支付请求
-      final paymentRequest = PaymentRequest(
-        orderId: orderId,
-        amount: order.pricing.total,
-        currency: 'CNY',
-        paymentMethod: paymentMethod,
-        description: '订单支付 - ${order.id}',
-        metadata: {
-          'order_id': orderId,
-          'user_id': order.userId,
-          'order_type': order.type.toString(),
-        },
-        additionalData: paymentData,
-      );
-      
-      // 处理支付
-      final paymentResult = await _paymentService.processPayment(paymentRequest);
-      
-      return paymentResult.fold(
-        (failure) => Left(OrderFailure.paymentFailed(failure.message)),
-        (result) async {
-          // 更新订单支付状态
-          await _updateOrderPaymentStatus(orderId, result);
-          return Right(result);
-        },
-      );
-    } catch (e) {
-      return Left(OrderFailure.paymentProcessingFailed(e.toString()));
-    }
-  }
-  
-  // 更新订单支付状态
-  Future<void> _updateOrderPaymentStatus(
-    String orderId,
-    PaymentResult paymentResult,
-  ) async {
-    OrderStatus newStatus;
-    switch (paymentResult.status) {
-      case PaymentStatus.success:
-        newStatus = OrderStatus.paid;
-        break;
-      case PaymentStatus.pending:
-        newStatus = OrderStatus.paymentPending;
-        break;
-      case PaymentStatus.failed:
-        newStatus = OrderStatus.paymentFailed;
-        break;
-      case PaymentStatus.cancelled:
-        newStatus = OrderStatus.pending;
-        break;
-    }
-    
-    await _repository.updateOrderPayment(
-      orderId: orderId,
-      paymentId: paymentResult.paymentId,
-      paymentStatus: paymentResult.status,
-      orderStatus: newStatus,
-      paidAt: paymentResult.status == PaymentStatus.success 
-          ? DateTime.now() 
-          : null,
-    );
-  }
-  
-  // 验证支付结果
-  Future<Result<void>> verifyPayment({
-    required String orderId,
-    required String paymentId,
-  }) async {
-    try {
-      final verificationResult = await _paymentService.verifyPayment(paymentId);
-      
-      return verificationResult.fold(
-        (failure) => Left(OrderFailure.paymentVerificationFailed()),
-        (isValid) async {
-          if (isValid) {
-            await _repository.updateOrderStatus(
-              orderId: orderId,
-              status: OrderStatus.paid,
-              updatedAt: DateTime.now(),
-            );
-            return Right(unit);
-          } else {
-            await _repository.updateOrderStatus(
-              orderId: orderId,
-              status: OrderStatus.paymentFailed,
-              updatedAt: DateTime.now(),
-            );
-            return Left(OrderFailure.paymentVerificationFailed());
-          }
-        },
-      );
-    } catch (e) {
-      return Left(OrderFailure.verificationError(e.toString()));
-    }
-  }
-}
-```
+import 'package:basic_modular/basic_modular.dart';
+import 'package:flutter/material.dart';
+import 'route_dp.dart';
 
-### 3. 订单状态跟踪
-
-#### 订单状态管理服务
-```dart
-// 订单状态跟踪服务
-class OrderTrackingService {
-  final OrderRepository _repository;
-  final NotificationService _notificationService;
-  final LogisticsService _logisticsService;
-  
-  OrderTrackingService(
-    this._repository,
-    this._notificationService,
-    this._logisticsService,
-  );
-  
-  // 更新订单状态
-  Future<Result<void>> updateOrderStatus({
-    required String orderId,
-    required OrderStatus newStatus,
-    String? operatorId,
-    String? notes,
-    Map<String, dynamic>? metadata,
-  }) async {
-    try {
-      final order = await _repository.getOrderById(orderId);
-      if (order == null) {
-        return Left(OrderFailure.orderNotFound());
-      }
-      
-      // 验证状态转换的合法性
-      if (!_isValidStatusTransition(order.status, newStatus)) {
-        return Left(OrderFailure.invalidStatusTransition());
-      }
-      
-      // 创建状态历史记录
-      final statusHistory = OrderStatusHistory(
-        id: generateId(),
-        orderId: orderId,
-        fromStatus: order.status,
-        toStatus: newStatus,
-        operatorId: operatorId,
-        notes: notes,
-        metadata: metadata,
-        createdAt: DateTime.now(),
-      );
-      
-      // 更新订单状态
-      await _repository.updateOrderStatusWithHistory(
-        orderId: orderId,
-        newStatus: newStatus,
-        statusHistory: statusHistory,
-        updatedAt: DateTime.now(),
-      );
-      
-      // 执行状态相关的业务逻辑
-      await _executeStatusChangeActions(order, newStatus);
-      
-      // 发送状态更新通知
-      await _notificationService.sendOrderStatusUpdateNotification(
-        userId: order.userId,
-        orderId: orderId,
-        newStatus: newStatus,
-      );
-      
-      return Right(unit);
-    } catch (e) {
-      return Left(OrderFailure.statusUpdateFailed(e.toString()));
-    }
-  }
-  
-  // 获取订单跟踪信息
-  Future<Result<OrderTrackingInfo>> getOrderTracking(String orderId) async {
-    try {
-      final order = await _repository.getOrderById(orderId);
-      if (order == null) {
-        return Left(OrderFailure.orderNotFound());
-      }
-      
-      final statusHistory = await _repository.getOrderStatusHistory(orderId);
-      
-      // 获取物流信息（如果有）
-      LogisticsInfo? logisticsInfo;
-      if (order.trackingNumber != null) {
-        logisticsInfo = await _logisticsService.getLogisticsInfo(
-          order.trackingNumber!,
-        );
-      }
-      
-      final trackingInfo = OrderTrackingInfo(
-        order: order,
-        statusHistory: statusHistory,
-        logisticsInfo: logisticsInfo,
-        estimatedDelivery: _calculateEstimatedDelivery(order),
-      );
-      
-      return Right(trackingInfo);
-    } catch (e) {
-      return Left(OrderFailure.trackingLoadFailed(e.toString()));
-    }
-  }
-  
-  // 验证状态转换合法性
-  bool _isValidStatusTransition(OrderStatus fromStatus, OrderStatus toStatus) {
-    final validTransitions = {
-      OrderStatus.pending: [
-        OrderStatus.paid,
-        OrderStatus.paymentFailed,
-        OrderStatus.cancelled,
-      ],
-      OrderStatus.paid: [
-        OrderStatus.processing,
-        OrderStatus.cancelled,
-      ],
-      OrderStatus.processing: [
-        OrderStatus.shipped,
-        OrderStatus.cancelled,
-      ],
-      OrderStatus.shipped: [
-        OrderStatus.delivered,
-        OrderStatus.returnRequested,
-      ],
-      OrderStatus.delivered: [
-        OrderStatus.completed,
-        OrderStatus.returnRequested,
-      ],
-      // ... 其他状态转换规则
-    };
-    
-    return validTransitions[fromStatus]?.contains(toStatus) ?? false;
-  }
-  
-  // 执行状态变更相关操作
-  Future<void> _executeStatusChangeActions(
-    Order order,
-    OrderStatus newStatus,
-  ) async {
-    switch (newStatus) {
-      case OrderStatus.paid:
-        await _onOrderPaid(order);
-        break;
-      case OrderStatus.shipped:
-        await _onOrderShipped(order);
-        break;
-      case OrderStatus.delivered:
-        await _onOrderDelivered(order);
-        break;
-      case OrderStatus.completed:
-        await _onOrderCompleted(order);
-        break;
-      default:
-        break;
-    }
-  }
-}
-```
-
-### 4. 订单数据模型
-
-#### 核心订单模型
-```dart
-// 订单模型
-class Order {
-  final String id;
-  final String userId;
-  final OrderType type;
-  final List<OrderItem> items;
-  final DeliveryInfo deliveryInfo;
-  final OrderPricing pricing;
-  final OrderStatus status;
-  final String? couponCode;
-  final String? notes;
-  final Map<String, dynamic>? metadata;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? paidAt;
-  final DateTime? shippedAt;
-  final DateTime? deliveredAt;
-  final DateTime? completedAt;
-  final String? paymentId;
-  final String? trackingNumber;
-  final List<OrderStatusHistory> statusHistory;
-  
-  const Order({
-    required this.id,
-    required this.userId,
-    required this.type,
-    required this.items,
-    required this.deliveryInfo,
-    required this.pricing,
-    required this.status,
-    this.couponCode,
-    this.notes,
-    this.metadata,
-    required this.createdAt,
-    required this.updatedAt,
-    this.paidAt,
-    this.shippedAt,
-    this.deliveredAt,
-    this.completedAt,
-    this.paymentId,
-    this.trackingNumber,
-    this.statusHistory = const [],
-  });
-  
-  // 业务逻辑方法
-  bool get isPaid => status.index >= OrderStatus.paid.index;
-  bool get isShipped => status.index >= OrderStatus.shipped.index;
-  bool get isDelivered => status.index >= OrderStatus.delivered.index;
-  bool get isCompleted => status == OrderStatus.completed;
-  bool get isCancelled => status == OrderStatus.cancelled;
-  
-  bool get canBeCancelled => [
-    OrderStatus.pending,
-    OrderStatus.paid,
-    OrderStatus.processing,
-  ].contains(status);
-  
-  bool get canBeReturned => [
-    OrderStatus.delivered,
-    OrderStatus.completed,
-  ].contains(status) && 
-      DateTime.now().difference(deliveredAt ?? DateTime.now()).inDays <= 7;
-  
-  Duration get processingTime => updatedAt.difference(createdAt);
-  
-  factory Order.fromJson(Map<String, dynamic> json) {
-    return Order(
-      id: json['id'],
-      userId: json['user_id'],
-      type: OrderType.fromString(json['type']),
-      items: (json['items'] as List)
-          .map((item) => OrderItem.fromJson(item))
-          .toList(),
-      deliveryInfo: DeliveryInfo.fromJson(json['delivery_info']),
-      pricing: OrderPricing.fromJson(json['pricing']),
-      status: OrderStatus.fromString(json['status']),
-      couponCode: json['coupon_code'],
-      notes: json['notes'],
-      metadata: json['metadata'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      paidAt: json['paid_at'] != null ? DateTime.parse(json['paid_at']) : null,
-      shippedAt: json['shipped_at'] != null ? DateTime.parse(json['shipped_at']) : null,
-      deliveredAt: json['delivered_at'] != null ? DateTime.parse(json['delivered_at']) : null,
-      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at']) : null,
-      paymentId: json['payment_id'],
-      trackingNumber: json['tracking_number'],
-    );
-  }
-}
-
-// 订单项模型
-class OrderItem {
-  final String id;
-  final String productId;
-  final String productName;
-  final String productDescription;
-  final String? productImage;
-  final int quantity;
-  final double unitPrice;
-  final double totalPrice;
-  final Map<String, dynamic>? productVariant;
-  final Map<String, dynamic>? metadata;
-  
-  const OrderItem({
-    required this.id,
-    required this.productId,
-    required this.productName,
-    required this.productDescription,
-    this.productImage,
-    required this.quantity,
-    required this.unitPrice,
-    required this.totalPrice,
-    this.productVariant,
-    this.metadata,
-  });
-  
-  factory OrderItem.fromJson(Map<String, dynamic> json) {
-    return OrderItem(
-      id: json['id'],
-      productId: json['product_id'],
-      productName: json['product_name'],
-      productDescription: json['product_description'],
-      productImage: json['product_image'],
-      quantity: json['quantity'],
-      unitPrice: (json['unit_price'] as num).toDouble(),
-      totalPrice: (json['total_price'] as num).toDouble(),
-      productVariant: json['product_variant'],
-      metadata: json['metadata'],
-    );
-  }
-}
-
-// 订单状态枚举
-enum OrderStatus {
-  pending,          // 待支付
-  paymentPending,   // 支付中
-  paymentFailed,    // 支付失败
-  paid,            // 已支付
-  processing,      // 处理中
-  shipped,         // 已发货
-  delivered,       // 已送达
-  completed,       // 已完成
-  cancelled,       // 已取消
-  returnRequested, // 申请退货
-  returned,        // 已退货
-  refunded,        // 已退款
-}
-
-extension OrderStatusExtension on OrderStatus {
-  String get displayName {
-    switch (this) {
-      case OrderStatus.pending:
-        return '待支付';
-      case OrderStatus.paymentPending:
-        return '支付中';
-      case OrderStatus.paymentFailed:
-        return '支付失败';
-      case OrderStatus.paid:
-        return '已支付';
-      case OrderStatus.processing:
-        return '处理中';
-      case OrderStatus.shipped:
-        return '已发货';
-      case OrderStatus.delivered:
-        return '已送达';
-      case OrderStatus.completed:
-        return '已完成';
-      case OrderStatus.cancelled:
-        return '已取消';
-      case OrderStatus.returnRequested:
-        return '申请退货';
-      case OrderStatus.returned:
-        return '已退货';
-      case OrderStatus.refunded:
-        return '已退款';
-    }
-  }
-  
-  Color get color {
-    switch (this) {
-      case OrderStatus.pending:
-      case OrderStatus.paymentPending:
-        return Colors.orange;
-      case OrderStatus.paymentFailed:
-      case OrderStatus.cancelled:
-        return Colors.red;
-      case OrderStatus.paid:
-      case OrderStatus.processing:
-        return Colors.blue;
-      case OrderStatus.shipped:
-        return Colors.purple;
-      case OrderStatus.delivered:
-      case OrderStatus.completed:
-        return Colors.green;
-      case OrderStatus.returnRequested:
-      case OrderStatus.returned:
-      case OrderStatus.refunded:
-        return Colors.grey;
-    }
-  }
-  
-  static OrderStatus fromString(String value) {
-    return OrderStatus.values.firstWhere(
-      (status) => status.toString().split('.').last == value,
-      orElse: () => OrderStatus.pending,
-    );
-  }
-}
-```
-
-## 页面组件设计
-
-### 订单列表页面
-```dart
-// 订单列表页面
-class OrderListPage extends StatefulWidget {
+/// App Order 模块定义
+class AppOrderModule extends Module {
   @override
-  _OrderListPageState createState() => _OrderListPageState();
+  String get name => "app_order";
+
+  @override
+  List<Bind> get binds => [];
+
+  @override
+  List<ModularRoute> get routes => OrderRouteController.routes;
+}
+```
+
+### 3. 路由导出管理
+
+**文件**: `src/route_export.dart`
+
+```dart
+import 'package:basic_modular_route/basic_modular_route.dart';
+
+class AppOrderRouteExport {
+  /// 订单中心路径
+  static const String orderCenter = "/order-center";
+  
+  /// 订单详情路径
+  static const String orderDetail = "/order-detail";
+  
+  /// 订单列表路径
+  static const String orderList = "/order-list";
+  
+  /// 发票管理路径
+  static const String invoiceManage = "/invoice-manage";
+  
+  /// 发票详情路径
+  static const String invoiceDetail = "/invoice-detail";
+  
+  /// 发票历史中心路径
+  static const String invoiceHistoryCenter = "/invoice-history-center";
+  
+  /// 退款详情路径
+  static const String refundDetail = "/refund-detail";
+
+  /// 跳转到订单中心
+  static Future<T?> gotoOrderCenter<T extends Object?>(
+    ModularRouteInformation information,
+  ) {
+    return information.pushNamed<T>(orderCenter);
+  }
+
+  /// 跳转到订单详情
+  static Future<T?> gotoOrderDetail<T extends Object?>(
+    ModularRouteInformation information, {
+    required String orderId,
+  }) {
+    return information.pushNamed<T>(
+      orderDetail,
+      arguments: {'orderId': orderId},
+    );
+  }
+
+  /// 跳转到发票管理页面
+  static Future<T?> gotoInvoiceManage<T extends Object?>(
+    ModularRouteInformation information,
+  ) {
+    return information.pushNamed<T>(invoiceManage);
+  }
+
+  /// 跳转到发票详情页面
+  static Future<T?> gotoInvoiceDetail<T extends Object?>(
+    ModularRouteInformation information, {
+    required String invoiceId,
+  }) {
+    return information.pushNamed<T>(
+      invoiceDetail,
+      arguments: {'invoiceId': invoiceId},
+    );
+  }
+
+  /// 跳转到退款详情页面
+  static Future<T?> gotoRefundDetail<T extends Object?>(
+    ModularRouteInformation information, {
+    required String refundId,
+  }) {
+    return information.pushNamed<T>(
+      refundDetail,
+      arguments: {'refundId': refundId},
+    );
+  }
+}
+```
+
+### 4. 订单中心页面
+
+**文件**: `src/pages/order_center_page.dart`
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:basic_modular_route/basic_modular_route.dart';
+import 'package:ui_basic/ui_basic.dart';
+import '../bloc/order_center_bloc.dart';
+
+class OrderCenterPage extends StatefulWidget {
+  @override
+  _OrderCenterPageState createState() => _OrderCenterPageState();
 }
 
-class _OrderListPageState extends State<OrderListPage>
+class _OrderCenterPageState extends State<OrderCenterPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  late OrderListBloc _orderBloc;
-  
+  int _currentIndex = 0;
+
+  final List<String> _tabTitles = [
+    '全部订单',
+    '待付款',
+    '已付款',
+    '已完成',
+    '已取消',
+  ];
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
-    _orderBloc = context.read<OrderListBloc>();
-    _orderBloc.add(LoadOrders());
+    _tabController = TabController(
+      length: _tabTitles.length,
+      vsync: this,
+    );
+    
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {
+          _currentIndex = _tabController.index;
+        });
+      }
+    });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('我的订单'),
+        title: Text('订单中心'),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
         bottom: TabBar(
           controller: _tabController,
-          isScrollable: true,
-          tabs: [
-            Tab(text: '全部'),
-            Tab(text: '待支付'),
-            Tab(text: '待发货'),
-            Tab(text: '待收货'),
-            Tab(text: '已完成'),
-          ],
-          onTap: (index) => _onTabChanged(index),
+          tabs: _tabTitles.map((title) => Tab(text: title)).toList(),
+          indicatorColor: Theme.of(context).primaryColor,
+          labelColor: Theme.of(context).primaryColor,
+          unselectedLabelColor: Colors.grey,
+          isScrollable: false,
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildOrderList(null),
-          _buildOrderList(OrderStatus.pending),
-          _buildOrderList(OrderStatus.paid),
-          _buildOrderList(OrderStatus.shipped),
-          _buildOrderList(OrderStatus.completed),
-        ],
+        children: _tabTitles.map((title) => _buildOrderList(title)).toList(),
       ),
     );
   }
-  
-  Widget _buildOrderList(OrderStatus? status) {
-    return BlocBuilder<OrderListBloc, OrderListState>(
-      builder: (context, state) {
-        if (state is OrderListLoaded) {
-          final filteredOrders = status != null
-              ? state.orders.where((order) => order.status == status).toList()
-              : state.orders;
-          
-          if (filteredOrders.isEmpty) {
-            return _buildEmptyState();
-          }
-          
-          return RefreshIndicator(
-            onRefresh: () async {
-              _orderBloc.add(RefreshOrders());
-            },
-            child: ListView.builder(
-              padding: EdgeInsets.all(16),
-              itemCount: filteredOrders.length,
-              itemBuilder: (context, index) {
-                return OrderCard(
-                  order: filteredOrders[index],
-                  onTap: () => _navigateToOrderDetail(filteredOrders[index]),
-                );
-              },
-            ),
-          );
-        } else if (state is OrderListError) {
-          return _buildErrorState(state.message);
-        }
-        return _buildLoadingState();
-      },
-    );
-  }
-}
 
-// 订单卡片组件
-class OrderCard extends StatelessWidget {
-  final Order order;
-  final VoidCallback? onTap;
-  
-  const OrderCard({
-    Key? key,
-    required this.order,
-    this.onTap,
-  }) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
+  Widget _buildOrderList(String tabTitle) {
+    return Container(
+      child: RefreshIndicator(
+        onRefresh: () async {
+          // 刷新订单列表
+          await _refreshOrderList(tabTitle);
+        },
+        child: ListView.builder(
           padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              SizedBox(height: 12),
-              _buildItems(),
-              SizedBox(height: 12),
-              _buildFooter(),
-            ],
-          ),
+          itemBuilder: (context, index) => _buildOrderCard(index),
+          itemCount: 10, // 示例数量
         ),
       ),
     );
   }
-  
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Text(
-          '订单号: ${order.id}',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-        Spacer(),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: order.status.color.withOpacity(0.1),
-            border: Border.all(color: order.status.color),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            order.status.displayName,
-            style: TextStyle(
-              fontSize: 12,
-              color: order.status.color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildItems() {
-    return Column(
-      children: order.items.take(3).map((item) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 8),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  item.productImage ?? '',
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 50,
-                      height: 50,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.image, color: Colors.grey),
-                    );
-                  },
+
+  Widget _buildOrderCard(int index) {
+    return Card(
+      margin: EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '订单号：20231201${(index + 1000)}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
+                Text(
+                  '已付款',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Text(
+              '服务内容：车辆充电服务',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            SizedBox(height: 4),
+            Text(
+              '金额：￥${(index * 50 + 100)}.00',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
               ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '下单时间：2023-12-0${index % 9 + 1} 14:30',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 12,
+                  ),
+                ),
+                Row(
                   children: [
-                    Text(
-                      item.productName,
-                      style: TextStyle(fontSize: 14),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    TextButton(
+                      onPressed: () => _viewOrderDetail(index),
+                      child: Text('查看详情'),
                     ),
-                    Text(
-                      '数量: ${item.quantity}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                    TextButton(
+                      onPressed: () => _manageInvoice(index),
+                      child: Text('发票管理'),
                     ),
                   ],
                 ),
-              ),
-              Text(
-                '¥${item.totalPrice.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
-  
-  Widget _buildFooter() {
-    return Row(
-      children: [
-        Text(
-          '共${order.items.length}件商品',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-        Spacer(),
-        Text(
-          '合计: ¥${order.pricing.total.toStringAsFixed(2)}',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-          ),
-        ),
-      ],
-    );
+
+  Future<void> _refreshOrderList(String tabTitle) async {
+    // 模拟刷新延时
+    await Future.delayed(Duration(seconds: 1));
+  }
+
+  void _viewOrderDetail(int index) {
+    ModularRouteInformation.of(context).pushNamed('/order-detail',
+        arguments: {'orderId': '20231201${(index + 1000)}'});
+  }
+
+  void _manageInvoice(int index) {
+    ModularRouteInformation.of(context).pushNamed('/invoice-manage',
+        arguments: {'orderId': '20231201${(index + 1000)}'});
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }
 ```
 
-## 状态管理
+### 5. 路由配置系统
 
-### 订单状态管理
+**文件**: `src/route_dp.dart`
+
 ```dart
-// 订单列表状态 BLoC
-class OrderListBloc extends Bloc<OrderListEvent, OrderListState> {
-  final OrderRepository _repository;
+import 'package:basic_modular/modular.dart';
+import 'route_export.dart';
+
+/// 订单中心页面路由key
+class OrderCenterRouteKey implements RouteKey {
+  /// 默认构造器
+  const OrderCenterRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyOrderCenter;
+}
+
+/// 订单详情页面路由key
+class OrderDetailRouteKey implements RouteKey {
+  /// 默认构造器
+  const OrderDetailRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyOrderDetail;
+}
+
+/// 订单退款详情页面路由key
+class RefundDetailRouteKey implements RouteKey {
+  /// 默认构造器
+  const RefundDetailRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyRefundDetail;
+}
+
+/// 发票抬头选择管理页路由key
+class InvoiceTitleCMRouteKey implements RouteKey {
+  /// 默认构造器
+  const InvoiceTitleCMRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyInvoiceCM;
+}
+
+/// 开具发票抬头提交页/发票抬头详情页
+class InvoiceTitleDetailsRouteKey implements RouteKey {
+  /// 默认构造器
+  const InvoiceTitleDetailsRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyInvoiceTitleDetails;
+}
+
+/// 发票历史
+class InvoiceHistoryRouteKey implements RouteKey {
+  /// 默认构造器
+  const InvoiceHistoryRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyInvoiceHistory;
+}
+
+/// 发票详情页
+class InvoiceDetailsRouteKey implements RouteKey {
+  /// 默认构造器
+  const InvoiceDetailsRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyInvoiceDetails;
+}
+
+/// 可开发票列表页
+class OpenInvoiceOrderChooseRouteKey implements RouteKey {
+  /// 默认构造器
+  const OpenInvoiceOrderChooseRouteKey();
+
+  @override
+  String get routeKey => AppOrderRouteExport.keyOpneInvoiceOrderChoose;
+}
+```
+
+## 实际项目集成
+
+### 依赖配置
+
+**文件**: `pubspec.yaml`
+
+```yaml
+name: app_order
+description: OneApp 订单管理模块
+
+dependencies:
+  flutter:
+    sdk: flutter
   
-  OrderListBloc(this._repository) : super(OrderListInitial()) {
-    on<LoadOrders>(_onLoadOrders);
-    on<RefreshOrders>(_onRefreshOrders);
-    on<FilterOrders>(_onFilterOrders);
-  }
+  # 基础依赖
+  basic_modular:
+    path: ../../oneapp_basic_utils/base_mvvm
+  basic_modular_route:
+    path: ../../oneapp_basic_utils/basic_modular_route
+  ui_basic:
+    path: ../../oneapp_basic_uis/ui_basic
   
-  Future<void> _onLoadOrders(
-    LoadOrders event,
-    Emitter<OrderListState> emit,
-  ) async {
-    emit(OrderListLoading());
+  # 订单核心依赖
+  clr_order:
+    path: ../clr_order
     
-    try {
-      final orders = await _repository.getUserOrders(
-        userId: event.userId,
-        status: event.status,
-        page: 1,
-        pageSize: 20,
-      );
-      
-      emit(OrderListLoaded(orders));
-    } catch (e) {
-      emit(OrderListError('加载订单失败: $e'));
-    }
+  # 其他依赖
+  flutter_bloc: ^8.1.3
+  equatable: ^2.0.5
+  dio: ^5.3.2
+  cached_network_image: ^3.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+```
+
+### 模块集成流程
+
+#### 1. 模块注册
+
+在主应用中注册订单模块：
+
+```dart
+// main_app 集成代码
+import 'package:app_order/app_order.dart';
+
+void setupOrderModule() {
+  // 注册订单模块
+  Modular.bindModule(AppOrderModule());
+  
+  // 配置路由
+  Get.routing.add(
+    AppOrderRouteExport.keyOrderCenter,
+    page: () => OrderCenterPage(),
+    binding: OrderCenterBinding(),
+  );
+}
+```
+
+#### 2. 功能特性
+
+- **多状态订单管理**: 支持待付款、已付款、已完成、已取消等多种状态
+- **发票系统集成**: 完整的发票申请、管理、历史查看功能  
+- **退款处理**: 订单退款申请和详情查看
+- **实时状态更新**: TabController 实现的多 Tab 订单分类浏览
+- **响应式设计**: 支持刷新和分页加载的订单列表
+- **模块化架构**: 基于 basic_modular 的标准化模块设计
+
+#### 3. 与其他模块的集成
+
+```dart
+// 与其他车辆服务模块的集成示例
+class OrderIntegrationService {
+  // 从充电模块创建订单
+  Future<void> createChargingOrder(ChargingSession session) async {
+    await AppOrderRouteExport.gotoOrderCenter(
+      ModularRouteInformation.current(),
+    );
+  }
+  
+  // 从维保模块创建订单  
+  Future<void> createMaintenanceOrder(MaintenanceAppointment appointment) async {
+    await AppOrderRouteExport.gotoOrderDetail(
+      ModularRouteInformation.current(),
+      orderId: appointment.orderId,
+    );
   }
 }
 ```
 
-## 依赖管理
+## 技术架构与设计模式
 
-### 核心依赖
-- **basic_modular**: 模块化框架
-- **basic_modular_route**: 路由管理
-- **basic_network**: 网络请求
-- **basic_logger**: 日志记录
-- **basic_intl**: 国际化支持
+### 1. 模块化架构
 
-### UI 依赖
-- **ui_basic**: 基础 UI 组件
-- **ui_payment**: 支付界面组件
+app_order 模块采用标准的 OneApp 模块化架构：
 
-### 服务依赖
-- **clr_payment**: 支付服务 SDK
-- **clr_account**: 账户服务 SDK
-- **clr_order**: 订单服务 SDK (本地路径)
+- **模块定义**: `AppOrderModule` 继承自 `basic_modular.Module`
+- **路由管理**: 通过 `AppOrderRouteExport` 统一管理所有路由
+- **依赖注入**: 使用 basic_modular 的依赖注入机制
+- **状态管理**: 基于 BLoC 模式的响应式状态管理
 
-## 错误处理
+### 2. 核心功能实现
 
-### 订单异常定义
+#### 订单中心页面特性
+- **TabController**: 5个标签页（全部、待付款、已付款、已完成、已取消）
+- **响应式设计**: 支持下拉刷新的 RefreshIndicator
+- **卡片列表**: 每个订单展示为 Card 组件
+- **导航集成**: 与订单详情页和发票管理页面的路由跳转
+
+#### 发票管理系统
+- **发票选择管理**: `invoiceChooseManagePage`
+- **发票详情页面**: `invoiceDetailsPage`  
+- **发票历史中心**: `invoiceHistoryCenterPage`
+- **发票抬头管理**: 支持个人和企业发票抬头
+
+#### 退款处理流程
+- **退款详情页**: `refunddetail_page.dart`
+- **退款状态跟踪**: 支持退款进度查看
+- **退款原因记录**: 详细的退款申请理由
+
+### 3. 与其他模块集成
+
 ```dart
-// 订单功能异常
-abstract class OrderFailure {
-  const OrderFailure();
+// 集成示例 - 从其他模块跳转到订单相关页面
+class OrderNavigationHelper {
+  // 从充电模块跳转到订单中心
+  static void gotoOrderCenterFromCharging() {
+    AppOrderRouteExport.gotoOrderCenter(
+      ModularRouteInformation.current(),
+    );
+  }
   
-  factory OrderFailure.creationFailed(String message) = OrderCreationFailure;
-  factory OrderFailure.paymentFailed(String message) = OrderPaymentFailure;
-  factory OrderFailure.orderNotFound() = OrderNotFoundFailure;
-  factory OrderFailure.permissionDenied() = OrderPermissionDeniedFailure;
-  factory OrderFailure.cannotBeCancelled() = OrderCannotBeCancelledFailure;
-  factory OrderFailure.invalidStatusTransition() = InvalidStatusTransitionFailure;
+  // 从维保模块跳转到具体订单详情
+  static void gotoOrderDetailFromMaintenance(String orderId) {
+    AppOrderRouteExport.gotoOrderDetail(
+      ModularRouteInformation.current(),
+      orderId: orderId,
+    );
+  }
 }
 ```
 
-## 总结
+## 最佳实践与规范
 
-`app_order` 模块为 OneApp 提供了完整的订单管理解决方案，涵盖了订单创建、支付处理、状态跟踪、历史查询等全生命周期功能。模块与支付系统、账户系统深度集成，通过清晰的状态管理和完善的错误处理机制，为用户提供了可靠的订单管理体验。
+### 1. 代码组织
+- 页面文件统一放在 `src/pages/` 目录
+- 按功能模块分别组织（订单、发票、退款）
+- 共享组件复用，减少代码重复
+
+### 2. 状态管理
+- 采用 BLoC 模式管理复杂状态
+- TabController 管理标签页切换状态
+- RefreshIndicator 处理列表刷新状态
+
+### 3. 用户体验优化
+- 支持下拉刷新和上拉加载
+- 响应式布局适配不同屏幕尺寸
+- 错误状态友好提示
+
+### 4. 性能优化
+- 列表项懒加载，避免一次性加载过多数据
+- 图片缓存和占位符处理
+- 合理的状态更新频率控制

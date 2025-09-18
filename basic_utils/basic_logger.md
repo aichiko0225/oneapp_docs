@@ -2,940 +2,444 @@
 
 ## 模块概述
 
-`basic_logger` 是 OneApp 基础工具模块群中的日志系统核心模块，提供统一的日志记录、管理和分析功能。该模块支持多级别日志、文件存储、网络上传、崩溃日志收集等功能，并提供了 Android 和 iOS 的原生日志监控能力。
+`basic_logger` 是 OneApp 基础工具模块群中的日志系统核心模块，提供统一的日志记录、管理和分析功能。该模块支持多级别日志、文件存储、网络上传、事件打点等功能，并提供了 Android 和 iOS 的原生日志监控能力。
 
 ### 基本信息
 - **模块名称**: basic_logger
-- **版本**: 0.2.5
-- **类型**: Flutter Plugin
-- **Flutter 版本**: >=2.10.5
-- **Dart 版本**: >=2.16.2 <4.0.0
+- **模块路径**: oneapp_basic_utils/basic_logger
+- **类型**: Flutter Plugin Module
+- **主要功能**: 日志记录、事件打点、文件上传、原生日志监控
+
+### 核心特性
+- **多级别日志**: 支持debug、info、warn、error四个级别
+- **业务标签**: 预定义车联网、账户、充电等业务场景标签
+- **文件记录**: 支持日志文件记录和轮转机制
+- **网络上传**: 支持日志文件网络上传功能
+- **事件打点**: 专门的事件日志记录能力
+- **原生监控**: Android/iOS原生日志监控和采集
+- **性能优化**: 支持日志级别过滤和调试开关
 
 ## 目录结构
 
 ```
 basic_logger/
 ├── lib/
-│   ├── basic_logger.dart         # 主导出文件
-│   └── src/                      # 源代码目录
-│       ├── logger/               # 日志核心实现
-│       ├── appenders/            # 日志输出器
-│       ├── formatters/           # 日志格式化器
-│       ├── filters/              # 日志过滤器
-│       ├── models/               # 数据模型
-│       └── utils/                # 工具类
-├── android/                      # Android 原生实现
-│   ├── src/main/
-│   │   ├── kotlin/               # Kotlin 源码
-│   │   └── java/                 # Java 源码 (遗留)
-│   └── build.gradle             # Android 构建配置
-├── ios/                          # iOS 原生实现
-│   ├── Classes/                  # Objective-C/Swift 源码
-│   └── basic_logger.podspec     # CocoaPods 配置
-├── pubspec.yaml                  # 依赖配置
-└── README.md                     # 项目说明
+│   ├── basic_logger.dart           # 模块入口文件
+│   ├── logcat_monitor.dart         # 原生日志监控
+│   ├── kit_logger_ios.dart         # iOS特定实现
+│   └── src/                        # 源代码目录
+│       ├── event_log/              # 事件日志
+│       │   └── one_event_log.dart
+│       ├── function/               # 核心功能
+│       │   └── one_app_log.dart    # 主日志类
+│       ├── model/                  # 数据模型
+│       │   ├── upload_config.dart
+│       │   └── upload_file_info.dart
+│       ├── record/                 # 记录功能
+│       │   ├── core.dart
+│       │   ├── record_delegate.dart
+│       │   └── impl_dart/
+│       │       ├── dart_record.dart
+│       │       └── dart_file_record_.dart
+│       └── upload/                 # 上传功能
+│           ├── core.dart
+│           └── upload_handler.dart
+├── android/                        # Android原生实现
+├── ios/                           # iOS原生实现
+└── pubspec.yaml                   # 依赖配置
 ```
 
-## 核心功能模块
+## 核心架构组件
 
-### 1. 日志记录器核心
+### 1. 日志级别枚举 (Level)
 
-#### 日志记录器实现
+定义应用日志的级别：
+
 ```dart
-// 日志记录器核心类
-class BasicLogger {
-  static BasicLogger? _instance;
-  static BasicLogger get instance => _instance ??= BasicLogger._internal();
-  
-  BasicLogger._internal();
-  
-  final List<LogAppender> _appenders = [];
-  final List<LogFilter> _filters = [];
-  LogLevel _minimumLevel = LogLevel.info;
-  LogFormatter _formatter = DefaultLogFormatter();
-  
-  // 初始化日志系统
-  Future<void> initialize({
-    LogLevel minimumLevel = LogLevel.info,
-    List<LogAppender>? appenders,
-    List<LogFilter>? filters,
-    LogFormatter? formatter,
-  }) async {
-    _minimumLevel = minimumLevel;
-    
-    if (appenders != null) {
-      _appenders.clear();
-      _appenders.addAll(appenders);
-    } else {
-      // 默认添加控制台和文件输出器
-      _appenders.addAll([
-        ConsoleAppender(),
-        FileAppender(),
-      ]);
-    }
-    
-    if (filters != null) {
-      _filters.clear();
-      _filters.addAll(filters);
-    }
-    
-    if (formatter != null) {
-      _formatter = formatter;
-    }
-    
-    // 初始化各个输出器
-    for (final appender in _appenders) {
-      await appender.initialize();
-    }
-  }
-  
-  // 记录日志
-  void log(
-    LogLevel level,
-    String message, {
-    String? tag,
-    Object? error,
-    StackTrace? stackTrace,
-    Map<String, dynamic>? context,
-  }) {
-    if (level.index < _minimumLevel.index) {
-      return;
-    }
-    
-    final logEntry = LogEntry(
-      level: level,
-      message: message,
-      tag: tag ?? 'BasicLogger',
-      error: error,
-      stackTrace: stackTrace,
-      context: context,
-      timestamp: DateTime.now(),
-      thread: _getCurrentThread(),
-    );
-    
-    // 应用过滤器
-    bool shouldLog = true;
-    for (final filter in _filters) {
-      if (!filter.shouldLog(logEntry)) {
-        shouldLog = false;
-        break;
-      }
-    }
-    
-    if (shouldLog) {
-      final formattedLog = _formatter.format(logEntry);
-      
-      // 发送到所有输出器
-      for (final appender in _appenders) {
-        appender.append(formattedLog, logEntry);
-      }
-    }
-  }
-  
-  // 便捷方法
-  void debug(String message, {String? tag, Map<String, dynamic>? context}) {
-    log(LogLevel.debug, message, tag: tag, context: context);
-  }
-  
-  void info(String message, {String? tag, Map<String, dynamic>? context}) {
-    log(LogLevel.info, message, tag: tag, context: context);
-  }
-  
-  void warning(String message, {String? tag, Object? error, Map<String, dynamic>? context}) {
-    log(LogLevel.warning, message, tag: tag, error: error, context: context);
-  }
-  
-  void error(String message, {String? tag, Object? error, StackTrace? stackTrace, Map<String, dynamic>? context}) {
-    log(LogLevel.error, message, tag: tag, error: error, stackTrace: stackTrace, context: context);
-  }
-  
-  void fatal(String message, {String? tag, Object? error, StackTrace? stackTrace, Map<String, dynamic>? context}) {
-    log(LogLevel.fatal, message, tag: tag, error: error, stackTrace: stackTrace, context: context);
-  }
-  
-  String _getCurrentThread() {
-    // 获取当前线程信息
-    return 'main'; // 简化实现
-  }
-}
-
-// 日志级别枚举
-enum LogLevel {
-  debug,
+/// Log Level
+enum Level {
+  /// none - 无日志
+  none,
+  /// info - 信息日志
   info,
-  warning,
+  /// debug - 调试日志  
+  debug,
+  /// warn - 警告日志
+  warn,
+  /// error - 错误日志
   error,
-  fatal;
-  
-  String get name {
-    switch (this) {
-      case LogLevel.debug:
-        return 'DEBUG';
-      case LogLevel.info:
-        return 'INFO';
-      case LogLevel.warning:
-        return 'WARN';
-      case LogLevel.error:
-        return 'ERROR';
-      case LogLevel.fatal:
-        return 'FATAL';
-    }
-  }
-  
-  Color get color {
-    switch (this) {
-      case LogLevel.debug:
-        return Colors.grey;
-      case LogLevel.info:
-        return Colors.blue;
-      case LogLevel.warning:
-        return Colors.orange;
-      case LogLevel.error:
-        return Colors.red;
-      case LogLevel.fatal:
-        return Colors.purple;
-    }
-  }
-}
-
-// 日志条目模型
-class LogEntry {
-  final LogLevel level;
-  final String message;
-  final String tag;
-  final Object? error;
-  final StackTrace? stackTrace;
-  final Map<String, dynamic>? context;
-  final DateTime timestamp;
-  final String thread;
-  
-  const LogEntry({
-    required this.level,
-    required this.message,
-    required this.tag,
-    this.error,
-    this.stackTrace,
-    this.context,
-    required this.timestamp,
-    required this.thread,
-  });
-  
-  Map<String, dynamic> toJson() {
-    return {
-      'level': level.name,
-      'message': message,
-      'tag': tag,
-      'error': error?.toString(),
-      'stackTrace': stackTrace?.toString(),
-      'context': context,
-      'timestamp': timestamp.toIso8601String(),
-      'thread': thread,
-    };
-  }
 }
 ```
 
-### 2. 日志输出器 (Appenders)
+### 2. 主日志类 (OneAppLog)
 
-#### 控制台输出器
+应用日志的核心实现类：
+
 ```dart
-// 控制台日志输出器
-class ConsoleAppender implements LogAppender {
-  bool _enableColors = true;
-  
-  ConsoleAppender({bool enableColors = true}) : _enableColors = enableColors;
-  
-  @override
-  Future<void> initialize() async {
-    // 控制台输出器无需初始化
-  }
-  
-  @override
-  void append(String formattedLog, LogEntry entry) {
-    if (kDebugMode) {
-      if (_enableColors) {
-        _printWithColor(formattedLog, entry.level);
-      } else {
-        print(formattedLog);
-      }
-    }
-  }
-  
-  void _printWithColor(String message, LogLevel level) {
-    // ANSI 颜色代码
-    const String reset = '\x1B[0m';
-    String colorCode;
-    
-    switch (level) {
-      case LogLevel.debug:
-        colorCode = '\x1B[37m'; // 白色
-        break;
-      case LogLevel.info:
-        colorCode = '\x1B[36m'; // 青色
-        break;
-      case LogLevel.warning:
-        colorCode = '\x1B[33m'; // 黄色
-        break;
-      case LogLevel.error:
-        colorCode = '\x1B[31m'; // 红色
-        break;
-      case LogLevel.fatal:
-        colorCode = '\x1B[35m'; // 紫色
-        break;
-    }
-    
-    print('$colorCode$message$reset');
-  }
-  
-  @override
-  Future<void> close() async {
-    // 控制台输出器无需关闭
-  }
-}
-```
+/// application层：日志
+class OneAppLog {
+  OneAppLog._();
 
-#### 文件输出器
-```dart
-// 文件日志输出器
-class FileAppender implements LogAppender {
-  late File _logFile;
-  late RandomAccessFile _fileHandle;
-  final int _maxFileSize;
-  final int _maxBackupFiles;
-  final Duration _flushInterval;
-  Timer? _flushTimer;
-  final List<String> _buffer = [];
-  final int _bufferSize;
+  /// logger flag
+  static const int loggerFlag = 1;
+  static const String _defaultTag = 'default';
   
-  FileAppender({
-    int maxFileSize = 10 * 1024 * 1024, // 10MB
-    int maxBackupFiles = 5,
-    Duration flushInterval = const Duration(seconds: 5),
-    int bufferSize = 100,
-  }) : _maxFileSize = maxFileSize,
-       _maxBackupFiles = maxBackupFiles,
-       _flushInterval = flushInterval,
-       _bufferSize = bufferSize;
-  
-  @override
-  Future<void> initialize() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final logDir = Directory('${directory.path}/logs');
-    
-    if (!await logDir.exists()) {
-      await logDir.create(recursive: true);
-    }
-    
-    _logFile = File('${logDir.path}/app.log');
-    _fileHandle = await _logFile.open(mode: FileMode.append);
-    
-    // 启动定时刷新
-    _flushTimer = Timer.periodic(_flushInterval, (_) => _flush());
-  }
-  
-  @override
-  void append(String formattedLog, LogEntry entry) {
-    _buffer.add(formattedLog);
-    
-    // 缓冲区满时立即刷新
-    if (_buffer.length >= _bufferSize) {
-      _flush();
-    }
-  }
-  
-  Future<void> _flush() async {
-    if (_buffer.isEmpty) return;
-    
-    try {
-      final content = _buffer.join('\n') + '\n';
-      await _fileHandle.writeString(content);
-      await _fileHandle.flush();
-      _buffer.clear();
-      
-      // 检查文件大小，必要时进行轮转
-      await _checkFileRotation();
-    } catch (e) {
-      print('Failed to flush log buffer: $e');
-    }
-  }
-  
-  Future<void> _checkFileRotation() async {
-    final fileSize = await _logFile.length();
-    if (fileSize > _maxFileSize) {
-      await _rotateLogFiles();
-    }
-  }
-  
-  Future<void> _rotateLogFiles() async {
-    await _fileHandle.close();
-    
-    // 轮转备份文件
-    for (int i = _maxBackupFiles - 1; i >= 1; i--) {
-      final oldFile = File('${_logFile.path}.$i');
-      final newFile = File('${_logFile.path}.${i + 1}');
-      
-      if (await oldFile.exists()) {
-        if (i == _maxBackupFiles - 1) {
-          await oldFile.delete();
-        } else {
-          await oldFile.rename(newFile.path);
-        }
-      }
-    }
-    
-    // 将当前日志文件重命名为 .1
-    await _logFile.rename('${_logFile.path}.1');
-    
-    // 创建新的日志文件
-    _logFile = File(_logFile.path.replaceAll('.1', ''));
-    _fileHandle = await _logFile.open(mode: FileMode.write);
-  }
-  
-  @override
-  Future<void> close() async {
-    _flushTimer?.cancel();
-    await _flush();
-    await _fileHandle.close();
-  }
-}
-```
+  static bool _debuggable = false;
+  static Level _filterLevel = Level.none;
 
-#### 网络输出器
-```dart
-// 网络日志输出器
-class NetworkAppender implements LogAppender {
-  final String _endpoint;
-  final Map<String, String> _headers;
-  final Duration _batchInterval;
-  final int _batchSize;
-  final List<LogEntry> _batch = [];
-  Timer? _batchTimer;
-  final Dio _dio;
-  
-  NetworkAppender({
-    required String endpoint,
-    Map<String, String>? headers,
-    Duration batchInterval = const Duration(seconds: 30),
-    int batchSize = 50,
-  }) : _endpoint = endpoint,
-       _headers = headers ?? {},
-       _batchInterval = batchInterval,
-       _batchSize = batchSize,
-       _dio = Dio();
-  
-  @override
-  Future<void> initialize() async {
-    _batchTimer = Timer.periodic(_batchInterval, (_) => _sendBatch());
-  }
-  
-  @override
-  void append(String formattedLog, LogEntry entry) {
-    _batch.add(entry);
-    
-    if (_batch.length >= _batchSize) {
-      _sendBatch();
-    }
-  }
-  
-  Future<void> _sendBatch() async {
-    if (_batch.isEmpty) return;
-    
-    final batch = List<LogEntry>.from(_batch);
-    _batch.clear();
-    
-    try {
-      final payload = {
-        'logs': batch.map((entry) => entry.toJson()).toList(),
-        'device_info': await _getDeviceInfo(),
-        'app_info': await _getAppInfo(),
-        'timestamp': DateTime.now().toIso8601String(),
-      };
-      
-      await _dio.post(
-        _endpoint,
-        data: payload,
-        options: Options(headers: _headers),
-      );
-    } catch (e) {
-      print('Failed to send log batch: $e');
-      // 可以考虑将失败的日志保存到本地，稍后重试
-    }
-  }
-  
-  Future<Map<String, dynamic>> _getDeviceInfo() async {
-    // 获取设备信息
-    return {
-      'platform': Platform.isAndroid ? 'android' : 'ios',
-      'version': Platform.operatingSystemVersion,
-      // 更多设备信息...
-    };
-  }
-  
-  Future<Map<String, dynamic>> _getAppInfo() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    return {
-      'app_name': packageInfo.appName,
-      'package_name': packageInfo.packageName,
-      'version': packageInfo.version,
-      'build_number': packageInfo.buildNumber,
-    };
-  }
-  
-  @override
-  Future<void> close() async {
-    _batchTimer?.cancel();
-    await _sendBatch();
-  }
-}
-```
-
-### 3. 日志格式化器
-
-#### 默认格式化器
-```dart
-// 日志格式化器接口
-abstract class LogFormatter {
-  String format(LogEntry entry);
-}
-
-// 默认日志格式化器
-class DefaultLogFormatter implements LogFormatter {
-  final String _pattern;
-  final DateFormat _dateFormat;
-  
-  DefaultLogFormatter({
-    String pattern = '{timestamp} [{level}] {tag}: {message}',
-  }) : _pattern = pattern,
-       _dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-  
-  @override
-  String format(LogEntry entry) {
-    String result = _pattern;
-    
-    result = result.replaceAll('{timestamp}', _dateFormat.format(entry.timestamp));
-    result = result.replaceAll('{level}', entry.level.name);
-    result = result.replaceAll('{tag}', entry.tag);
-    result = result.replaceAll('{message}', entry.message);
-    result = result.replaceAll('{thread}', entry.thread);
-    
-    // 添加错误信息
-    if (entry.error != null) {
-      result += '\nError: ${entry.error}';
-    }
-    
-    // 添加堆栈跟踪
-    if (entry.stackTrace != null) {
-      result += '\nStackTrace:\n${entry.stackTrace}';
-    }
-    
-    // 添加上下文信息
-    if (entry.context != null && entry.context!.isNotEmpty) {
-      result += '\nContext: ${jsonEncode(entry.context)}';
-    }
-    
-    return result;
-  }
-}
-
-// JSON 格式化器
-class JsonLogFormatter implements LogFormatter {
-  final bool _prettyPrint;
-  
-  JsonLogFormatter({bool prettyPrint = false}) : _prettyPrint = prettyPrint;
-  
-  @override
-  String format(LogEntry entry) {
-    final json = entry.toJson();
-    
-    if (_prettyPrint) {
-      const encoder = JsonEncoder.withIndent('  ');
-      return encoder.convert(json);
-    } else {
-      return jsonEncode(json);
-    }
-  }
-}
-```
-
-### 4. 崩溃日志处理
-
-#### 崩溃日志收集器
-```dart
-// 崩溃日志收集器
-class CrashLogCollector {
-  static CrashLogCollector? _instance;
-  static CrashLogCollector get instance => _instance ??= CrashLogCollector._internal();
-  
-  CrashLogCollector._internal();
-  
-  late BasicLogger _logger;
-  bool _isInitialized = false;
-  
-  Future<void> initialize(BasicLogger logger) async {
-    if (_isInitialized) return;
-    
-    _logger = logger;
-    
-    // 捕获 Flutter 框架错误
-    FlutterError.onError = (FlutterErrorDetails details) {
-      _logFlutterError(details);
-    };
-    
-    // 捕获其他未处理的异常
-    PlatformDispatcher.instance.onError = (error, stack) {
-      _logUnhandledException(error, stack);
-      return true;
-    };
-    
-    // 捕获 Zone 错误
-    runZonedGuarded(() {
-      // 应用代码在这里运行
-    }, (error, stack) {
-      _logZoneError(error, stack);
-    });
-    
-    _isInitialized = true;
-  }
-  
-  void _logFlutterError(FlutterErrorDetails details) {
-    _logger.fatal(
-      'Flutter Error: ${details.summary}',
-      tag: 'CrashLogger',
-      error: details.exception,
-      stackTrace: details.stack,
-      context: {
-        'library': details.library,
-        'context': details.context?.toString(),
-        'information_collector': details.informationCollector?.toString(),
-      },
-    );
-  }
-  
-  void _logUnhandledException(Object error, StackTrace stack) {
-    _logger.fatal(
-      'Unhandled Exception: $error',
-      tag: 'CrashLogger',
-      error: error,
-      stackTrace: stack,
-    );
-  }
-  
-  void _logZoneError(Object error, StackTrace stack) {
-    _logger.fatal(
-      'Zone Error: $error',
-      tag: 'CrashLogger',
-      error: error,
-      stackTrace: stack,
-    );
-  }
-  
-  // 手动记录崩溃
-  void logCrash({
-    required String message,
-    Object? error,
-    StackTrace? stackTrace,
-    Map<String, dynamic>? context,
+  /// 配置日志系统
+  /// [debuggable] 调试开关
+  /// [filterLevel] 日志过滤级别
+  static void config({
+    bool debuggable = false,
+    Level filterLevel = Level.none,
   }) {
-    _logger.fatal(
-      message,
-      tag: 'ManualCrash',
-      error: error,
-      stackTrace: stackTrace,
-      context: context,
-    );
+    _debuggable = debuggable;
+    _filterLevel = filterLevel;
+  }
+
+  /// info级别日志
+  /// [msg] 日志内容
+  /// [tag] 日志标签
+  static void i(String msg, [String tag = _defaultTag]) {
+    if (Level.info.index > _filterLevel.index) {
+      _log(Level.info, msg, tag);
+    }
+  }
+
+  /// debug级别日志
+  /// [msg] 日志内容
+  /// [tag] 日志标签
+  static void d(String msg, [String tag = _defaultTag]) {
+    if (_debuggable && Level.debug.index > _filterLevel.index) {
+      _log(Level.debug, msg, tag);
+    }
+  }
+
+  /// warn级别日志
+  /// [msg] 日志内容
+  /// [tag] 日志标签
+  static void w(String msg, [String tag = _defaultTag]) {
+    if (Level.warn.index > _filterLevel.index) {
+      _log(Level.warn, msg, tag);
+    }
+  }
+
+  /// error级别日志
+  /// [msg] 日志内容
+  /// [tag] 日志标签
+  static void e(String msg, [String tag = _defaultTag]) {
+    _log(Level.error, msg, tag);
+  }
+
+  /// 上传日志文件
+  /// [fileName] 文件名，如果为空内部自动生成
+  /// [handler] 上传处理器
+  /// [config] 上传配置
+  static Future<UploadFileResult> upload(
+    String? fileName,
+    UploadHandler handler,
+    UploadConfig config,
+  ) => UploadManager().upload(fileName, handler, config);
+
+  // 内部日志记录实现
+  static void _log(Level level, String msg, String tag) {
+    final time = DateTime.now();
+    final emoji = _levelEmojis[level];
+    recordIns.record(loggerFlag, '$time: $emoji[$tag] $msg');
   }
 }
 ```
 
-## Android 原生实现
+### 3. 业务标签定义
 
-### Android 日志监控
-```kotlin
-// Android 日志监控插件
-class LogcatMonitorPlugin : FlutterPlugin, MethodCallHandler {
-    private lateinit var channel: MethodChannel
-    private var logcatMonitor: LogcatMonitor? = null
-    
-    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(binding.binaryMessenger, "basic_logger")
-        channel.setMethodCallHandler(this)
-    }
-    
-    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
-            "startLogcatMonitor" -> {
-                startLogcatMonitor(result)
-            }
-            "stopLogcatMonitor" -> {
-                stopLogcatMonitor(result)
-            }
-            "getNativeLogs" -> {
-                getNativeLogs(result)
-            }
-            else -> {
-                result.notImplemented()
-            }
-        }
-    }
-    
-    private fun startLogcatMonitor(result: MethodChannel.Result) {
-        try {
-            logcatMonitor = LogcatMonitor { logEntry ->
-                // 将原生日志传递到 Flutter
-                channel.invokeMethod("onNativeLog", logEntry.toMap())
-            }
-            logcatMonitor?.start()
-            result.success(true)
-        } catch (e: Exception) {
-            result.error("MONITOR_ERROR", "Failed to start logcat monitor", e.message)
-        }
-    }
-    
-    private fun stopLogcatMonitor(result: MethodChannel.Result) {
-        logcatMonitor?.stop()
-        logcatMonitor = null
-        result.success(true)
-    }
-    
-    private fun getNativeLogs(result: MethodChannel.Result) {
-        try {
-            val logs = logcatMonitor?.getRecentLogs() ?: emptyList()
-            result.success(logs.map { it.toMap() })
-        } catch (e: Exception) {
-            result.error("LOG_ERROR", "Failed to get native logs", e.message)
-        }
-    }
-}
+为不同业务场景预定义的日志标签：
 
-// Logcat 监控器
-class LogcatMonitor(private val onLogEntry: (LogEntry) -> Unit) {
-    private var process: Process? = null
-    private var isRunning = false
-    private val logBuffer = mutableListOf<LogEntry>()
-    
-    fun start() {
-        if (isRunning) return
-        
-        isRunning = true
-        thread {
-            try {
-                process = Runtime.getRuntime().exec("logcat -v time")
-                val reader = BufferedReader(InputStreamReader(process!!.inputStream))
-                
-                reader.useLines { lines ->
-                    lines.forEach { line ->
-                        if (isRunning) {
-                            parseLogLine(line)?.let { logEntry ->
-                                logBuffer.add(logEntry)
-                                onLogEntry(logEntry)
-                                
-                                // 保持缓冲区大小
-                                if (logBuffer.size > 1000) {
-                                    logBuffer.removeAt(0)
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("LogcatMonitor", "Error reading logcat", e)
-            }
-        }
-    }
-    
-    fun stop() {
-        isRunning = false
-        process?.destroy()
-        process = null
-    }
-    
-    fun getRecentLogs(): List<LogEntry> {
-        return logBuffer.toList()
-    }
-    
-    private fun parseLogLine(line: String): LogEntry? {
-        // 解析 logcat 输出格式
-        // 示例: "01-01 12:00:00.000 D/Tag(12345): Message"
-        val pattern = Regex("""(\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+([VDIWEF])/([^(]+)\((\d+)\):\s+(.*)""")
-        val match = pattern.find(line) ?: return null
-        
-        val (timestamp, level, tag, pid, message) = match.destructured
-        
-        return LogEntry(
-            timestamp = timestamp,
-            level = level,
-            tag = tag,
-            pid = pid.toInt(),
-            message = message
-        )
-    }
-}
-```
-
-## iOS 原生实现
-
-### iOS 日志监控
-```objc
-// iOS 日志监控插件
-@implementation KitLoggerIosPlugin
-
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel* channel = [FlutterMethodChannel
-        methodChannelWithName:@"basic_logger"
-        binaryMessenger:[registrar messenger]];
-    
-    KitLoggerIosPlugin* instance = [[KitLoggerIosPlugin alloc] init];
-    instance.channel = channel;
-    [registrar addMethodCallDelegate:instance channel:channel];
-}
-
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if ([@"startSystemLogMonitor" isEqualToString:call.method]) {
-        [self startSystemLogMonitor:result];
-    } else if ([@"stopSystemLogMonitor" isEqualToString:call.method]) {
-        [self stopSystemLogMonitor:result];
-    } else if ([@"getSystemLogs" isEqualToString:call.method]) {
-        [self getSystemLogs:result];
-    } else {
-        result(FlutterMethodNotImplemented);
-    }
-}
-
-- (void)startSystemLogMonitor:(FlutterResult)result {
-    // iOS 系统日志监控实现
-    self.logStore = [[OSLogStore alloc] initWithScope:OSLogStoreCurrentProcessIdentifier
-                                                error:nil];
-    
-    if (self.logStore) {
-        [self startLogMonitoring];
-        result(@YES);
-    } else {
-        result([FlutterError errorWithCode:@"MONITOR_ERROR"
-                                   message:@"Failed to initialize log store"
-                                   details:nil]);
-    }
-}
-
-- (void)startLogMonitoring {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"subsystem == %@", 
-                                  [[NSBundle mainBundle] bundleIdentifier]];
-        
-        OSLogEnumerator *enumerator = [self.logStore entriesEnumeratorWithOptions:0
-                                                                        position:nil
-                                                                       predicate:predicate
-                                                                           error:nil];
-        
-        for (OSLogEntryLog *entry in enumerator) {
-            NSDictionary *logData = @{
-                @"timestamp": @([entry.date timeIntervalSince1970]),
-                @"level": [self logLevelString:entry.level],
-                @"category": entry.category,
-                @"message": entry.composedMessage
-            };
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.channel invokeMethod:@"onSystemLog" arguments:logData];
-            });
-        }
-    });
-}
-
-@end
-```
-
-## 使用示例
-
-### 基本使用
 ```dart
-// 初始化日志系统
-await BasicLogger.instance.initialize(
-  minimumLevel: LogLevel.debug,
-  appenders: [
-    ConsoleAppender(enableColors: true),
-    FileAppender(
-      maxFileSize: 5 * 1024 * 1024, // 5MB
-      maxBackupFiles: 3,
-    ),
-    NetworkAppender(
-      endpoint: 'https://api.example.com/logs',
-      headers: {'Authorization': 'Bearer token'},
-    ),
-  ],
-  formatter: DefaultLogFormatter(
-    pattern: '{timestamp} [{level}] {tag}: {message}',
-  ),
+/// App通用标签
+const tagApp = 'App';           // App全局日志
+const tagRoute = 'Route';       // 路由跳转
+const tagNetwork = 'Network';   // 网络请求
+const tagWebView = 'WebView';   // WebView相关
+
+/// 业务标签
+const tagCommunity = 'Community';       // 社区功能
+const tagCarSale = 'CarSale';          // 汽车销售
+const tagAfterSale = 'AfterSale';      // 售后服务
+const tagMall = 'Mall';                // 商城
+const tagOrder = 'Order';              // 订单
+const tagMaintenance = 'Maintenance';   // 保养维护
+
+/// 车联网标签
+const tagVehicleSDK = 'VehicleSDK';     // CEA/MM SDK
+const tagAccount = 'Account';           // 账户系统
+const tagCarHome = 'CarHome';           // 爱车首页
+const tagMDK = 'MDK';                   // MDK相关
+const tagRemoteControl = 'RemoteControl'; // 远程控制
+const tagHVAC = 'HVAC';                 // 空调系统
+const tagCarFind = 'CarFind';           // 寻车功能
+const tag3DModel = '3DModel';           // 3D模型
+const tagRPA = 'RPA';                   // RPA功能
+const tagCamera = 'Camera';             // 摄像头
+const tagIntelligentScene = 'IntelligentScene'; // 智能场景
+const tagRVS = 'RVS';                   // 远程车辆状态
+const tagVUR = 'VUR';                   // 用车报告
+const tagAvatar = 'Avatar';             // 虚拟形象
+const tagTouchGo = 'TouchGo';           // 小组件
+const tagFridge = 'Fridge';             // 冰箱
+const tagWallbox = 'Wallbox';           // 壁挂充电盒
+const tagOTA = 'OTA';                   // 空中升级
+const tagCharging = 'Charging';         // 充电功能
+const tagMessage = 'Message';           // 通知消息
+```
+
+### 4. 日志级别表情符号映射
+
+```dart
+final Map<Level, String> _levelEmojis = {
+  Level.debug: '🐛',
+  Level.info: '💡💡',
+  Level.warn: '⚠️⚠️⚠️',
+  Level.error: '❌❌❌',
+};
+```
+
+### 5. Logger类型别名
+
+```dart
+typedef Logger = OneAppLog;
+```
+
+## 使用指南
+
+### 1. 日志系统初始化
+
+```dart
+import 'package:basic_logger/basic_logger.dart';
+
+// 配置日志系统
+OneAppLog.config(
+  debuggable: true,           // 开启调试模式
+  filterLevel: Level.debug,   // 设置过滤级别
+);
+```
+
+### 2. 基础日志记录
+
+```dart
+// 使用预定义标签
+OneAppLog.i('用户登录成功', tagAccount);
+OneAppLog.d('调试信息：用户ID = 12345', tagAccount);
+OneAppLog.w('网络请求超时，正在重试', tagNetwork);
+OneAppLog.e('登录失败：用户名或密码错误', tagAccount);
+
+// 使用默认标签
+OneAppLog.i('应用启动完成');
+OneAppLog.e('未知错误发生');
+```
+
+### 3. 车联网业务日志
+
+```dart
+// 车辆控制相关
+OneAppLog.i('开始远程启动车辆', tagRemoteControl);
+OneAppLog.w('车辆锁定状态异常', tagVehicleSDK);
+OneAppLog.e('空调控制指令失败', tagHVAC);
+
+// 充电相关
+OneAppLog.i('开始充电', tagCharging);
+OneAppLog.w('充电桩连接不稳定', tagCharging);
+OneAppLog.e('充电异常停止', tagCharging);
+
+// 3D模型相关
+OneAppLog.d('3D模型加载中', tag3DModel);
+OneAppLog.i('3D模型渲染完成', tag3DModel);
+
+// 虚拟形象相关
+OneAppLog.i('虚拟形象初始化', tagAvatar);
+OneAppLog.w('虚拟形象动画加载超时', tagAvatar);
+```
+
+### 4. 日志文件上传
+
+```dart
+// 创建上传配置
+final uploadConfig = UploadConfig(
+  serverUrl: 'https://api.example.com/logs',
+  apiKey: 'your_api_key',
+  timeout: Duration(seconds: 30),
 );
 
-// 初始化崩溃日志收集
-await CrashLogCollector.instance.initialize(BasicLogger.instance);
+// 创建上传处理器
+final uploadHandler = CustomUploadHandler();
 
-// 记录不同级别的日志
-BasicLogger.instance.debug('Debug message');
-BasicLogger.instance.info('Info message', context: {'user_id': '123'});
-BasicLogger.instance.warning('Warning message');
-BasicLogger.instance.error('Error occurred', error: exception);
-BasicLogger.instance.fatal('Fatal error', error: exception, stackTrace: stackTrace);
+// 上传日志文件
+try {
+  final result = await OneAppLog.upload(
+    'app_logs_20231201.log',
+    uploadHandler,
+    uploadConfig,
+  );
+  
+  if (result.success) {
+    OneAppLog.i('日志上传成功', tagApp);
+  } else {
+    OneAppLog.e('日志上传失败: ${result.error}', tagApp);
+  }
+} catch (e) {
+  OneAppLog.e('日志上传异常: $e', tagApp);
+}
 ```
 
-### 高级配置
+### 5. 条件日志记录
+
 ```dart
-// 自定义过滤器
-class TagFilter implements LogFilter {
-  final Set<String> _allowedTags;
+// 仅在调试模式下记录
+if (kDebugMode) {
+  OneAppLog.d('这是调试信息，仅开发时可见', tagApp);
+}
+
+// 根据业务条件记录
+void onUserAction(String action) {
+  OneAppLog.i('用户执行操作: $action', tagApp);
   
-  TagFilter(this._allowedTags);
-  
+  if (action == 'high_risk_operation') {
+    OneAppLog.w('用户执行高风险操作', tagApp);
+  }
+}
+```
+
+## 依赖配置
+
+### pubspec.yaml 配置
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+    
+  # 基础日志模块
+  basic_logger:
+    path: ../oneapp_basic_utils/basic_logger
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+```
+
+## 高级功能
+
+### 1. 自定义上传处理器
+
+```dart
+class CustomUploadHandler extends UploadHandler {
   @override
-  bool shouldLog(LogEntry entry) {
-    return _allowedTags.contains(entry.tag);
+  Future<UploadFileResult> upload(
+    String filePath, 
+    UploadConfig config
+  ) async {
+    // 实现自定义上传逻辑
+    try {
+      // 发送HTTP请求上传文件
+      final response = await http.post(
+        Uri.parse(config.serverUrl),
+        headers: {'Authorization': 'Bearer ${config.apiKey}'},
+        body: await File(filePath).readAsBytes(),
+      );
+      
+      if (response.statusCode == 200) {
+        return UploadFileResult.success();
+      } else {
+        return UploadFileResult.failure('上传失败: ${response.statusCode}');
+      }
+    } catch (e) {
+      return UploadFileResult.failure('上传异常: $e');
+    }
   }
 }
-
-// 使用自定义配置
-await BasicLogger.instance.initialize(
-  minimumLevel: LogLevel.info,
-  appenders: [
-    ConsoleAppender(),
-    FileAppender(),
-    NetworkAppender(
-      endpoint: 'https://log-server.com/api/logs',
-      batchSize: 20,
-      batchInterval: Duration(seconds: 10),
-    ),
-  ],
-  filters: [
-    TagFilter({'NetworkService', 'UserAction', 'CrashLogger'}),
-  ],
-  formatter: JsonLogFormatter(prettyPrint: false),
-);
 ```
 
-## 依赖管理
+### 2. 事件日志记录
 
-### 核心依赖
-- **flutter**: Flutter SDK
-- **archive**: 压缩功能支持
+```dart
+import 'package:basic_logger/basic_logger.dart';
 
-### 开发依赖
-- **flutter_test**: 测试框架
-- **flutter_lints**: 代码检查
-- **mockito**: Mock 测试
-- **build_runner**: 代码生成
+// 记录事件日志
+OneEventLog.record({
+  'event_type': 'user_click',
+  'element_id': 'login_button',
+  'timestamp': DateTime.now().millisecondsSinceEpoch,
+  'user_id': '12345',
+});
+```
 
-## 性能优化
+### 3. 原生日志监控
 
-### 日志性能优化
-- 异步日志写入
-- 批量网络上传
-- 内存缓冲区管理
-- 日志文件轮转
+```dart
+import 'package:basic_logger/logcat_monitor.dart';
 
-### 内存管理
-- 限制内存缓冲区大小
-- 及时释放不用的日志数据
-- 压缩历史日志文件
+// 开启原生日志监控
+final monitor = LogcatMonitor();
+await monitor.startMonitoring();
 
-## 总结
+// 停止监控
+await monitor.stopMonitoring();
+```
 
-`basic_logger` 模块为 OneApp 提供了强大而灵活的日志系统，支持多种输出方式、格式化选项和过滤机制。通过原生平台集成，能够收集系统级日志信息，为应用调试、性能监控和问题诊断提供了完整的解决方案。
+## 性能优化建议
+
+### 1. 日志级别管理
+- 生产环境关闭debug日志：`debuggable: false`
+- 设置合适的过滤级别：`filterLevel: Level.warn`
+- 避免在循环中大量打印日志
+
+### 2. 文件管理
+- 定期清理过期日志文件
+- 控制日志文件大小，避免占用过多存储空间
+- 使用日志轮转机制
+
+### 3. 网络上传优化
+- 在WiFi环境下上传日志
+- 压缩日志文件减少网络开销
+- 实现上传失败重试机制
+
+## 最佳实践
+
+### 1. 标签使用规范
+```dart
+// 推荐：使用预定义业务标签
+OneAppLog.i('充电状态更新', tagCharging);
+
+// 避免：使用无意义的标签
+OneAppLog.i('充电状态更新', 'test');
+```
+
+### 2. 敏感信息保护
+```dart
+// 推荐：脱敏处理
+OneAppLog.i('用户登录: ${userId.substring(0, 3)}***', tagAccount);
+
+// 避免：直接记录敏感信息
+OneAppLog.i('用户登录: $userPassword', tagAccount);
+```
+
+### 3. 错误日志详细性
+```dart
+// 推荐：提供详细上下文
+OneAppLog.e('网络请求失败: $url, 状态码: $statusCode, 错误: $error', tagNetwork);
+
+// 避免：信息不足的错误日志
+OneAppLog.e('请求失败', tagNetwork);
+```
+
+## 问题排查
+
+### 常见问题
+1. **日志不显示**: 检查debuggable配置和filterLevel设置
+2. **文件上传失败**: 确认网络权限和上传配置
+3. **性能影响**: 避免高频日志输出，合理设置日志级别
+
+### 调试技巧
+- 使用Android Studio/Xcode查看原生日志
+- 通过文件系统检查日志文件生成
+- 监控应用内存使用避免日志系统影响性能

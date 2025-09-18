@@ -51,51 +51,141 @@
 
 ### 核心组件
 
-#### 1. 订单管理器 (OrderManager)
+#### 1. 订单管理器 (OrderFacade)
 ```dart
-class OrderManager {
-  // 创建订单
-  Future<OrderResult> createOrder(OrderRequest request);
+/// 订单服务接口
+abstract class IOrderFacade {
+  /// 创建订单
+  Future<Either<OrderError, OrderDetail>> createOrder({
+    required OrderCreateParams params,
+  });
+
+  /// 批量获取订单
+  Future<Either<OrderError, OrderList>> fetchOrders({
+    required int pageIndex,
+    required OrderQueryType orderQueryType,
+    int pageSize = 10,
+    OrderRefundQueryType? orderRefundQueryType,
+  });
+
+  /// 取消订单
+  Future<Either<OrderError, Unit>> cancelOrder(String orderId);
+
+  /// 删除订单
+  Future<Either<OrderError, Unit>> delOrder(String orderId);
+
+  /// 获取订单详情
+  Future<Either<OrderError, OrderDetail>> fetchOrderDetail(
+    String orderId, {
+    bool realTimePull = false,
+  });
+
+  /// 获取退款详情
+  Future<Either<OrderError, RefundDetail>> fetchRefundDetail(String orderId);
+
+  /// 获取待支付的总数
+  Future<Either<OrderError, OrderNum>> fetchAllUnpaidNum();
+
+  /// 获取订单状态
+  Future<Either<OrderError, OrderStatus>> fetchOrderStatus(String orderId);
+}
+
+class OrderFacade implements IOrderFacade {
+  final OrderRemoteApi? remoteApi;
+  final String? environment;
   
-  // 查询订单
-  Future<Order> getOrder(String orderId);
+  OrderFacade(this.remoteApi, this.environment) {
+    remoteApi ??= OrderRemoteApi(Impl());
+    environment ??= defaultOption.environment;
+    OrderModuleConfig.setUp(environment ?? '');
+  }
   
-  // 更新订单状态
-  Future<bool> updateOrderStatus(String orderId, OrderStatus status);
+  @override
+  Future<Either<OrderError, OrderDetail>> createOrder({
+    required OrderCreateParams params,
+  }) async {
+    try {
+      final orderDetail = await remoteApi!.createOrder(params: params);
+      return right(orderDetail);
+    } catch (e) {
+      return left(OrderError.createOrderError(obj: 'create order failed, $e'));
+    }
+  }
   
-  // 取消订单
-  Future<bool> cancelOrder(String orderId, String reason);
+  // 其他方法实现...
 }
 ```
 
-#### 2. 支付处理器 (PaymentProcessor)
+#### 2. 发票门面 (InvoiceFacade)
 ```dart
-class PaymentProcessor {
-  // 发起支付
-  Future<PaymentResult> initiatePayment(PaymentRequest request);
-  
-  // 查询支付状态
-  Future<PaymentStatus> getPaymentStatus(String paymentId);
-  
-  // 处理退款
-  Future<RefundResult> processRefund(RefundRequest request);
+/// 发票服务接口  
+abstract class IInvoiceFacade {
+  /// 获取发票抬头详情
+  Future<Either<OrderError, InvoiceTitleDetailsDo>> getInvoiceTitleDetails(
+    String titleId,
+  );
+
+  /// 新增/修改发票抬头
+  Future<Either<OrderError, String>> submitInvoiceTitleDetails(
+    InvoiceTitleDetailsDo invoiceTitleDetails,
+  );
+
+  /// 删除发票抬头
+  Future<Either<OrderError, Unit>> delInvoiceTitleDetails(String titleId);
+
+  /// 获取发票抬头列表
+  Future<Either<OrderError, List<InvoiceTitleDetailsDo>>> 
+      getInvoiceTitleDetailsList();
+
+  /// 获取发票详情
+  Future<Either<OrderError, InvoiceDetailsDo>> getInvoiceDetails(
+    String invoiceId,
+  );
+
+  /// 获取发票历史列表
+  Future<Either<OrderError, List<InvoiceDetailsDo>>> getInvoiceList({
+    required int pageIndex,
+    required int pageSize,
+  });
+
+  /// 申请开具发票
+  Future<Either<OrderError, Unit>> submitInvoice(InvoiceOptionsDo invoiceOptions);
+
+  /// 获取可开发票的订单列表
+  Future<Either<OrderError, List<NoOpenInvoiceOrderDo>>> getNoOpenInvoiceOrderList({
+    required int pageIndex,
+    required int pageSize,
+  });
 }
 ```
 
-#### 3. 订单状态机 (OrderStateMachine)
+#### 3. 订单状态和类型枚举
 ```dart
+/// 订单状态枚举
 enum OrderStatus {
-  created,      // 已创建
-  paid,         // 已支付
-  processing,   // 处理中
-  completed,    // 已完成
-  cancelled,    // 已取消
-  refunded      // 已退款
+  unpaid,           // 未付款
+  paid,            // 已付款  
+  processing,      // 处理中
+  completed,       // 已完成
+  cancelled,       // 已取消
+  refunding,       // 退款中
+  refunded         // 已退款
 }
 
-class OrderStateMachine {
-  bool canTransition(OrderStatus from, OrderStatus to);
-  Future<bool> transition(String orderId, OrderStatus to);
+/// 订单查询类型
+enum OrderQueryType {
+  all,             // 全部
+  unpaid,          // 待付款
+  paid,            // 已付款
+  completed,       // 已完成
+  cancelled        // 已取消
+}
+
+/// 订单退款查询类型  
+enum OrderRefundQueryType {
+  refunding,       // 退款中
+  refunded,        // 已退款
+  refundFailed     // 退款失败
 }
 ```
 
@@ -103,49 +193,142 @@ class OrderStateMachine {
 
 ### 订单模型
 ```dart
+/// 订单领域模型
 class Order {
+  /// 订单ID
   final String id;
-  final String userId;
-  final OrderType type;
+  
+  /// 订单价格
+  final double price;
+  
+  /// 订单标题
+  final String title;
+  
+  /// 创建时间
+  final DateTime createTime;
+  
+  /// 订单状态
   final OrderStatus status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final List<OrderItem> items;
-  final PaymentInfo payment;
-  final DeliveryInfo delivery;
-  final double totalAmount;
-  final String currency;
-  final Map<String, dynamic> metadata;
+  
+  /// 支付金额
+  final double payAmount;
+  
+  /// 订单来源
+  final OrderSource orderSource;
+  
+  /// 订单类型
+  final OrderType orderType;
+  
+  /// 折扣金额
+  final double discountAmount;
+  
+  /// 订单项总数量
+  final int orderItemTotalQuantity;
+
+  Order({
+    required this.id,
+    required this.price,
+    required this.title,
+    required this.createTime,
+    required this.status,
+    required this.payAmount,
+    required this.orderSource,
+    required this.orderType,
+    required this.discountAmount,
+    required this.orderItemTotalQuantity,
+  });
+
+  /// 从DTO转换为DO
+  factory Order.fromDto(OrderDto dto) => Order(
+    id: dto.orderNo,
+    price: dto.orderAmount,
+    title: dto.title,
+    createTime: DateTime.fromMillisecondsSinceEpoch(dto.orderCreateTime),
+    status: OrderStatusEx.valueFromBackend(dto.orderState),
+    payAmount: dto.payAmount,
+    orderSource: OrderSourceEx.valueFromBackend(dto.orderSource),
+    orderType: OrderSourceTypeEx.valueFromBackend(dto.orderType),
+    discountAmount: dto.discountAmount,
+    orderItemTotalQuantity: dto.orderItemTotalQuantity,
+  );
 }
 
-class OrderItem {
+/// 订单详情模型
+class OrderDetail {
   final String id;
+  final double orderPrice;
+  final List<Product> products;
+  final DateTime createTime;
+  final OrderStatus status;
+  final double payAmount;
+  final OrderSource orderSource;
+  final OrderType orderType;
+  final double discountAmount;
+  final int orderItemTotalQuantity;
+  
+  // 构造方法和工厂方法...
+}
+
+/// 产品模型
+class Product {
   final String productId;
-  final String name;
-  final int quantity;
+  final String productName;
+  final String productImage;
   final double price;
-  final Map<String, dynamic> attributes;
+  final int quantity;
+  
+  // 构造方法...
 }
 ```
 
-### 支付模型
+### 发票模型
 ```dart
-class PaymentInfo {
-  final String paymentId;
-  final PaymentMethod method;
-  final PaymentStatus status;
-  final double amount;
-  final String currency;
-  final DateTime paidAt;
-  final String transactionId;
+/// 发票详情模型
+class InvoiceDetailsDo {
+  final String invoiceId;
+  final String invoiceNumber;
+  final String invoiceTitle;
+  final double invoiceAmount;
+  final DateTime createTime;
+  final InvoiceStatus status;
+  final String downloadUrl;
+  
+  // 构造方法和工厂方法...
 }
 
-enum PaymentMethod {
-  creditCard,
-  debitCard,
-  digitalWallet,
-  bankTransfer,
-  cryptocurrency
+/// 发票抬头模型
+class InvoiceTitleDetailsDo {
+  final String titleId;
+  final String invoiceTitle;
+  final InvoiceType invoiceType;
+  final String taxNumber;
+  final String address;
+  final String phone;
+  final String bankName;
+  final String bankAccount;
+  
+  // 构造方法和工厂方法...
+}
+
+/// 发票选项模型
+class InvoiceOptionsDo {
+  final String orderId;
+  final String titleId;
+  final String invoiceType;
+  final String email;
+  
+  // 构造方法...
+}
+
+/// 可开发票订单模型
+class NoOpenInvoiceOrderDo {
+  final String orderId;
+  final String orderTitle;
+  final double amount;
+  final DateTime createTime;
+  final bool canInvoice;
+  
+  // 构造方法...
 }
 ```
 
@@ -153,38 +336,91 @@ enum PaymentMethod {
 
 ### 订单接口
 ```dart
-abstract class OrderService {
-  // 创建订单
-  Future<ApiResponse<Order>> createOrder(CreateOrderRequest request);
-  
-  // 获取订单列表
-  Future<ApiResponse<List<Order>>> getOrders(OrderQuery query);
-  
-  // 获取订单详情
-  Future<ApiResponse<Order>> getOrderById(String orderId);
-  
-  // 更新订单
-  Future<ApiResponse<Order>> updateOrder(String orderId, UpdateOrderRequest request);
-  
-  // 取消订单
-  Future<ApiResponse<bool>> cancelOrder(String orderId, CancelOrderRequest request);
+/// 订单服务接口
+abstract class IOrderFacade {
+  /// 创建订单
+  /// DSSOMOBILE-ONEAPP-ORDER-3001
+  Future<Either<OrderError, OrderDetail>> createOrder({
+    required OrderCreateParams params,
+  });
+
+  /// 批量获取订单
+  /// DSSOMOBILE-ONEAPP-ORDER-3002  
+  Future<Either<OrderError, OrderList>> fetchOrders({
+    required int pageIndex,
+    required OrderQueryType orderQueryType,
+    int pageSize = 10,
+    OrderRefundQueryType? orderRefundQueryType,
+  });
+
+  /// 获取订单详情
+  /// DSSOMOBILE-ONEAPP-ORDER-3003
+  Future<Either<OrderError, OrderDetail>> fetchOrderDetail(
+    String orderId, {
+    bool realTimePull = false,
+  });
+
+  /// 删除订单
+  /// DSSOMOBILE-ONEAPP-ORDER-3004
+  Future<Either<OrderError, Unit>> delOrder(String orderId);
+
+  /// 取消订单
+  /// DSSOMOBILE-ONEAPP-ORDER-3005
+  Future<Either<OrderError, Unit>> cancelOrder(String orderId);
+
+  /// 获取待支付订单数量
+  /// DSSOMOBILE-ONEAPP-ORDER-3006
+  Future<Either<OrderError, OrderNum>> fetchAllUnpaidNum();
+
+  /// 获取订单状态
+  /// DSSOMOBILE-ONEAPP-ORDER-3007
+  Future<Either<OrderError, OrderStatus>> fetchOrderStatus(String orderId);
+
+  /// 获取退款详情
+  Future<Either<OrderError, RefundDetail>> fetchRefundDetail(String orderId);
 }
 ```
 
-### 支付接口
+### 发票接口
 ```dart
-abstract class PaymentService {
-  // 创建支付
-  Future<ApiResponse<PaymentSession>> createPayment(CreatePaymentRequest request);
-  
-  // 确认支付
-  Future<ApiResponse<PaymentResult>> confirmPayment(String paymentId, ConfirmPaymentRequest request);
-  
-  // 查询支付状态
-  Future<ApiResponse<PaymentStatus>> getPaymentStatus(String paymentId);
-  
-  // 申请退款
-  Future<ApiResponse<RefundResult>> requestRefund(RefundRequest request);
+/// 发票服务接口
+abstract class IInvoiceFacade {
+  /// 获取发票抬头详情
+  Future<Either<OrderError, InvoiceTitleDetailsDo>> getInvoiceTitleDetails(
+    String titleId,
+  );
+
+  /// 新增/修改发票抬头
+  Future<Either<OrderError, String>> submitInvoiceTitleDetails(
+    InvoiceTitleDetailsDo invoiceTitleDetails,
+  );
+
+  /// 删除发票抬头
+  Future<Either<OrderError, Unit>> delInvoiceTitleDetails(String titleId);
+
+  /// 获取发票抬头列表
+  Future<Either<OrderError, List<InvoiceTitleDetailsDo>>> 
+      getInvoiceTitleDetailsList();
+
+  /// 获取发票详情
+  Future<Either<OrderError, InvoiceDetailsDo>> getInvoiceDetails(
+    String invoiceId,
+  );
+
+  /// 获取发票历史列表
+  Future<Either<OrderError, List<InvoiceDetailsDo>>> getInvoiceList({
+    required int pageIndex,
+    required int pageSize,
+  });
+
+  /// 申请开具发票
+  Future<Either<OrderError, Unit>> submitInvoice(InvoiceOptionsDo invoiceOptions);
+
+  /// 获取可开发票的订单列表
+  Future<Either<OrderError, List<NoOpenInvoiceOrderDo>>> getNoOpenInvoiceOrderList({
+    required int pageIndex,
+    required int pageSize,
+  });
 }
 ```
 
@@ -244,69 +480,76 @@ class OrderException implements Exception {
 
 ### 创建订单
 ```dart
+final orderFacade = buildOrderFacadeImpl();
+
 try {
-  final orderRequest = CreateOrderRequest(
-    userId: 'user123',
-    items: [
-      OrderItem(
+  final orderCreateParams = OrderCreateParams(
+    products: [
+      OrderProduct(
         productId: 'charging_session',
         quantity: 1,
         price: 25.0,
       ),
     ],
-    paymentMethod: PaymentMethod.creditCard,
+    deliveryAddress: '北京市朝阳区...',
+    paymentMethod: 'alipay',
   );
   
-  final order = await OrderManager.instance.createOrder(orderRequest);
-  print('订单创建成功: ${order.id}');
+  final result = await orderFacade.createOrder(params: orderCreateParams);
+  
+  result.fold(
+    (error) => print('订单创建失败: ${error.message}'),
+    (orderDetail) => print('订单创建成功: ${orderDetail.id}'),
+  );
 } catch (e) {
-  print('订单创建失败: $e');
+  print('订单创建异常: $e');
 }
 ```
 
-### 处理支付
+### 查询订单列表
 ```dart
+final orderFacade = buildOrderFacadeImpl();
+
 try {
-  final paymentRequest = PaymentRequest(
-    orderId: order.id,
-    amount: order.totalAmount,
-    method: PaymentMethod.creditCard,
-    cardToken: 'card_token_123',
+  final result = await orderFacade.fetchOrders(
+    pageIndex: 1,
+    orderQueryType: OrderQueryType.all,
+    pageSize: 20,
   );
   
-  final result = await PaymentProcessor.instance.initiatePayment(paymentRequest);
-  
-  if (result.isSuccess) {
-    print('支付成功: ${result.transactionId}');
-  } else {
-    print('支付失败: ${result.errorMessage}');
-  }
+  result.fold(
+    (error) => print('查询订单失败: ${error.message}'),
+    (orderList) {
+      print('查询订单成功，共 ${orderList.orders.length} 条记录');
+      for (final order in orderList.orders) {
+        print('订单: ${order.id} - ${order.title} - ${order.status}');
+      }
+    },
+  );
 } catch (e) {
-  print('支付处理异常: $e');
+  print('查询订单异常: $e');
 }
 ```
 
-### 查询订单状态
+### 获取订单详情
 ```dart
+final orderFacade = buildOrderFacadeImpl();
+
 try {
-  final order = await OrderManager.instance.getOrder(orderId);
+  final result = await orderFacade.fetchOrderDetail('order_123');
   
-  switch (order.status) {
-    case OrderStatus.created:
-      print('订单已创建，等待支付');
-      break;
-    case OrderStatus.paid:
-      print('订单已支付，正在处理');
-      break;
-    case OrderStatus.completed:
-      print('订单已完成');
-      break;
-    case OrderStatus.cancelled:
-      print('订单已取消');
-      break;
-  }
+  result.fold(
+    (error) => print('获取订单详情失败: ${error.message}'),
+    (orderDetail) {
+      print('订单详情获取成功:');
+      print('订单ID: ${orderDetail.id}');
+      print('订单状态: ${orderDetail.status}');
+      print('订单金额: ${orderDetail.orderPrice}');
+      print('产品列表: ${orderDetail.products.map((p) => p.productName).join(', ')}');
+    },
+  );
 } catch (e) {
-  print('查询订单失败: $e');
+  print('获取订单详情异常: $e');
 }
 ```
 

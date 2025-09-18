@@ -57,73 +57,135 @@
 
 ### 核心组件
 
-#### 1. 搜索引擎 (SearchEngine)
+#### 1. 通用搜索组件 (GlobalSearchCommonWidget)
+
+基于真实项目代码的通用搜索组件：
+
 ```dart
-class GlobalSearchEngine {
-  // 执行搜索
-  Future<SearchResult> search(SearchQuery query);
-  
-  // 获取搜索建议
-  Future<List<SearchSuggestion>> getSuggestions(String input);
-  
-  // 注册搜索提供者
-  void registerSearchProvider(SearchProvider provider);
-  
-  // 构建搜索索引
-  Future<void> buildSearchIndex();
+/// 全局搜索通用组件
+class GlobalSearchCommonWidget extends StatefulWidget {
+  const GlobalSearchCommonWidget({
+    Key? key, 
+    required this.selectCommonSearchItem
+  }) : super(key: key);
+
+  final SelectCommonSearch selectCommonSearchItem;
+
+  @override
+  State<GlobalSearchCommonWidget> createState() =>
+      _GlobalSearchCommonWidgetState();
+}
+
+/// 搜索项目数据模型
+class SearchItemBean {
+  String name;
+  String event;
+
+  SearchItemBean({required this.name, required this.event});
+}
+
+/// 选择通用搜索项回调
+typedef SelectCommonSearch = void Function(SearchItemBean commonSearchItem);
+```
+
+#### 2. 搜索组件实现
+
+```dart
+class _GlobalSearchCommonWidgetState extends State<GlobalSearchCommonWidget> {
+  List<SearchItemBean> commonSearchBeanList = [];
+  String tips = '';
+
+  @override
+  Widget build(BuildContext context) {
+    if (commonSearchBeanList.isEmpty) {
+      return Container();
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: EdgeInsets.fromLTRB(15, 15, 12, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    tips,
+                    style: OneTextStyle.content(color: OneColors.tc),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 12,
+                children: _buildHistoryTag(commonSearchBeanList),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 构建历史搜索标签
+  List<Widget> _buildHistoryTag(List<SearchItemBean> historys) {
+    List<Widget> historyWidgets = [];
+    for (int i = 0; i < historys.length; i++) {
+      var displayName = historys[i].name;
+      if (displayName.length > 8) {
+        displayName = displayName.substring(0, 8) + '...';
+      }
+      historyWidgets.add(InkWell(
+        onTap: () {
+          widget.selectCommonSearchItem(historys[i]);
+        },
+        child: Container(
+          padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+          decoration: BoxDecoration(
+            color: OneColors.bgcSub1,
+            borderRadius: BorderRadius.all(Radius.circular(2)),
+          ),
+          child: Text(
+            displayName,
+            style: OneTextStyle.content(
+              color: OneColors.tc.withOpacity(0.55),
+            ),
+          ),
+        ),
+      ));
+    }
+    return historyWidgets;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCommonSearchResult();
+  }
+
+  /// 获取通用搜索结果
+  void getCommonSearchResult() {
+    // 实际项目中的搜索数据获取逻辑
+  }
 }
 ```
 
-#### 2. 索引管理器 (IndexManager)
-```dart
-class SearchIndexManager {
-  // 更新索引
-  Future<bool> updateIndex(String moduleId, List<SearchableItem> items);
-  
-  // 删除索引
-  Future<bool> removeIndex(String moduleId, List<String> itemIds);
-  
-  // 重建索引
-  Future<bool> rebuildIndex(String moduleId);
-  
-  // 搜索索引
-  Future<List<IndexedItem>> searchIndex(String query, SearchOptions options);
-}
-```
+#### 3. 搜索组件架构
 
-#### 3. 搜索历史管理器 (SearchHistoryManager)
-```dart
-class SearchHistoryManager {
-  // 添加搜索记录
-  Future<void> addSearchRecord(SearchRecord record);
-  
-  // 获取搜索历史
-  Future<List<SearchRecord>> getSearchHistory({int limit = 50});
-  
-  // 删除搜索记录
-  Future<bool> deleteSearchRecord(String recordId);
-  
-  // 清空搜索历史
-  Future<bool> clearSearchHistory();
-}
-```
+实际项目包含的搜索组件：
 
-#### 4. 搜索建议系统 (SuggestionSystem)
-```dart
-class SearchSuggestionSystem {
-  // 生成搜索建议
-  Future<List<SearchSuggestion>> generateSuggestions(String input);
-  
-  // 获取热门搜索
-  Future<List<String>> getPopularSearches();
-  
-  // 获取个性化建议
-  Future<List<SearchSuggestion>> getPersonalizedSuggestions(String userId);
-  
-  // 更新建议数据
-  Future<void> updateSuggestionData();
-}
-```
+- **QuicklyAccess.dart**: 快速访问组件
+- **search_all_result_widget.dart**: 全部搜索结果组件  
+- **search_common_widget.dart**: 通用搜索组件
+- **search_event_result_widget.dart**: 事件搜索结果组件
+- **search_history_widget.dart**: 搜索历史组件
+- **search_input_TextField_widget.dart**: 搜索输入框组件
+- **search_mall_result_widget.dart**: 商城搜索结果组件
+- **search_post_result_widget.dart**: 帖子搜索结果组件
+- **search_result_widget.dart**: 搜索结果组件
 
 ## 数据模型
 

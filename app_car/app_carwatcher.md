@@ -19,20 +19,20 @@
    - 车辆状态监控（锁车状态、车窗状态等）
    - 车辆异常报警
 
-2. **安全防护**
-   - 防盗报警
-   - 异常移动检测
-   - 远程监控告警
+2. **地理围栏管理**
+   - 围栏设置和编辑
+   - 围栏事件监控
+   - POI 地点搜索
 
-3. **地图集成**
+3. **历史报告查看**
+   - 日报详情查看
+   - 事件详情展示
+   - 事件过滤功能
+
+4. **地图集成**
    - 车辆位置可视化
    - 历史轨迹查看
    - 地理围栏设置
-
-4. **权限管理**
-   - 位置权限管理
-   - 用户授权验证
-   - 隐私合规检查
 
 ## 技术架构
 
@@ -47,235 +47,579 @@ lib/
 │   ├── blocs/                    # 状态管理
 │   ├── constants/                # 常量定义
 │   ├── pages/                    # 页面组件
+│   │   ├── home/                 # 首页
+│   │   ├── geo_fence_list/       # 地理围栏列表
+│   │   ├── geo_fence_detail/     # 地理围栏详情
+│   │   ├── geo_fence_search_poi/ # POI搜索
+│   │   ├── daily_report/         # 日报详情
+│   │   ├── event_detail/         # 事件详情
+│   │   └── event_filter/         # 事件过滤
 │   └── utils/                    # 工具类
 ├── generated/                    # 代码生成文件
-└── l10n/                        # 国际化文件
+└── l10n/                         # 国际化文件
 ```
 
-### 依赖关系
+## 核心实现
 
-#### 核心依赖
-- `basic_modular: ^0.2.3` - 模块化框架
-- `basic_modular_route: ^0.2.1` - 路由管理
-- `basic_intl: ^0.2.0` - 国际化支持
-- `basic_consent: ^0.2.17` - 隐私合规
+### 1. 模块入口文件
 
-#### 业务依赖
-- `app_consent: ^0.2.19` - 用户同意模块
-- `ui_mapview: ^0.2.18` - 地图视图组件
-- `clr_geo: ^0.2.16+1` - 地理位置服务
-- `clr_carwatcher: ^0.1.0` - 车辆监控服务SDK
+**文件**: `lib/app_carwatcher.dart`
 
-#### 第三方依赖
-- `permission_handler: ^10.3.0` - 权限管理
-- `json_annotation: ^4.8.1` - JSON序列化
-- `dartz: ^0.10.1` - 函数式编程
-
-## 核心模块分析
-
-### 1. 模块入口 (`app_carwatcher.dart`)
-
-**功能职责**:
-- 模块对外接口统一导出
-- 核心组件暴露
-
-**导出内容**:
 ```dart
-export 'src/app_carwatcher_module.dart';  // 模块定义
-export 'src/route_dp.dart';              // 路由配置
-export 'src/route_export.dart';          // 路由导出
+/// Carwatcher APP
+library app_carwatcher;
+
+export 'src/app_carwatcher_module.dart';
+export 'src/route_dp.dart';
+export 'src/route_export.dart';
 ```
 
-### 2. 模块定义 (`src/app_carwatcher_module.dart`)
+### 2. 模块定义与路由配置
 
-**功能职责**:
-- 模块依赖注入配置
-- 服务注册和生命周期管理
-- 模块初始化逻辑
+**文件**: `src/app_carwatcher_module.dart`
 
-**主要功能**:
-- 注册车辆监控相关服务
-- 配置模块路由
-- 初始化地图服务
-- 设置权限管理
+```dart
+import 'package:basic_modular/modular.dart';
+import 'package:basic_modular_route/basic_modular_route.dart';
 
-### 3. 路由配置 (`src/route_dp.dart` & `src/route_export.dart`)
+import 'route_export.dart';
 
-**功能职责**:
-- 定义模块内部路由
-- 配置页面导航规则
-- 对外路由接口暴露
+/// Module负责的页面
+class AppCarwatcherModule extends Module with RouteObjProvider {
+  @override
+  List<ModularRoute> get routes {
+    final moduleHome = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyModule);
+    final carWatcherHomePage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyCarWatcherHomePage);
+    final geoFenceListPage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyGeoFenceListPage);
+    final geoFenceDetailPage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyGeoFenceDetailPage);
+    final searchPoiPage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyGeoFenceSearchPOIPage);
+    final dailyReportDetailPage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyDailyReportPage);
+    final eventFilterPage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyEventFilterPage);
+    final reportDetailPage = RouteCenterAPI.routeMetaBy(AppCarwatcherRouteExport.keyReportDetailPage);
 
-**路由功能**:
-- 车辆监控主页面
-- 车辆位置详情页
-- 历史轨迹查看页
-- 安全设置页面
-
-### 4. 状态管理 (`src/blocs/`)
-
-**功能职责**:
-- 车辆状态数据管理
-- 位置信息状态维护
-- 监控告警状态处理
-
-**主要BLoC**:
-- `CarwatcherBloc` - 车辆监控主状态
-- `LocationBloc` - 位置信息状态
-- `AlertBloc` - 告警信息状态
-- `PermissionBloc` - 权限状态管理
-
-### 5. 页面组件 (`src/pages/`)
-
-**功能职责**:
-- 用户界面展示
-- 用户交互处理
-- 数据展示和操作
-
-**主要页面**:
-- `CarwatcherHomePage` - 监控主页
-- `VehicleLocationPage` - 车辆位置页
-- `TrackHistoryPage` - 轨迹历史页
-- `SecuritySettingsPage` - 安全设置页
-
-### 6. 工具类 (`src/utils/`)
-
-**功能职责**:
-- 业务工具方法
-- 数据处理辅助
-- 通用功能封装
-
-**主要工具**:
-- 地理位置计算工具
-- 时间格式化工具
-- 数据转换工具
-- 权限检查工具
-
-### 7. 常量定义 (`src/constants/`)
-
-**功能职责**:
-- 模块常量定义
-- 配置参数管理
-- 错误码定义
-
-**常量类型**:
-- API接口常量
-- 业务配置常量
-- 错误消息常量
-- UI配置常量
-
-## 业务流程
-
-### 车辆监控流程
-```mermaid
-graph TD
-    A[启动监控] --> B[权限检查]
-    B --> C{权限是否已授予}
-    C -->|是| D[获取车辆位置]
-    C -->|否| E[请求位置权限]
-    E --> F{用户是否同意}
-    F -->|是| D
-    F -->|否| G[显示权限说明]
-    D --> H[更新地图位置]
-    H --> I[检查异常状态]
-    I --> J{是否有异常}
-    J -->|是| K[发送告警通知]
-    J -->|否| L[继续监控]
-    K --> L
-    L --> D
+    return [
+      ChildRoute<dynamic>(moduleHome.path, child: (_, args) => moduleHome.provider(args).as()),
+      ChildRoute<dynamic>(carWatcherHomePage.path, child: (_, args) => carWatcherHomePage.provider(args).as()),
+      ChildRoute<dynamic>(geoFenceListPage.path, child: (_, args) => geoFenceListPage.provider(args).as()),
+      ChildRoute<dynamic>(geoFenceDetailPage.path, child: (_, args) => geoFenceDetailPage.provider(args).as()),
+      ChildRoute<dynamic>(searchPoiPage.path, child: (_, args) => searchPoiPage.provider(args).as()),
+      ChildRoute<dynamic>(dailyReportDetailPage.path, child: (_, args) => dailyReportDetailPage.provider(args).as()),
+      ChildRoute<dynamic>(eventFilterPage.path, child: (_, args) => eventFilterPage.provider(args).as()),
+      ChildRoute<dynamic>(reportDetailPage.path, child: (_, args) => reportDetailPage.provider(args).as()),
+    ];
+  }
+}
 ```
 
-### 告警处理流程
-```mermaid
-graph TD
-    A[接收告警] --> B[验证告警有效性]
-    B --> C[确定告警类型]
-    C --> D{告警级别}
-    D -->|高危| E[立即推送通知]
-    D -->|中危| F[记录日志+通知]
-    D -->|低危| G[仅记录日志]
-    E --> H[更新UI状态]
-    F --> H
-    G --> H
-    H --> I[存储告警记录]
+### 3. 路由导出管理
+
+**文件**: `src/route_export.dart`
+
+```dart
+import 'package:basic_modular/modular.dart';
+import 'package:clr_carwatcher/clr_carwatcher.dart';
+import 'package:ui_mapview/ui_mapview.dart';
+
+import 'app_carwatcher_module.dart';
+import 'pages/daily_report/daily_report_detail_page.dart';
+import 'pages/event_detail/report_event_detail_page.dart';
+import 'pages/event_filter/event_filter_page.dart';
+import 'pages/geo_fence_detail/geo_fence_detail_page.dart';
+import 'pages/geo_fence_list/geo_fence_list_page.dart';
+import 'pages/geo_fence_search_poi/geo_fence_search_poi_page.dart';
+import 'pages/home/car_watcher_home_page.dart';
+
+/// app_carwatcher的路由管理
+class AppCarwatcherRouteExport implements RouteExporter {
+  // 路由常量定义
+  static const String keyModule = 'app_carWatcher';
+  static const String keyCarWatcherHomePage = 'app_carWatcher.carWatcher_home';
+  static const String keyGeoFenceListPage = 'app_carWatcher.geoFenceList';
+  static const String keyGeoFenceDetailPage = 'app_carWatcher.geoFenceDetail';
+  static const String keyGeoFenceSearchPOIPage = 'app_carWatcher.poiSearch';
+  static const String keyDailyReportPage = 'app_carWatcher.dailyReport';
+  static const String keyEventFilterPage = 'app_carWatcher.eventFilter';
+  static const String keyReportDetailPage = 'app_carWatcher.reportDetail';
+
+  @override
+  List<RouteMeta> exportRoutes() {
+    final r0 = RouteMeta(keyModule, '/app_carWatcher', (args) => AppCarwatcherModule(), null);
+    
+    final r1 = RouteMeta(keyCarWatcherHomePage, '/carWatcher_home', 
+        (args) => CarWatcherHomePage(args.data['vin'] as String), r0);
+    
+    final r2 = RouteMeta(keyGeoFenceListPage, '/geoFenceList', 
+        (args) => GeoFenceListPage(args.data['vin'] as String), r0);
+    
+    final r3 = RouteMeta(keyGeoFenceDetailPage, '/geoFenceDetail', 
+        (args) => GeoFenceDetailPage(
+          args.data['vin'] as String,
+          args.data['fenceId'] as String?,
+          args.data['fenceOnCount'] as int,
+        ), r0);
+    
+    final r4 = RouteMeta(keyGeoFenceSearchPOIPage, '/poiSearch', 
+        (args) => GeoFenceSearchPOIPage(
+          args.data['province'] as String?,
+          args.data['city'] as String?,
+          args.data['cityCode'] as String?,
+          args.data['fenceLatLng'] as LatLng?,
+        ), r0);
+    
+    final r5 = RouteMeta(keyDailyReportPage, '/dailyReport', 
+        (args) => DailyReportDetailPage(
+          args.data['vin'] as String,
+          args.data['reportId'] as String,
+        ), r0);
+    
+    final r6 = RouteMeta(keyEventFilterPage, '/eventFilter', 
+        (args) => EventFilterPage(args.data['eventTypes'] as List<EEventType>?), r0);
+    
+    final r7 = RouteMeta(keyReportDetailPage, '/reportDetail', 
+        (args) => ReportEventDetailPage(
+          args.data['vin'] as String,
+          args.data['eventId'] as String,
+        ), r0);
+
+    return [r0, r1, r2, r3, r4, r5, r6, r7];
+  }
+}
 ```
 
-## 安全特性
+## 核心页面功能
 
-### 隐私保护
-- 位置数据加密传输
-- 本地数据安全存储
-- 用户隐私合规检查
-- 数据访问权限控制
+### 1. 车辆监控首页
 
-### 数据安全
-- API接口安全认证
-- 数据传输加密
-- 敏感信息脱敏
-- 防重放攻击机制
+**文件**: `pages/home/car_watcher_home_page.dart`
 
-## 性能优化
+```dart
+import 'package:app_consent/app_consent.dart';
+import 'package:basic_intl/intl.dart';
+import 'package:basic_logger/basic_logger.dart';
+import 'package:basic_modular/modular.dart';
+import 'package:flutter/material.dart';
+import 'package:ui_basic/pull_to_refresh.dart';
+import 'package:ui_basic/screen_util.dart';
+import 'package:ui_basic/ui_basic.dart';
 
-### 位置服务优化
-- 智能定位频率调节
-- 低功耗定位策略
-- 位置缓存机制
-- 网络状态适配
+/// CarWatcher首页
+class CarWatcherHomePage extends StatefulWidget with RouteObjProvider {
+  const CarWatcherHomePage(this.vin, {Key? key}) : super(key: key);
 
-### 内存管理
-- 历史数据定期清理
-- 地图资源释放
-- 状态对象生命周期管理
-- 内存泄漏防护
+  /// 车辆vin码
+  final String vin;
 
-## 扩展性设计
+  @override
+  State<StatefulWidget> createState() => _CarWatcherHomeState();
+}
 
-### 插件化架构
-- 监控功能模块化
-- 告警策略可配置
-- 第三方服务集成
-- 自定义监控规则
+class _CarWatcherHomeState extends State<CarWatcherHomePage> {
+  final CarWatcherHomeBloc _bloc = CarWatcherHomeBloc();
+  late List<BannerBean> images = [];
 
-### 配置化管理
-- 监控参数可配置
-- 告警阈值动态调整
-- UI界面个性化
-- 功能开关控制
+  @override
+  void initState() {
+    super.initState();
+    
+    // 初始化banner数据
+    images.add(BannerBean(
+      imageUrl: 'packages/app_carwatcher/assets/images/icon_banner1.png',
+      title: '车辆监控横幅1',
+    ));
+    
+    images.add(BannerBean(
+      imageUrl: 'packages/app_carwatcher/assets/images/icon_banner2.png', 
+      title: '车辆监控横幅2',
+    ));
+  }
 
-## 测试策略
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('车辆监控')),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _bloc.add(RefreshDataEvent());
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Banner轮播
+              HomeBannerWidget(images: images),
+              
+              // 功能入口区域
+              _buildFunctionEntries(),
+              
+              // 车辆状态信息
+              _buildVehicleStatus(),
+              
+              // 最近事件列表
+              _buildRecentEvents(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildFunctionEntries() {
+    return Container(
+      padding: EdgeInsets.all(16),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        children: [
+          _buildFunctionCard(
+            icon: Icons.location_on,
+            title: '地理围栏',
+            onTap: () => _navigateToGeoFenceList(),
+          ),
+          _buildFunctionCard(
+            icon: Icons.event_note,
+            title: '历史报告',
+            onTap: () => _navigateToDailyReport(),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildFunctionCard({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48, color: Colors.blue),
+            SizedBox(height: 8),
+            Text(title, style: TextStyle(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  void _navigateToGeoFenceList() {
+    Modular.to.pushNamed('/app_carWatcher/geoFenceList', arguments: {'vin': widget.vin});
+  }
+  
+  void _navigateToDailyReport() {
+    Modular.to.pushNamed('/app_carWatcher/dailyReport', arguments: {'vin': widget.vin});
+  }
+}
+```
 
-### 单元测试
-- BLoC状态测试
-- 工具类方法测试
-- 数据模型测试
-- 权限逻辑测试
+### 2. 地理围栏功能
 
-### 集成测试
-- 地图集成测试
-- 位置服务测试
-- 告警流程测试
-- 权限流程测试
+#### 围栏列表页面
+```dart
+/// 地理围栏列表页面
+class GeoFenceListPage extends StatefulWidget {
+  const GeoFenceListPage(this.vin, {Key? key}) : super(key: key);
+  
+  final String vin;
+  
+  @override
+  State<GeoFenceListPage> createState() => _GeoFenceListPageState();
+}
 
-### UI测试
-- 页面渲染测试
-- 用户交互测试
-- 导航流程测试
-- 异常场景测试
+class _GeoFenceListPageState extends State<GeoFenceListPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('地理围栏'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _navigateToCreateFence(),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: fenceList.length,
+        itemBuilder: (context, index) {
+          final fence = fenceList[index];
+          return ListTile(
+            title: Text(fence.name),
+            subtitle: Text(fence.address),
+            trailing: Switch(
+              value: fence.isEnabled,
+              onChanged: (value) => _toggleFence(fence, value),
+            ),
+            onTap: () => _navigateToFenceDetail(fence),
+          );
+        },
+      ),
+    );
+  }
+  
+  void _navigateToCreateFence() {
+    Modular.to.pushNamed('/app_carWatcher/geoFenceDetail', arguments: {
+      'vin': widget.vin,
+      'fenceId': null,
+      'fenceOnCount': 0,
+    });
+  }
+}
+```
 
-## 部署和维护
+#### 围栏详情页面
+```dart
+/// 地理围栏详情页面
+class GeoFenceDetailPage extends StatefulWidget {
+  const GeoFenceDetailPage(this.vin, this.fenceId, this.fenceOnCount, {Key? key}) 
+      : super(key: key);
+  
+  final String vin;
+  final String? fenceId;
+  final int fenceOnCount;
+  
+  @override
+  State<GeoFenceDetailPage> createState() => _GeoFenceDetailPageState();
+}
 
-### 构建配置
-- 多环境构建支持
-- 权限配置检查
-- 资源文件优化
-- 代码混淆配置
+class _GeoFenceDetailPageState extends State<GeoFenceDetailPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.fenceId == null ? '新建围栏' : '编辑围栏'),
+        actions: [
+          TextButton(
+            onPressed: _saveFence,
+            child: Text('保存'),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // 地图显示区域
+          Expanded(
+            flex: 2,
+            child: Container(
+              color: Colors.grey[300],
+              child: Center(child: Text('地图显示区域')),
+            ),
+          ),
+          
+          // 设置区域
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: '围栏名称',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Text('半径(米): '),
+                      Expanded(
+                        child: Slider(
+                          min: 100,
+                          max: 5000,
+                          value: 500,
+                          onChanged: (value) {},
+                        ),
+                      ),
+                      Text('500'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _saveFence() {
+    // 保存围栏逻辑
+    Navigator.of(context).pop();
+  }
+}
+```
 
-### 监控指标
-- 定位成功率
-- 告警响应时间
-- 用户活跃度
-- 异常错误率
+### 3. POI搜索功能
 
-## 总结
+```dart
+/// POI搜索页面
+class GeoFenceSearchPOIPage extends StatefulWidget {
+  const GeoFenceSearchPOIPage(
+    this.province,
+    this.city,
+    this.cityCode,
+    this.fenceLatLng, {
+    Key? key,
+  }) : super(key: key);
+  
+  final String? province;
+  final String? city;
+  final String? cityCode;
+  final LatLng? fenceLatLng;
+  
+  @override
+  State<GeoFenceSearchPOIPage> createState() => _GeoFenceSearchPOIPageState();
+}
 
-`app_carwatcher` 模块作为 OneApp 的重要安全组件，提供了全面的车辆监控解决方案。通过模块化的设计、完善的权限管理和智能的告警机制，为用户提供可靠的车辆安全保障。模块具有良好的扩展性和维护性，能够适应不断变化的业务需求。
+class _GeoFenceSearchPOIPageState extends State<GeoFenceSearchPOIPage> {
+  final TextEditingController _searchController = TextEditingController();
+  List<POIItem> _searchResults = [];
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: '搜索地点',
+            border: InputBorder.none,
+            suffixIcon: IconButton(
+              icon: Icon(Icons.search),
+              onPressed: _performSearch,
+            ),
+          ),
+          onSubmitted: (_) => _performSearch(),
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: _searchResults.length,
+        itemBuilder: (context, index) {
+          final poi = _searchResults[index];
+          return ListTile(
+            title: Text(poi.name),
+            subtitle: Text(poi.address),
+            onTap: () => _selectPOI(poi),
+          );
+        },
+      ),
+    );
+  }
+  
+  void _performSearch() {
+    // 执行POI搜索
+    setState(() {
+      _searchResults = [
+        // 模拟搜索结果
+        POIItem(name: '示例地点1', address: '示例地址1'),
+        POIItem(name: '示例地点2', address: '示例地址2'),
+      ];
+    });
+  }
+  
+  void _selectPOI(POIItem poi) {
+    Navigator.of(context).pop(poi);
+  }
+}
+
+class POIItem {
+  final String name;
+  final String address;
+  
+  POIItem({required this.name, required this.address});
+}
+```
+
+## 状态管理
+
+### BLoC状态管理模式
+```dart
+// CarWatcher首页状态管理
+class CarWatcherHomeBloc extends Bloc<CarWatcherHomeEvent, CarWatcherHomeState> {
+  CarWatcherHomeBloc() : super(CarWatcherHomeInitial()) {
+    on<LoadDataEvent>(_onLoadData);
+    on<RefreshDataEvent>(_onRefreshData);
+  }
+  
+  Future<void> _onLoadData(LoadDataEvent event, Emitter<CarWatcherHomeState> emit) async {
+    emit(CarWatcherHomeLoading());
+    
+    try {
+      // 加载车辆数据
+      final vehicleData = await loadVehicleData(event.vin);
+      emit(CarWatcherHomeLoaded(vehicleData));
+    } catch (e) {
+      emit(CarWatcherHomeError(e.toString()));
+    }
+  }
+  
+  Future<void> _onRefreshData(RefreshDataEvent event, Emitter<CarWatcherHomeState> emit) async {
+    // 刷新数据逻辑
+  }
+}
+
+// 事件定义
+abstract class CarWatcherHomeEvent {}
+
+class LoadDataEvent extends CarWatcherHomeEvent {
+  final String vin;
+  LoadDataEvent(this.vin);
+}
+
+class RefreshDataEvent extends CarWatcherHomeEvent {}
+
+// 状态定义
+abstract class CarWatcherHomeState {}
+
+class CarWatcherHomeInitial extends CarWatcherHomeState {}
+
+class CarWatcherHomeLoading extends CarWatcherHomeState {}
+
+class CarWatcherHomeLoaded extends CarWatcherHomeState {
+  final VehicleData data;
+  CarWatcherHomeLoaded(this.data);
+}
+
+class CarWatcherHomeError extends CarWatcherHomeState {
+  final String message;
+  CarWatcherHomeError(this.message);
+}
+```
+
+## 依赖管理
+
+### 核心依赖
+- **clr_carwatcher**: 车辆监控服务SDK
+- **ui_mapview**: 地图视图组件
+- **app_consent**: 用户授权管理
+
+### 框架依赖
+- **basic_modular**: 模块化框架
+- **basic_modular_route**: 路由管理
+- **basic_intl**: 国际化支持
+- **basic_logger**: 日志服务
+
+### UI 组件依赖
+- **ui_basic**: 基础UI组件
+- **flutter/material**: Material Design组件
+
+## 最佳实践
+
+### 1. 代码组织
+- 按功能模块组织页面和组件
+- 统一的路由管理和导航
+- 清晰的状态管理模式
+
+### 2. 用户体验
+- 响应式设计适配不同屏幕
+- 友好的加载和错误提示
+- 流畅的页面转场
+
+### 3. 性能优化
+- 合理的状态管理避免不必要的重建
+- 地图资源的合理加载和释放
+- 网络请求的优化和缓存

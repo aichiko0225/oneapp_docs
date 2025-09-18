@@ -2,899 +2,217 @@
 
 ## 模块概述
 
-`oneapp_community` 是 OneApp 的用户社区模块，提供车主社交、内容分享、话题讨论、活动参与等功能。该模块集成了多媒体内容展示、用户互动、内容管理等核心功能，为车主用户构建活跃的社区生态。
+`oneapp_community` 是 OneApp 的社区模块，专注于社区发现和用户互动功能。该模块提供社区内容浏览、文章发现、动态时刻、用户主页等核心功能。
 
 ### 基本信息
 - **模块名称**: oneapp_community
 - **版本**: 0.0.3
 - **类型**: Flutter Package
-- **Dart 版本**: >=3.0.0 <4.0.0
-- **Flutter 版本**: >=1.17.0
+
+### 核心导出组件
+
+基于真实项目代码的主要导出：
+
+```dart
+library oneapp_community;
+
+// 社区发现模块
+export 'src/app_modules/app_discover/pages/community_tab_page.dart';
+export 'src/app_modules/app_discover/pages/discover_tab_page.dart';
+export 'src/app_modules/app_discover/pages/community_tab_explore_page.dart';
+export 'src/app_modules/app_discover/pages/discover_article_page.dart';
+export 'src/app_modules/app_discover/pages/discovery_moment_page.dart';
+
+// 用户模块
+export 'src/app_modules/app_mine/pages/user_home_page.dart';
+
+// 路由和模块配置
+export 'src/community_route_dp.dart';
+export 'src/community_route_export.dart';
+export 'src/oneapp_community_module.dart';
+
+// 数据模型
+export '/src/app_modules/app_mine/models/ads_space_model.dart';
+
+// 组件
+export 'src/app_component/medium_component/sweep_video_bg.dart';
+```
 
 ## 目录结构
+
+基于实际项目结构：
 
 ```
 oneapp_community/
 ├── lib/
 │   ├── oneapp_community.dart     # 主导出文件
-│   └── src/                      # 源代码目录
-│       ├── pages/                # 社区页面
-│       ├── widgets/              # 社区组件
-│       ├── models/               # 数据模型
-│       ├── services/             # 服务层
-│       ├── blocs/                # 状态管理
-│       └── utils/                # 工具类
-├── assets/                       # 静态资源
-├── pubspec.yaml                  # 依赖配置
-└── README.md                     # 项目说明
+│   ├── generated/                # 生成的国际化文件
+│   ├── l10n/                    # 国际化资源文件
+│   └── src/                     # 源代码目录
+│       ├── app_modules/         # 应用模块
+│       │   ├── app_discover/    # 发现模块
+│       │   │   └── pages/       # 发现页面
+│       │   └── app_mine/        # 我的模块
+│       │       ├── pages/       # 用户页面
+│       │       └── models/      # 数据模型
+│       ├── app_component/       # 应用组件
+│       │   └── medium_component/ # 媒体组件
+│       ├── community_route_dp.dart      # 社区路由依赖
+│       ├── community_route_export.dart  # 社区路由导出
+│       └── oneapp_community_module.dart # 社区模块定义
+├── assets/                      # 静态资源
+└── pubspec.yaml                # 依赖配置
 ```
 
 ## 核心功能模块
 
-### 1. 内容发布与管理
+### 1. 社区发现功能
 
-#### 内容发布系统
+实际项目包含的发现页面：
+
+- **community_tab_page.dart**: 社区标签页面
+- **discover_tab_page.dart**: 发现标签页面  
+- **community_tab_explore_page.dart**: 社区探索页面
+- **discover_article_page.dart**: 发现文章页面
+- **discovery_moment_page.dart**: 发现动态页面
+
+### 2. 用户相关功能
+
+- **user_home_page.dart**: 用户主页页面
+- **ads_space_model.dart**: 广告位数据模型
+
+### 3. 媒体组件功能
+
+- **sweep_video_bg.dart**: 视频背景扫描组件
+
+## 技术架构
+
+### 模块化设计
+
+基于OneApp的模块化架构：
+
 ```dart
-// 内容发布服务
-class ContentPublishService {
-  final CommunityRepository _repository;
-  final MediaService _mediaService;
-  final UserService _userService;
-  
-  ContentPublishService(
-    this._repository,
-    this._mediaService,
-    this._userService,
-  );
-  
-  // 发布图文内容
-  Future<Result<Post>> publishTextPost({
-    required String content,
-    required List<String> tags,
-    List<File>? images,
-    String? location,
-    PostPrivacy privacy = PostPrivacy.public,
-  }) async {
-    try {
-      // 1. 上传图片
-      List<String> imageUrls = [];
-      if (images != null && images.isNotEmpty) {
-        final uploadResults = await Future.wait(
-          images.map((image) => _mediaService.uploadImage(image)),
-        );
-        imageUrls = uploadResults.where((url) => url != null).cast<String>().toList();
-      }
-      
-      // 2. 创建帖子
-      final post = Post(
-        id: generateId(),
-        authorId: _userService.currentUserId,
-        content: content,
-        images: imageUrls,
-        tags: tags,
-        location: location,
-        privacy: privacy,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-      
-      // 3. 保存到数据库
-      final savedPost = await _repository.createPost(post);
-      
-      // 4. 通知相关用户
-      await _notifyFollowers(savedPost);
-      
-      return Right(savedPost);
-    } catch (e) {
-      return Left(CommunityFailure.publishFailed(e.toString()));
-    }
-  }
-  
-  // 发布视频内容
-  Future<Result<Post>> publishVideoPost({
-    required String content,
-    required File video,
-    File? thumbnail,
-    required List<String> tags,
-    String? location,
-  }) async {
-    try {
-      // 1. 上传视频
-      final videoUrl = await _mediaService.uploadVideo(video);
-      if (videoUrl == null) {
-        return Left(CommunityFailure.videoUploadFailed());
-      }
-      
-      // 2. 上传缩略图或生成缩略图
-      String? thumbnailUrl;
-      if (thumbnail != null) {
-        thumbnailUrl = await _mediaService.uploadImage(thumbnail);
-      } else {
-        thumbnailUrl = await _mediaService.generateVideoThumbnail(videoUrl);
-      }
-      
-      // 3. 创建视频帖子
-      final post = Post(
-        id: generateId(),
-        authorId: _userService.currentUserId,
-        content: content,
-        videoUrl: videoUrl,
-        thumbnailUrl: thumbnailUrl,
-        tags: tags,
-        location: location,
-        type: PostType.video,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-      
-      final savedPost = await _repository.createPost(post);
-      return Right(savedPost);
-    } catch (e) {
-      return Left(CommunityFailure.publishFailed(e.toString()));
-    }
-  }
-  
-  // 分享车辆状态
-  Future<Result<Post>> shareVehicleStatus({
-    required String vehicleId,
-    required VehicleStatus status,
-    String? content,
-    List<String>? tags,
-  }) async {
-    try {
-      final post = Post(
-        id: generateId(),
-        authorId: _userService.currentUserId,
-        content: content ?? '分享我的爱车状态',
-        tags: tags ?? ['车辆状态'],
-        vehicleData: VehicleShareData.fromStatus(vehicleId, status),
-        type: PostType.vehicleShare,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
-      
-      final savedPost = await _repository.createPost(post);
-      return Right(savedPost);
-    } catch (e) {
-      return Left(CommunityFailure.publishFailed(e.toString()));
-    }
-  }
-}
-```
-
-### 2. 内容浏览与互动
-
-#### 内容流管理
-```dart
-// 社区内容流服务
-class CommunityFeedService {
-  final CommunityRepository _repository;
-  final UserPreferenceService _preferenceService;
-  final RecommendationEngine _recommendationEngine;
-  
-  CommunityFeedService(
-    this._repository,
-    this._preferenceService,
-    this._recommendationEngine,
-  );
-  
-  // 获取个性化内容流
-  Future<Result<List<Post>>> getPersonalizedFeed({
-    int page = 1,
-    int pageSize = 20,
-    FeedType type = FeedType.recommended,
-  }) async {
-    try {
-      final userPreferences = await _preferenceService.getUserPreferences();
-      
-      List<Post> posts;
-      switch (type) {
-        case FeedType.recommended:
-          posts = await _getRecommendedPosts(userPreferences, page, pageSize);
-          break;
-        case FeedType.following:
-          posts = await _getFollowingPosts(page, pageSize);
-          break;
-        case FeedType.latest:
-          posts = await _getLatestPosts(page, pageSize);
-          break;
-        case FeedType.trending:
-          posts = await _getTrendingPosts(page, pageSize);
-          break;
-      }
-      
-      return Right(posts);
-    } catch (e) {
-      return Left(CommunityFailure.feedLoadFailed(e.toString()));
-    }
-  }
-  
-  // 获取推荐内容
-  Future<List<Post>> _getRecommendedPosts(
-    UserPreferences preferences,
-    int page,
-    int pageSize,
-  ) async {
-    final recommendations = await _recommendationEngine.getRecommendations(
-      userId: _userService.currentUserId,
-      preferences: preferences,
-      page: page,
-      pageSize: pageSize,
-    );
-    
-    return await _repository.getPostsByIds(recommendations.postIds);
-  }
-  
-  // 搜索内容
-  Future<Result<SearchResult>> searchContent({
-    required String keyword,
-    List<String>? tags,
-    PostType? type,
-    String? location,
-    DateRange? dateRange,
-    int page = 1,
-    int pageSize = 20,
-  }) async {
-    try {
-      final searchParams = SearchParams(
-        keyword: keyword,
-        tags: tags,
-        type: type,
-        location: location,
-        dateRange: dateRange,
-        page: page,
-        pageSize: pageSize,
-      );
-      
-      final searchResult = await _repository.searchPosts(searchParams);
-      return Right(searchResult);
-    } catch (e) {
-      return Left(CommunityFailure.searchFailed(e.toString()));
-    }
-  }
-}
-
-// 内容互动服务
-class ContentInteractionService {
-  final CommunityRepository _repository;
-  final NotificationService _notificationService;
-  
-  ContentInteractionService(this._repository, this._notificationService);
-  
-  // 点赞/取消点赞
-  Future<Result<void>> toggleLike(String postId) async {
-    try {
-      final isLiked = await _repository.isPostLiked(postId, _userService.currentUserId);
-      
-      if (isLiked) {
-        await _repository.unlikePost(postId, _userService.currentUserId);
-      } else {
-        await _repository.likePost(postId, _userService.currentUserId);
-        
-        // 发送点赞通知
-        final post = await _repository.getPostById(postId);
-        if (post != null && post.authorId != _userService.currentUserId) {
-          await _notificationService.sendLikeNotification(
-            targetUserId: post.authorId,
-            postId: postId,
-            likerUserId: _userService.currentUserId,
-          );
-        }
-      }
-      
-      return Right(unit);
-    } catch (e) {
-      return Left(CommunityFailure.interactionFailed(e.toString()));
-    }
-  }
-  
-  // 评论
-  Future<Result<Comment>> addComment({
-    required String postId,
-    required String content,
-    String? parentCommentId,
-    List<String>? mentionedUserIds,
-  }) async {
-    try {
-      final comment = Comment(
-        id: generateId(),
-        postId: postId,
-        authorId: _userService.currentUserId,
-        content: content,
-        parentCommentId: parentCommentId,
-        mentionedUserIds: mentionedUserIds ?? [],
-        createdAt: DateTime.now(),
-      );
-      
-      final savedComment = await _repository.createComment(comment);
-      
-      // 发送评论通知
-      await _sendCommentNotifications(savedComment);
-      
-      return Right(savedComment);
-    } catch (e) {
-      return Left(CommunityFailure.commentFailed(e.toString()));
-    }
-  }
-  
-  // 分享
-  Future<Result<void>> sharePost({
-    required String postId,
-    required ShareTarget target,
-    String? message,
-  }) async {
-    try {
-      final post = await _repository.getPostById(postId);
-      if (post == null) {
-        return Left(CommunityFailure.postNotFound());
-      }
-      
-      await _repository.recordShare(postId, _userService.currentUserId, target);
-      
-      // 根据分享目标执行相应操作
-      switch (target) {
-        case ShareTarget.internal:
-          await _shareToInternalFeed(post, message);
-          break;
-        case ShareTarget.wechat:
-          await _shareToWeChat(post);
-          break;
-        case ShareTarget.weibo:
-          await _shareToWeibo(post);
-          break;
-        default:
-          break;
-      }
-      
-      return Right(unit);
-    } catch (e) {
-      return Left(CommunityFailure.shareFailed(e.toString()));
-    }
-  }
-}
-```
-
-### 3. 用户关系管理
-
-#### 关注系统
-```dart
-// 用户关系服务
-class UserRelationshipService {
-  final CommunityRepository _repository;
-  final NotificationService _notificationService;
-  
-  UserRelationshipService(this._repository, this._notificationService);
-  
-  // 关注用户
-  Future<Result<void>> followUser(String targetUserId) async {
-    try {
-      if (targetUserId == _userService.currentUserId) {
-        return Left(CommunityFailure.cannotFollowSelf());
-      }
-      
-      final isAlreadyFollowing = await _repository.isFollowing(
-        _userService.currentUserId,
-        targetUserId,
-      );
-      
-      if (isAlreadyFollowing) {
-        return Left(CommunityFailure.alreadyFollowing());
-      }
-      
-      await _repository.followUser(_userService.currentUserId, targetUserId);
-      
-      // 发送关注通知
-      await _notificationService.sendFollowNotification(
-        targetUserId: targetUserId,
-        followerUserId: _userService.currentUserId,
-      );
-      
-      return Right(unit);
-    } catch (e) {
-      return Left(CommunityFailure.followFailed(e.toString()));
-    }
-  }
-  
-  // 取消关注
-  Future<Result<void>> unfollowUser(String targetUserId) async {
-    try {
-      await _repository.unfollowUser(_userService.currentUserId, targetUserId);
-      return Right(unit);
-    } catch (e) {
-      return Left(CommunityFailure.unfollowFailed(e.toString()));
-    }
-  }
-  
-  // 获取关注列表
-  Future<Result<List<UserProfile>>> getFollowing({
-    String? userId,
-    int page = 1,
-    int pageSize = 20,
-  }) async {
-    try {
-      final targetUserId = userId ?? _userService.currentUserId;
-      final followingList = await _repository.getFollowing(
-        targetUserId,
-        page,
-        pageSize,
-      );
-      return Right(followingList);
-    } catch (e) {
-      return Left(CommunityFailure.loadFollowingFailed(e.toString()));
-    }
-  }
-  
-  // 获取粉丝列表
-  Future<Result<List<UserProfile>>> getFollowers({
-    String? userId,
-    int page = 1,
-    int pageSize = 20,
-  }) async {
-    try {
-      final targetUserId = userId ?? _userService.currentUserId;
-      final followersList = await _repository.getFollowers(
-        targetUserId,
-        page,
-        pageSize,
-      );
-      return Right(followersList);
-    } catch (e) {
-      return Left(CommunityFailure.loadFollowersFailed(e.toString()));
-    }
-  }
-  
-  // 获取共同关注
-  Future<Result<List<UserProfile>>> getMutualFollowing(String userId) async {
-    try {
-      final mutualFollowing = await _repository.getMutualFollowing(
-        _userService.currentUserId,
-        userId,
-      );
-      return Right(mutualFollowing);
-    } catch (e) {
-      return Left(CommunityFailure.loadMutualFollowingFailed(e.toString()));
-    }
-  }
-}
-```
-
-### 4. 话题与标签系统
-
-#### 话题管理
-```dart
-// 话题服务
-class TopicService {
-  final CommunityRepository _repository;
-  final TrendingAnalyzer _trendingAnalyzer;
-  
-  TopicService(this._repository, this._trendingAnalyzer);
-  
-  // 获取热门话题
-  Future<Result<List<Topic>>> getTrendingTopics({
-    int limit = 20,
-    Duration? timeRange,
-  }) async {
-    try {
-      final topics = await _trendingAnalyzer.getTrendingTopics(
-        limit: limit,
-        timeRange: timeRange ?? Duration(days: 7),
-      );
-      return Right(topics);
-    } catch (e) {
-      return Left(CommunityFailure.loadTopicsFailed(e.toString()));
-    }
-  }
-  
-  // 搜索话题
-  Future<Result<List<Topic>>> searchTopics(String keyword) async {
-    try {
-      final topics = await _repository.searchTopics(keyword);
-      return Right(topics);
-    } catch (e) {
-      return Left(CommunityFailure.searchTopicsFailed(e.toString()));
-    }
-  }
-  
-  // 关注话题
-  Future<Result<void>> followTopic(String topicId) async {
-    try {
-      await _repository.followTopic(_userService.currentUserId, topicId);
-      return Right(unit);
-    } catch (e) {
-      return Left(CommunityFailure.followTopicFailed(e.toString()));
-    }
-  }
-  
-  // 获取话题下的内容
-  Future<Result<List<Post>>> getTopicPosts({
-    required String topicId,
-    int page = 1,
-    int pageSize = 20,
-    PostSortType sortType = PostSortType.latest,
-  }) async {
-    try {
-      final posts = await _repository.getTopicPosts(
-        topicId: topicId,
-        page: page,
-        pageSize: pageSize,
-        sortType: sortType,
-      );
-      return Right(posts);
-    } catch (e) {
-      return Left(CommunityFailure.loadTopicPostsFailed(e.toString()));
-    }
-  }
-}
-```
-
-### 5. 多媒体内容处理
-
-#### 视频播放器集成
-```dart
-// 社区视频播放器
-class CommunityVideoPlayer extends StatefulWidget {
-  final String videoUrl;
-  final String? thumbnailUrl;
-  final bool autoPlay;
-  final bool showControls;
-  final VoidCallback? onPlayComplete;
-  
-  const CommunityVideoPlayer({
-    Key? key,
-    required this.videoUrl,
-    this.thumbnailUrl,
-    this.autoPlay = false,
-    this.showControls = true,
-    this.onPlayComplete,
-  }) : super(key: key);
-  
+// 社区模块类（推测结构）
+class OneAppCommunityModule extends Module {
   @override
-  _CommunityVideoPlayerState createState() => _CommunityVideoPlayerState();
-}
+  List<Bind> get binds => [
+    // 服务绑定
+  ];
 
-class _CommunityVideoPlayerState extends State<CommunityVideoPlayer> {
-  late SuperPlayerController _controller;
-  bool _isInitialized = false;
-  
   @override
-  void initState() {
-    super.initState();
-    _initializePlayer();
-  }
-  
-  void _initializePlayer() {
-    _controller = SuperPlayerController();
-    
-    final playerConfig = SuperPlayerModel();
-    playerConfig.videoURL = widget.videoUrl;
-    playerConfig.title = '社区视频';
-    playerConfig.coverURL = widget.thumbnailUrl;
-    
-    _controller.playWithModel(playerConfig);
-    
-    _controller.onSimplePlayerEventBroadcast.listen((event) {
-      if (event['event'] == SuperPlayerViewEvent.onPlayEnd) {
-        widget.onPlayComplete?.call();
-      }
-    });
-    
-    setState(() {
-      _isInitialized = true;
-    });
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    if (!_isInitialized) {
-      return _buildLoadingState();
-    }
-    
-    return SuperPlayerView(
-      _controller,
-      isFullScreen: false,
-      showLeftBackBtn: false,
-    );
-  }
-  
-  Widget _buildLoadingState() {
-    return Container(
-      height: 200,
-      color: Colors.black12,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 8),
-            Text('加载中...'),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  @override
-  void dispose() {
-    _controller.releasePlayer();
-    super.dispose();
-  }
+  List<ModularRoute> get routes => [
+    // 路由配置
+  ];
 }
 ```
 
-## 数据模型
+### 路由管理
 
-### 核心数据模型
 ```dart
-// 帖子模型
-class Post {
-  final String id;
-  final String authorId;
-  final String content;
-  final List<String> images;
-  final String? videoUrl;
-  final String? thumbnailUrl;
-  final List<String> tags;
-  final String? location;
-  final PostType type;
-  final PostPrivacy privacy;
-  final VehicleShareData? vehicleData;
-  final int likeCount;
-  final int commentCount;
-  final int shareCount;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+// 社区路由导出
+class CommunityRouteExport {
+  // 路由键定义
+  static const String keyCommunityTab = 'Key_Community_Tab';
+  static const String keyDiscoverTab = 'Key_Discover_Tab';
+  static const String keyUserHome = 'Key_User_Home';
   
-  const Post({
-    required this.id,
-    required this.authorId,
-    required this.content,
-    this.images = const [],
-    this.videoUrl,
-    this.thumbnailUrl,
-    this.tags = const [],
-    this.location,
-    this.type = PostType.text,
-    this.privacy = PostPrivacy.public,
-    this.vehicleData,
-    this.likeCount = 0,
-    this.commentCount = 0,
-    this.shareCount = 0,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-}
-
-// 评论模型
-class Comment {
-  final String id;
-  final String postId;
-  final String authorId;
-  final String content;
-  final String? parentCommentId;
-  final List<String> mentionedUserIds;
-  final int likeCount;
-  final List<Comment> replies;
-  final DateTime createdAt;
-  
-  const Comment({
-    required this.id,
-    required this.postId,
-    required this.authorId,
-    required this.content,
-    this.parentCommentId,
-    this.mentionedUserIds = const [],
-    this.likeCount = 0,
-    this.replies = const [],
-    required this.createdAt,
-  });
-}
-
-// 用户资料模型
-class UserProfile {
-  final String id;
-  final String username;
-  final String? displayName;
-  final String? avatar;
-  final String? bio;
-  final String? location;
-  final int followingCount;
-  final int followersCount;
-  final int postsCount;
-  final bool isVerified;
-  final DateTime joinedAt;
-  
-  const UserProfile({
-    required this.id,
-    required this.username,
-    this.displayName,
-    this.avatar,
-    this.bio,
-    this.location,
-    this.followingCount = 0,
-    this.followersCount = 0,
-    this.postsCount = 0,
-    this.isVerified = false,
-    required this.joinedAt,
-  });
+  // 其他路由相关配置
 }
 ```
 
-## UI 组件设计
+## 使用指南
 
-### 帖子卡片组件
+### 1. 模块集成
+
 ```dart
-// 帖子卡片组件
-class PostCard extends StatelessWidget {
-  final Post post;
-  final UserProfile author;
-  final VoidCallback? onTap;
-  final VoidCallback? onLike;
-  final VoidCallback? onComment;
-  final VoidCallback? onShare;
-  
-  const PostCard({
-    Key? key,
-    required this.post,
-    required this.author,
-    this.onTap,
-    this.onLike,
-    this.onComment,
-    this.onShare,
-  }) : super(key: key);
-  
+// 在主应用中导入社区模块
+import 'package:oneapp_community/oneapp_community.dart';
+
+// 注册模块
+class AppModule extends Module {
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              SizedBox(height: 12),
-              _buildContent(),
-              if (post.images.isNotEmpty) ...[
-                SizedBox(height: 12),
-                _buildImageGrid(),
-              ],
-              if (post.videoUrl != null) ...[
-                SizedBox(height: 12),
-                _buildVideoPlayer(),
-              ],
-              if (post.vehicleData != null) ...[
-                SizedBox(height: 12),
-                _buildVehicleData(),
-              ],
-              SizedBox(height: 12),
-              _buildInteractionBar(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundImage: author.avatar != null
-              ? NetworkImage(author.avatar!)
-              : null,
-          child: author.avatar == null
-              ? Text(author.username[0].toUpperCase())
-              : null,
-        ),
-        SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    author.displayName ?? author.username,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  if (author.isVerified) ...[
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.verified,
-                      size: 16,
-                      color: Colors.blue,
-                    ),
-                  ],
-                ],
-              ),
-              Text(
-                timeago.format(post.createdAt),
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.more_vert),
-          onPressed: () => _showPostMenu(context),
-        ),
-      ],
-    );
-  }
-  
-  Widget _buildContent() {
-    return Text(
-      post.content,
-      style: TextStyle(fontSize: 16),
-    );
-  }
-  
-  Widget _buildInteractionBar() {
-    return Row(
-      children: [
-        _buildInteractionButton(
-          icon: Icons.favorite_border,
-          count: post.likeCount,
-          onTap: onLike,
-        ),
-        SizedBox(width: 24),
-        _buildInteractionButton(
-          icon: Icons.comment_outlined,
-          count: post.commentCount,
-          onTap: onComment,
-        ),
-        SizedBox(width: 24),
-        _buildInteractionButton(
-          icon: Icons.share_outlined,
-          count: post.shareCount,
-          onTap: onShare,
-        ),
-      ],
-    );
-  }
+  List<Module> get imports => [
+    OneAppCommunityModule(),
+    // 其他模块...
+  ];
 }
 ```
 
-## 依赖管理
+### 2. 页面导航
 
-### 集成模块依赖
-- **basic_utils**: 基础工具类
-- **basic_uis**: 基础 UI 组件
-- **oneapp_membership**: 会员系统集成
-- **oneapp_car_sales**: 汽车销售集成
-- **oneapp_touch_point**: 触点管理集成
-- **oneapp_after_sales**: 售后服务集成
-- **share_to_friends**: 分享功能组件
-
-### 多媒体依赖
-- **superplayer_widget**: 腾讯云超级播放器，用于视频播放
-
-## 错误处理
-
-### 社区特定异常
 ```dart
-// 社区功能异常
-abstract class CommunityFailure {
-  const CommunityFailure();
-  
-  factory CommunityFailure.publishFailed(String message) = PublishFailure;
-  factory CommunityFailure.feedLoadFailed(String message) = FeedLoadFailure;
-  factory CommunityFailure.interactionFailed(String message) = InteractionFailure;
-  factory CommunityFailure.followFailed(String message) = FollowFailure;
-  factory CommunityFailure.contentNotFound() = ContentNotFoundFailure;
-  factory CommunityFailure.permissionDenied() = PermissionDeniedFailure;
-}
+// 导航到社区页面
+Navigator.pushNamed(context, '/community_tab');
+
+// 导航到发现页面
+Navigator.pushNamed(context, '/discover_tab');
+
+// 导航到用户主页
+Navigator.pushNamed(context, '/user_home');
 ```
 
-## 总结
+### 3. 组件使用
 
-`oneapp_community` 模块为 OneApp 构建了完整的车主社区生态，通过内容发布、互动分享、用户关系等功能，促进了车主之间的交流与互动。模块集成了多媒体播放、分享组件等功能，并与其他业务模块深度整合，为用户提供了丰富的社区体验。
+```dart
+// 使用视频背景组件
+SweepVideoBg(
+  videoUrl: 'your_video_url',
+  child: YourContentWidget(),
+)
+```
+
+## 依赖配置
+
+### pubspec.yaml 关键依赖
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 基础模块依赖
+  basic_modular:
+    path: ../oneapp_basic_utils/basic_modular
+    
+  # UI基础组件
+  ui_basic:
+    path: ../oneapp_basic_uis/ui_basic
+
+  # 国际化支持
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.17.0
+
+dev_dependencies:
+  # 国际化代码生成
+  intl_utils: ^2.8.0
+```
+
+## 最佳实践
+
+### 1. 性能优化
+- 使用懒加载优化页面加载速度
+- 合理缓存图片和视频资源
+- 实现虚拟列表减少内存占用
+
+### 2. 用户体验
+- 提供加载状态指示
+- 实现下拉刷新和上拉加载
+- 支持离线浏览缓存内容
+
+### 3. 代码组织
+- 按功能模块组织代码结构
+- 使用BLoC模式管理状态
+- 实现完整的错误处理机制
+
+## 问题排查
+
+### 常见问题
+1. **页面加载慢**: 检查网络请求和图片加载优化
+2. **内存占用高**: 使用内存分析工具检查是否有内存泄漏
+3. **导航异常**: 检查路由配置和模块注册
+
+### 调试技巧
+- 使用Flutter Inspector检查组件树
+- 启用性能监控查看帧率
+- 使用网络抓包工具检查API调用

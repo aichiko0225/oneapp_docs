@@ -54,63 +54,92 @@ app_car/
 
 ### 1. 车辆控制核心 (Vehicle Control Core)
 
-#### 车门锁控制 (`car_lock_unlock/`)
+基于真实的OneApp项目实现，使用统一的Vehicle服务和BLoC状态管理。
+
+#### 远程车辆状态管理 (`bloc/home/bloc_rvs.dart`)
 ```dart
-// 车门锁控制服务
-class CarLockUnlockService {
-  // 车门上锁
-  Future<Result<void>> lockVehicle() async {
-    return await _vehicleConnector.sendCommand(
-      VehicleCommand.lock(),
-    );
-  }
+// 实际的远程车辆状态BLoC
+class RemoteVehicleStateBloc
+    extends Bloc<RemoteVehicleStateEvent, RemoteVehicleState> {
   
-  // 车门解锁
-  Future<Result<void>> unlockVehicle() async {
-    return await _vehicleConnector.sendCommand(
-      VehicleCommand.unlock(),
-    );
+  RemoteVehicleStateBloc(
+    RvsService rvs,
+    ClimatizationService climatization,
+    int index,
+    String? noticeVin,
+    BuildContext? context,
+  ) : super(
+          RemoteVehicleState(
+            rvs: rvs,
+            climatization: climatization,
+            index: index,
+            isRefreshing: false,
+          ),
+        ) {
+    on<EnterManualRefreshEvent>(_onEnterManualRefreshEvent);
+    on<ExecuteManualRefreshEvent>(_onExecuteManualRefreshEvent);
+    on<ConditionerEvent>(_conditionerEvent);
+    on<LockEvent>(_lockEvent);
+    on<UnlockEvent>(_unlockEvent);
+    on<VehicleOverallStatusEvent>(_vehicleOverallStatusEvent);
+
+    // 检查权限
+    checkPermission();
+    
+    // 首次进来的时候获取默认车辆信息更新到Vehicle
+    Vehicle.updateUserVehicleInfo(VehicleUtils.assembleDefaultVehicleLocal());
+    
+    // 拉取页面数据
+    refreshHomeData(RvsAction.refresh);
   }
-  
-  // 获取车门锁状态
-  Future<Result<LockStatus>> getLockStatus() async {
-    return await _vehicleConnector.getVehicleStatus()
-        .map((status) => status.lockStatus);
-  }
+}
+
+// 实际的远程车辆状态数据模型
+@freezed
+class RemoteVehicleState with _$RemoteVehicleState {
+  const factory RemoteVehicleState({
+    required RvsService rvs,
+    required ClimatizationService climatization,
+    required int index,
+    required bool isRefreshing,
+    VehicleRemoteStatus? status,
+    double? temperature,
+    ClimatisationStatus? climatisationStatus,
+    ClimatizationParameter? cParameter,
+    bool? actionStart,
+    bool? actionStop,
+    bool? actionSetting,
+    bool? actionLock,
+    RluLockState? lockState,
+    CfMessage? cfMessage,
+    bool? locationPermission,
+    bool? isLocationOpen,
+    double? distance,
+    String? searchGeocode,
+    VhrWarningListMessage? primitiveVhrWarningListMessage,
+    List<HealthStatus>? vhrWarningListMessage,
+    List<VehicleDto>? vehicleDtos,
+  }) = _RemoteVehicleState;
 }
 ```
 
-#### 空调控制 (`car_climatisation/`, `car_climatisation_50/`)
+#### 车辆服务观察者模式
 ```dart
-// 空调控制服务
-class CarClimatisationService {
-  // 开启空调
-  Future<Result<void>> startClimatisation({
-    required double targetTemperature,
-    AirConditioningMode mode = AirConditioningMode.auto,
-  }) async {
-    return await _vehicleConnector.sendCommand(
-      ClimatisationCommand.start(
-        temperature: targetTemperature,
-        mode: mode,
-      ),
-    );
+// 实际的车辆服务监听机制
+class Vehicle {
+  /// 添加服务观察者
+  static ObserverClient addServiceObserver(
+    ServiceType serviceType,
+    Function(UpdateEvent event, ConnectorAction action, dynamic value) callback,
+  ) {
+    return ServiceUtils.getServiceByType(serviceType)?.addObserver(callback);
   }
   
-  // 关闭空调
-  Future<Result<void>> stopClimatisation() async {
-    return await _vehicleConnector.sendCommand(
-      ClimatisationCommand.stop(),
-    );
-  }
-  
-  // 预设温度控制
-  Future<Result<void>> setPresetTemperature(
-    TemperaturePreset preset,
-  ) async {
-    return await _vehicleConnector.sendCommand(
-      ClimatisationCommand.setPreset(preset),
-    );
+  /// 更新用户车辆信息
+  static void updateUserVehicleInfo(VehicleDto? vehicleDto) {
+    if (vehicleDto != null) {
+      _currentVehicle = vehicleDto;
+    }
   }
 }
 ```
@@ -180,76 +209,87 @@ class VehicleHealthStatus {
 
 ### 3. 充电管理 (`car_charging_center/`, `car_charging_profiles/`)
 
-#### 充电中心控制
+基于真实项目的充电管理实现，使用Vehicle服务和ChargingOverall状态模型。
+
+#### 充电中心控制 (`car_charging_center_bloc.dart`)
 ```dart
-// 充电管理服务
-class ChargingCenterService {
-  // 开始充电
-  Future<Result<void>> startCharging({
-    ChargingProfile? profile,
-    DateTime? scheduledTime,
-  }) async {
-    return await _vehicleConnector.sendCommand(
-      ChargingCommand.start(
-        profile: profile ?? ChargingProfile.standard(),
-        scheduledTime: scheduledTime,
-      ),
-    );
-  }
+// 实际的充电中心BLoC
+class CarChargingCenterBloc
+    extends Bloc<CarChargingCenterEvent, CarChargingCenterState> {
   
-  // 停止充电
-  Future<Result<void>> stopCharging() async {
-    return await _vehicleConnector.sendCommand(
-      ChargingCommand.stop(),
-    );
+  CarChargingCenterBloc() : super(const CarChargingCenterState()) {
+    on<RefreshChargingEvent>(_refreshChargingEvent);
+    on<CarChargingCenterClearEvent>(_chargingCenterClearEvent);
+
+    // 注册充电服务
+    chargingService();
+
+    // 先获取内存中的值进行显示
+    final cService = ServiceUtils.getChargingService();
+    final ChargingOverall? cs =
+        cService.status == null ? null : cService.status as ChargingOverall;
+    emit(state.copyWith(chargingOverall: cs));
+
+    // 刷新充电数据
+    add(const CarChargingCenterEvent.refreshCharging());
   }
-  
-  // 设置充电目标
-  Future<Result<void>> setChargingTarget(int targetPercentage) async {
-    return await _vehicleConnector.sendCommand(
-      ChargingCommand.setTarget(targetPercentage),
+
+  /// 充电服务观察者
+  ObserverClient? chargingClient;
+
+  /// 充电服务监听
+  void chargingService() {
+    chargingClient = Vehicle.addServiceObserver(
+      ServiceType.remoteCharging,
+      (UpdateEvent event, ConnectorAction action, dynamic value) {
+        if (event == UpdateEvent.onStatusChange) {
+          if (value != null) {
+            final chargingOverall = value as ChargingOverall;
+            emit(state.copyWith(chargingOverall: chargingOverall));
+          }
+        }
+      },
     );
   }
 }
+
+// 实际的充电状态模型
+@freezed
+class CarChargingCenterState with _$CarChargingCenterState {
+  const factory CarChargingCenterState({
+    ChargingOverall? chargingOverall,
+    bool? isRefreshing,
+  }) = _CarChargingCenterState;
+}
 ```
 
-#### 充电配置文件管理
+#### 充电配置文件管理 (`car_charging_profiles_bloc.dart`)
 ```dart
-// 充电配置文件
-class ChargingProfile {
-  final String id;
-  final String name;
-  final int targetPercentage;
-  final ChargingSpeed speed;
-  final bool isEcoMode;
-  final TimeWindow? timeWindow;
+// 实际的充电配置BLoC
+class CarChargingProfilesBloc
+    extends Bloc<CarChargingProfilesEvent, CarChargingProfilesState> {
   
-  const ChargingProfile({
-    required this.id,
-    required this.name,
-    required this.targetPercentage,
-    required this.speed,
-    this.isEcoMode = false,
-    this.timeWindow,
-  });
-  
-  // 标准充电配置
-  factory ChargingProfile.standard() {
-    return ChargingProfile(
-      id: 'standard',
-      name: '标准充电',
-      targetPercentage: 80,
-      speed: ChargingSpeed.normal,
-    );
+  CarChargingProfilesBloc() : super(const CarChargingProfilesState()) {
+    on<CarChargingProfilesRefreshEvent>(_refreshEvent);
+    on<CarChargingProfilesDeleteEvent>(_deleteEvent);
+    
+    // 注册服务监听
+    chargingProfilesService();
+    
+    // 首次加载配置文件列表
+    add(const CarChargingProfilesEvent.refreshEvent());
   }
-  
-  // 快速充电配置
-  factory ChargingProfile.fast() {
-    return ChargingProfile(
-      id: 'fast',
-      name: '快速充电',
-      targetPercentage: 100,
-      speed: ChargingSpeed.fast,
+
+  /// 充电配置服务
+  void chargingProfilesService() {
+    chargingClient = Vehicle.addServiceObserver(
+      ServiceType.remoteCharging,
+      (UpdateEvent event, ConnectorAction action, dynamic value) {
+        if (event == UpdateEvent.onStatusChange) {
+          // 处理充电配置状态变更
+          _handleChargingProfilesUpdate(value);
+        }
+      },
     );
   }
 }
@@ -325,53 +365,70 @@ class CarFinderService {
 
 ## 状态管理架构 (`bloc/`)
 
-### BLoC 模式实现
+基于真实项目的BLoC架构和Flutter Modular依赖注入框架。
+
+### 模块化架构实现
 ```dart
-// 车辆状态 BLoC
-class VehicleStatusBloc extends Bloc<VehicleStatusEvent, VehicleStatusState> {
-  final VehicleStatusRepository _repository;
-  
-  VehicleStatusBloc(this._repository) : super(VehicleStatusInitial()) {
-    on<LoadVehicleStatus>(_onLoadVehicleStatus);
-    on<RefreshVehicleStatus>(_onRefreshVehicleStatus);
-    on<VehicleStatusUpdated>(_onVehicleStatusUpdated);
-  }
-  
-  Future<void> _onLoadVehicleStatus(
-    LoadVehicleStatus event,
-    Emitter<VehicleStatusState> emit,
-  ) async {
-    emit(VehicleStatusLoading());
+// 实际的车辆控制模块（app_car.dart）
+class CarControlModule extends Module with RouteObjProvider {
+  @override
+  List<Module> get imports => [];
+
+  @override
+  List<Bind> get binds => [
+        Bind<CarBloc>((i) => CarBloc(), export: true),
+      ];
+
+  @override
+  List<ModularRoute> get routes {
+    final r1 = RouteCenterAPI.routeMetaBy(CarControlRouteExport.keyHome);
+    final r2 = RouteCenterAPI.routeMetaBy(CarControlRouteExport.keyClimatization);
+    final r3 = RouteCenterAPI.routeMetaBy(CarControlRouteExport.keyCharging);
+    final r4 = RouteCenterAPI.routeMetaBy(CarControlRouteExport.keyChargingProfile);
+    // ... 更多路由配置
     
-    final result = await _repository.getVehicleStatus();
-    result.fold(
-      (failure) => emit(VehicleStatusError(failure.message)),
-      (status) => emit(VehicleStatusLoaded(status)),
-    );
+    return [
+      ChildRoute(r1.path, child: (_, args) => r1.provider(args).as()),
+      ChildRoute(r2.path, child: (_, args) => r2.provider(args).as()),
+      ChildRoute(r3.path, child: (_, args) => r3.provider(args).as()),
+      ChildRoute(r4.path, child: (_, args) => r4.provider(args).as()),
+      // ... 更多路由实现
+    ];
   }
 }
 
-// 车辆控制 BLoC
-class VehicleControlBloc extends Bloc<VehicleControlEvent, VehicleControlState> {
-  final VehicleControlRepository _repository;
-  
-  VehicleControlBloc(this._repository) : super(VehicleControlInitial()) {
-    on<LockVehicle>(_onLockVehicle);
-    on<UnlockVehicle>(_onUnlockVehicle);
-    on<StartClimatisation>(_onStartClimatisation);
-    on<StopClimatisation>(_onStopClimatisation);
+// 实际的CarBloc实现
+class CarBloc extends Bloc<CarEvent, CarState> {
+  CarBloc() : super(CarState().getInstance()) {
+    on<CarEvent>((event, emit) {
+      // 处理车辆相关事件
+    });
+  }
+}
+```
+
+### 车辆状态BLoC实现
+```dart
+// 实际的车辆状态管理BLoC
+class CarVehicleBloc extends Bloc<CarVehicleEvent, CarVehicleState> {
+  CarVehicleBloc() : super(const CarVehicleState()) {
+    on<CarVehicleInitEvent>(_initEvent);
+    on<CarVehicleRefreshEvent>(_refreshEvent);
+    
+    // 初始化车辆服务
+    initVehicleService();
   }
   
-  Future<void> _onLockVehicle(
-    LockVehicle event,
-    Emitter<VehicleControlState> emit,
-  ) async {
-    emit(VehicleControlLoading());
-    
-    final result = await _repository.lockVehicle();
-    result.fold(
-      (failure) => emit(VehicleControlError(failure.message)),
-      (_) => emit(VehicleControlSuccess('车辆已上锁')),
+  void initVehicleService() {
+    // 注册车辆状态观察者
+    Vehicle.addServiceObserver(
+      ServiceType.remoteVehicleStatus,
+      (UpdateEvent event, ConnectorAction action, dynamic value) {
+        if (event == UpdateEvent.onStatusChange) {
+          final status = value as VehicleRemoteStatus;
+          emit(state.copyWith(vehicleStatus: status));
+        }
+      },
     );
   }
 }
@@ -693,22 +750,56 @@ class AIChatVehicleIntegration {
 
 ## 依赖管理
 
+基于实际的pubspec.yaml配置，展示真实的项目依赖关系。
+
 ### 核心依赖
-- **car_connector**: 车联网连接服务
-- **car_vehicle**: 车辆基础服务
-- **car_vur**: 车辆更新记录
-- **flutter_ingeek_carkey**: 数字钥匙 SDK
+```yaml
+# 车辆连接和服务依赖
+dependencies:
+  car_connector: ^0.4.11        # 车联网连接服务
+  car_vehicle: ^0.6.4+1         # 车辆基础服务
+  car_vur: ^0.1.12              # 车辆更新记录
+  flutter_ingeek_carkey: 1.6.2  # 数字钥匙 SDK
+  
+  # 框架依赖
+  basic_modular: ^0.2.3         # 模块化框架
+  basic_modular_route: ^0.2.1   # 路由管理
+  basic_intl: ^0.2.0            # 国际化支持
+  basic_storage: ^0.2.2         # 本地存储
+  
+  # 业务服务依赖
+  clr_mno: ^0.2.2               # MNO 服务
+  clr_geo: ^0.2.16+1            # 地理位置服务
+  
+  # 功能性依赖
+  dartz: ^0.10.1                # 函数式编程支持
+  freezed_annotation: ^2.2.0    # 不可变类生成
+  json_annotation: ^4.9.0       # JSON 序列化
+  
+  # AI功能集成
+  ai_chat_assistant:            # AI 聊天助手模块
+    path: ../ai_chat_assistant
+    
+  # UI组件依赖
+  carousel_slider: ^4.2.1       # 轮播图组件
+  flutter_slidable: ^3.1.2     # 滑动组件
+  overlay_support: ^2.1.0       # 覆盖层支持
+  provider: ^6.0.5              # 状态管理
+```
 
-### 框架依赖
-- **basic_modular**: 模块化框架
-- **basic_modular_route**: 路由管理
-- **basic_intl**: 国际化支持
-- **basic_storage**: 本地存储
-
-### 业务依赖
-- **ai_chat_assistant**: AI 聊天助手集成
-- **clr_mno**: MNO 服务
-- **dartz**: 函数式编程支持
+### 模块间依赖关系
+```dart
+// 实际的模块依赖结构（基于项目配置）
+app_car/
+├── car_connector: 车辆连接服务 (核心通信)
+├── car_vehicle: 车辆基础服务 (状态管理)  
+├── car_vur: 车辆更新记录 (版本控制)
+├── flutter_ingeek_carkey: 数字钥匙SDK (安全认证)
+├── ai_chat_assistant: AI聊天助手 (智能交互)
+├── clr_mno: MNO服务 (网络运营商)
+├── clr_geo: 地理位置服务 (定位功能)
+└── basic_*: 基础框架模块群
+```
 
 ## 路由配置 (`route_dp.dart`, `route_export.dart`)
 

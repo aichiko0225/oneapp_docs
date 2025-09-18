@@ -2,55 +2,137 @@
 
 ## 模块概述
 
-`app_configuration` 是 OneApp 的应用配置管理模块，提供了完整的配置管理解决方案。该模块支持远程配置下发、本地配置缓存、配置热更新和多环境配置切换等功能，为应用的配置管理提供了统一的接口和可靠的实现。
+`app_configuration` 是 OneApp 的车辆配置管理模块，专注于车辆配置选择和管理功能。该模块提供了完整的车辆配置解决方案，包括车型选择、外观配置、内饰配置、选装配置等功能。
 
 ## 核心功能
 
-### 1. 远程配置管理
-- **配置下发**：从服务端动态下发配置信息
-- **版本控制**：配置版本管理和回滚机制
-- **灰度发布**：支持配置的灰度发布策略
-- **实时同步**：配置变更的实时同步
-
-### 2. 本地配置缓存
-- **离线支持**：配置本地缓存确保离线可用
-- **持久化存储**：配置数据持久化存储
-- **缓存策略**：智能缓存策略优化性能
-- **数据压缩**：配置数据压缩存储
-
-### 3. 配置热更新
-- **实时更新**：配置变更无需重启应用
-- **增量更新**：只更新变化的配置项
-- **更新通知**：配置更新事件通知机制
-- **回滚机制**：配置更新失败自动回滚
-
-### 4. 环境配置切换
-- **多环境支持**：开发、测试、生产环境配置
-- **环境隔离**：不同环境配置完全隔离
-- **动态切换**：运行时动态切换配置环境
+### 1. 车辆配置管理
+- **车型配置页面**：提供完整的车辆配置选择界面
+- **配置选项管理**：支持各种车辆配置选项
+- **3D模型展示**：集成3D车辆模型展示功能
 - **配置验证**：配置有效性验证机制
+
+### 2. 模块导出组件
+
+基于真实项目代码的主要导出：
+
+```dart
+library app_configuration;
+
+// 车辆配置页面
+export 'src/app_modules/car_configuration/pages/car_configuration_page.dart';
+
+// 车辆配置状态管理
+export 'src/app_modules/car_configuration/blocs/car_configuration_bloc.dart';
+
+// 配置相关组件
+export 'src/app_modules/car_configuration/widgets/car_rights_dialog_widget.dart';
+export 'src/app_modules/car_configuration/widgets/car_order_count_exception_dialog.dart';
+
+// 路由导出
+export 'src/route_export.dart';
+
+// 配置常量
+export 'src/app_modules/car_configuration/configuration_constant.dart';
+```
+
+### 3. 车辆配置页面 (CarConfigurationPage)
+
+核心配置页面实现：
+
+```dart
+/// 车辆配置页面
+class CarConfigurationPage extends StatefulWidget with RouteObjProvider {
+  CarConfigurationPage({
+    Key? key,
+    this.carModelCode,
+    this.smallPreOrderNum,
+    this.carOrderNum,
+    this.needDepositAmount,
+    this.pageFrom = PageFrom.pageNone,
+  }) : super(key: key);
+
+  /// 已选车型配置代码
+  final String? carModelCode;
+
+  /// 小订订单号，创建大定时可以关联小订
+  final String? smallPreOrderNum;
+
+  /// 大定修改订单原始订单号
+  final String? carOrderNum;
+
+  /// 大定修改，大定定金金额
+  final double? needDepositAmount;
+
+  /// 页面来源类型
+  PageFrom? pageFrom = PageFrom.pageNone;
+
+  @override
+  State<CarConfigurationPage> createState() => _CarConfigurationPageState();
+}
+```
+
+### 4. 模块架构组件
+
+实际项目包含的配置组件：
+
+- **car_3D_model_webview.dart**: 3D车辆模型WebView组件
+- **car_exterior_config.dart**: 车辆外观配置组件  
+- **car_interior_config.dart**: 车辆内饰配置组件
+- **car_model_config_new.dart**: 新版车型配置组件
+- **car_option_config.dart**: 车辆选装配置组件
+- **config_bottom_bar_widget.dart**: 配置底部栏组件
+- **configuration_tab.dart**: 配置选项卡组件
 
 ## 技术架构
 
-### 架构设计
+### 模块注册
+
+```dart
+/// App配置模块
+class AppConfigurationModule extends Module with RouteObjProvider {
+  @override
+  List<Module> get imports => [];
+
+  @override
+  List<Bind> get binds => [];
+
+  @override
+  List<ModularRoute> get routes {
+    final r1 = RouteCenterAPI.routeMetaBy(
+      AppConfigurationRouteExport.keyAppConfiguration
+    );
+
+    return [
+      ChildRoute(
+        r1.path, 
+        child: (_, args) => r1.provider(args).as(),
+        guards: loginGuardList,
+      ),
+    ];
+  }
+}
 ```
-┌─────────────────────────────────────┐
-│            应用层                    │
-│         (UI Components)             │
-├─────────────────────────────────────┤
-│       App Configuration             │
-│  ┌──────────┬──────────┬──────────┐ │
-│  │ 配置管理 │ 缓存服务 │ 更新服务 │ │
-│  ├──────────┼──────────┼──────────┤ │
-│  │ 环境切换 │ 数据同步 │ 事件通知 │ │
-│  └──────────┴──────────┴──────────┘ │
-├─────────────────────────────────────┤
-│         CLR Configuration           │
-│           (配置服务SDK)              │
-├─────────────────────────────────────┤
-│           网络服务层                 │
-│      (HTTP/WebSocket/GraphQL)       │
-└─────────────────────────────────────┘
+
+### 目录结构
+
+基于实际项目结构：
+
+```
+lib/
+├── app_configuration.dart      # 主导出文件
+├── generated/                  # 生成的国际化文件
+├── l10n/                      # 国际化资源文件
+└── src/                       # 源代码目录
+    ├── app_modules/           # 应用模块
+    │   └── car_configuration/ # 车辆配置模块
+    │       ├── blocs/         # BLoC状态管理
+    │       ├── model/         # 数据模型
+    │       ├── pages/         # 页面组件
+    │       ├── widgets/       # 配置组件
+    │       └── configuration_constant.dart # 配置常量
+    ├── app_defines/           # 应用定义
+    └── route_export.dart      # 路由导出
 ```
 
 ### 核心组件

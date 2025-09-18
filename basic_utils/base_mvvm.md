@@ -1,688 +1,504 @@
-# Base MVVM MVVM架构模块
+# Base MVVM - 基础MVVM架构模块文档
 
 ## 模块概述
 
-`base_mvvm` 是 OneApp 基础工具模块群中的 MVVM（Model-View-ViewModel）架构模块，提供了完整的MVVM架构实现和相关基础组件。该模块为Flutter应用开发提供了规范化的架构模式，包含了状态管理、数据绑定、视图抽象等核心功能。
+`base_mvvm` 是 OneApp 基础工具模块群中的MVVM架构基础模块，提供了完整的Model-View-ViewModel架构模式实现。该模块封装了状态管理、数据绑定、Provider模式等核心功能，为应用提供了统一的架构规范和基础组件。
 
 ### 基本信息
 - **模块名称**: base_mvvm
-- **版本**: 0.0.1
-- **描述**: MVVM架构基础模块
-- **Flutter 版本**: >=1.17.0
-- **Dart 版本**: >=3.0.0 <4.0.0
+- **模块路径**: oneapp_basic_utils/base_mvvm  
+- **类型**: Flutter Package Module
+- **主要功能**: MVVM架构基础、状态管理、数据绑定
 
-## 功能特性
+### 核心特性
+- **状态管理**: 基于Provider的响应式状态管理
+- **视图状态**: 统一的页面状态管理(idle/busy/empty/error)
+- **列表刷新**: 封装下拉刷新和上拉加载更多
+- **数据绑定**: 双向数据绑定支持
+- **错误处理**: 统一的错误类型和处理机制
+- **日志工具**: 集成日志记录功能
 
-### 核心功能
-1. **MVVM架构实现**
-   - Model-View-ViewModel分离
-   - 数据双向绑定
-   - 视图状态管理
-   - 命令模式支持
+## 目录结构
 
-2. **状态管理系统**
-   - 响应式状态管理
-   - 异步状态处理
-   - 状态变化通知
-   - 状态持久化
-
-3. **基础组件库**
-   - 可刷新列表组件
-   - 网络图片缓存
-   - 加载状态组件
-   - 错误处理组件
-
-4. **数据流管理**
-   - 单向数据流
-   - 事件驱动更新
-   - 数据流监听
-   - 副作用处理
-
-## 技术架构
-
-### 目录结构
 ```
-lib/
-├── base_mvvm.dart              # 模块入口文件
-├── src/                        # 源代码目录
-│   ├── mvvm/                   # MVVM核心
-│   ├── base_components/        # 基础组件
-│   ├── state_management/       # 状态管理
-│   ├── data_binding/           # 数据绑定
-│   ├── commands/               # 命令模式
-│   └── utils/                  # 工具类
-├── widgets/                    # 通用Widget
-└── test/                       # 测试文件
+base_mvvm/
+├── lib/
+│   ├── base_mvvm.dart              # 模块入口文件
+│   ├── provider/                   # Provider相关
+│   │   ├── provider_widget.dart    # Provider封装组件
+│   │   ├── view_state_model.dart   # 视图状态模型
+│   │   ├── view_state_list_model.dart        # 列表状态模型
+│   │   ├── view_state_refresh_list_model.dart # 刷新列表模型
+│   │   └── view_state.dart         # 状态枚举定义
+│   ├── utils/                      # 工具类
+│   │   ├── logs/                   # 日志工具
+│   │   │   └── log_utils.dart
+│   │   └── rxbus.dart              # 事件总线
+│   └── widgets/                    # 基础组件
+│       ├── glides/                 # 图片组件
+│       │   └── glide_image_view.dart
+│       └── refresh/                # 刷新组件
+│           └── base_easy_refresh.dart
+└── pubspec.yaml                    # 依赖配置
 ```
 
-### 依赖关系
+## 核心架构组件
 
-#### 状态管理依赖
-- `provider: ^6.0.5` - 状态管理框架
-- `rxdart: ^0.27.7` - 响应式编程
+### 1. 视图状态枚举 (ViewState)
 
-#### UI组件依赖
-- `easy_refresh: ^3.3.2+1` - 下拉刷新组件
-- `cached_network_image: ^3.3.0` - 网络图片缓存
-- `flutter_cache_manager: ^3.3.1` - 缓存管理
+定义了应用中通用的页面状态：
 
-#### 工具依赖
-- `path_provider: ^2.1.3` - 文件路径
-- `logger: 1.4.0` - 日志框架
-
-#### 内部依赖
-- `basic_utils` - 基础工具（本地路径）
-- `basic_uis` - 基础UI组件（本地路径）
-
-## 核心模块分析
-
-### 1. 模块入口 (`base_mvvm.dart`)
-
-**功能职责**:
-- MVVM架构组件统一导出
-- 架构配置初始化
-- 依赖注入设置
-
-### 2. MVVM核心 (`src/mvvm/`)
-
-**功能职责**:
-- MVVM架构模式实现
-- 基础类定义
-- 生命周期管理
-- 数据流控制
-
-**主要组件**:
-- `BaseModel` - 数据模型基类
-- `BaseView` - 视图基类
-- `BaseViewModel` - 视图模型基类
-- `MVVMController` - MVVM控制器
-
-#### BaseViewModel 实现
 ```dart
-abstract class BaseViewModel extends ChangeNotifier {
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _isDisposed = false;
+/// 页面状态类型
+enum ViewState {
+  idle,    // 空闲状态
+  busy,    // 加载中
+  empty,   // 无数据
+  error,   // 加载失败
+}
 
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get hasError => _errorMessage != null;
+/// 错误类型
+enum ViewStateErrorType {
+  none,
+  defaultError,
+  networkTimeOutError,    // 网络超时
+  disconnectException,    // 断网
+  noNetworkSignal,       // 无网络信号
+}
+```
 
-  void setLoading(bool loading) {
-    if (_isDisposed) return;
-    _isLoading = loading;
-    notifyListeners();
-  }
+### 2. 基础视图状态模型 (ViewStateModel)
 
-  void setError(String? error) {
-    if (_isDisposed) return;
-    _errorMessage = error;
-    notifyListeners();
-  }
+所有ViewModel的基础类，提供统一的状态管理：
 
-  void clearError() {
-    setError(null);
-  }
+```dart
+class ViewStateModel with ChangeNotifier {
+  /// 防止页面销毁后异步任务才完成导致报错
+  bool _disposed = false;
 
-  Future<T?> executeAsync<T>(Future<T> Function() action) async {
-    try {
-      setLoading(true);
-      clearError();
-      final result = await action();
-      return result;
-    } catch (e) {
-      setError(e.toString());
-      return null;
-    } finally {
-      setLoading(false);
+  /// 当前页面状态，默认为idle
+  ViewState _viewState = ViewState.idle;
+  
+  /// 错误类型
+  ViewStateErrorType _viewStateError = ViewStateErrorType.none;
+
+  /// 构造函数，可指定初始状态
+  ViewStateModel({ViewState? viewState})
+      : _viewState = viewState ?? ViewState.idle;
+
+  // 状态获取器
+  ViewState get viewState => _viewState;
+  ViewStateErrorType get viewStateError => _viewStateError;
+
+  // 状态判断方法
+  bool get isBusy => viewState == ViewState.busy;
+  bool get isIdle => viewState == ViewState.idle;
+  bool get isEmpty => viewState == ViewState.empty;
+  bool get isError => viewState == ViewState.error;
+
+  // 状态设置方法
+  void setIdle() => viewState = ViewState.idle;
+  void setBusy() => viewState = ViewState.busy;
+  void setEmpty() => viewState = ViewState.empty;
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
     }
   }
 
   @override
   void dispose() {
-    _isDisposed = true;
+    _disposed = true;
     super.dispose();
   }
 }
 ```
 
-#### BaseView 实现
+### 3. Provider封装组件 (ProviderWidget)
+
+简化Provider使用的封装组件：
+
 ```dart
-abstract class BaseView<T extends BaseViewModel> extends StatefulWidget {
-  const BaseView({Key? key}) : super(key: key);
+class ProviderWidget<T extends ChangeNotifier> extends StatefulWidget {
+  final ValueWidgetBuilder<T> builder;
+  final T model;
+  final Widget? child;
+  final Function(T model)? onModelReady;
+  final bool autoDispose;
 
-  T createViewModel();
-
-  Widget buildView(BuildContext context, T viewModel);
+  const ProviderWidget({
+    super.key,
+    required this.builder,
+    required this.model,
+    this.child,
+    this.onModelReady,
+    this.autoDispose = true
+  });
 
   @override
-  State<BaseView<T>> createState() => _BaseViewState<T>();
+  _ProviderWidgetState<T> createState() => _ProviderWidgetState<T>();
 }
 
-class _BaseViewState<T extends BaseViewModel> extends State<BaseView<T>> {
-  late T _viewModel;
+class _ProviderWidgetState<T extends ChangeNotifier>
+    extends State<ProviderWidget<T>> {
+  late T model;
 
   @override
   void initState() {
+    model = widget.model;
+    widget.onModelReady?.call(model);
     super.initState();
-    _viewModel = widget.createViewModel();
+  }
+
+  @override
+  void dispose() {
+    if (widget.autoDispose) {
+      model.dispose();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<T>(
-      create: (_) => _viewModel,
-      child: Consumer<T>(
-        builder: (context, viewModel, child) {
-          return Scaffold(
-            body: Stack(
-              children: [
-                widget.buildView(context, viewModel),
-                if (viewModel.isLoading)
-                  const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                if (viewModel.hasError)
-                  _buildErrorWidget(viewModel.errorMessage!),
-              ],
-            ),
-          );
-        },
-      ),
+    return ChangeNotifierProvider<T>.value(
+      value: model,
+      child: Consumer<T>(builder: widget.builder, child: widget.child)
     );
   }
+}
+```
 
-  Widget _buildErrorWidget(String error) {
-    return Container(
-      color: Colors.black54,
-      child: Center(
-        child: Card(
-          margin: const EdgeInsets.all(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error, color: Colors.red, size: 48),
-                const SizedBox(height: 16),
-                Text(error, textAlign: TextAlign.center),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _viewModel.clearError(),
-                  child: const Text('确定'),
-                ),
-              ],
-            ),
+### 4. 多Provider支持 (ProviderWidget2)
+
+支持同时管理两个Model的组件：
+
+```dart
+class ProviderWidget2<A extends ChangeNotifier, B extends ChangeNotifier>
+    extends StatefulWidget {
+  final Widget Function(BuildContext context, A model1, B model2, Widget? child) builder;
+  final A model1;
+  final B model2;
+  final Widget? child;
+  final Function(A model1, B model2)? onModelReady;
+  final bool autoDispose;
+
+  // ... 实现与ProviderWidget类似，支持双Model管理
+}
+```
+
+### 5. 刷新列表状态模型 (ViewStateRefreshListModel)
+
+专门用于处理列表数据的刷新和加载更多功能：
+
+```dart
+abstract class ViewStateRefreshListModel<T> extends ViewStateListModel<T> {
+  /// 分页配置
+  static const int pageNumFirst = 1;
+  static const int pageSize = 10;
+
+  /// 列表刷新控制器
+  final EasyRefreshController _refreshController;
+  EasyRefreshController get refreshController => _refreshController;
+
+  /// 当前页码
+  int _currentPageNum = pageNumFirst;
+
+  ViewStateRefreshListModel({super.viewState, bool isMore = true})
+      : _refreshController = EasyRefreshController(
+            controlFinishLoad: isMore, 
+            controlFinishRefresh: true);
+
+  /// 下拉刷新
+  @override
+  Future<List<T>> refresh({bool init = false}) async {
+    try {
+      _currentPageNum = pageNumFirst;
+      var data = await loadData(pageNum: pageNumFirst);
+      refreshController.finishRefresh();
+      
+      if (data.isEmpty) {
+        refreshController.finishLoad(IndicatorResult.none);
+        list.clear();
+        setEmpty();
+      } else {
+        onCompleted(data);
+        list.clear();
+        list.addAll(data);
+        
+        // 小于分页数量时禁止上拉加载更多
+        if (data.length < pageSize) {
+          Future.delayed(const Duration(milliseconds: 100)).then((value) {
+            refreshController.finishLoad(IndicatorResult.noMore);
+          });
+        }
+        setIdle();
+      }
+      return data;
+    } catch (e) {
+      if (init) list.clear();
+      refreshController.finishLoad(IndicatorResult.fail);
+      setEmpty();
+      return [];
+    }
+  }
+
+  /// 上拉加载更多
+  Future<List<T>> loadMore() async {
+    try {
+      var data = await loadData(pageNum: ++_currentPageNum);
+      refreshController.finishRefresh();
+      
+      if (data.isEmpty) {
+        _currentPageNum--;
+        refreshController.finishLoad(IndicatorResult.noMore);
+      } else {
+        onCompleted(data);
+        list.addAll(data);
+        
+        if (data.length < pageSize) {
+          refreshController.finishLoad(IndicatorResult.noMore);
+        } else {
+          refreshController.finishLoad();
+        }
+        notifyListeners();
+      }
+      return data;
+    } catch (e) {
+      _currentPageNum--;
+      refreshController.finishLoad(IndicatorResult.fail);
+      return [];
+    }
+  }
+
+  /// 抽象方法：加载数据
+  @override
+  Future<List<T>> loadData({int? pageNum});
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+}
+```
+
+## 使用指南
+
+### 1. 基础ViewModel示例
+
+创建一个继承ViewStateModel的ViewModel：
+
+```dart
+class UserProfileViewModel extends ViewStateModel {
+  UserInfo? _userInfo;
+  UserInfo? get userInfo => _userInfo;
+
+  Future<void> loadUserProfile(String userId) async {
+    setBusy(); // 设置加载状态
+    
+    try {
+      _userInfo = await userRepository.getUserProfile(userId);
+      setIdle(); // 设置空闲状态
+    } catch (e) {
+      setError(); // 设置错误状态
+    }
+  }
+}
+```
+
+### 2. 在UI中使用ProviderWidget
+
+```dart
+class UserProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ProviderWidget<UserProfileViewModel>(
+      model: UserProfileViewModel(),
+      onModelReady: (model) => model.loadUserProfile("123"),
+      builder: (context, model, child) {
+        if (model.isBusy) {
+          return Center(child: CircularProgressIndicator());
+        }
+        
+        if (model.isEmpty) {
+          return Center(child: Text('暂无数据'));
+        }
+        
+        if (model.isError) {
+          return Center(child: Text('加载失败'));
+        }
+        
+        return Column(
+          children: [
+            Text(model.userInfo?.name ?? ''),
+            Text(model.userInfo?.email ?? ''),
+          ],
+        );
+      },
+    );
+  }
+}
+```
+
+### 3. 列表刷新示例
+
+```dart
+class NewsListViewModel extends ViewStateRefreshListModel<NewsItem> {
+  final NewsRepository _repository = NewsRepository();
+
+  @override
+  Future<List<NewsItem>> loadData({int? pageNum}) async {
+    return await _repository.getNewsList(
+      page: pageNum ?? 1,
+      pageSize: ViewStateRefreshListModel.pageSize,
+    );
+  }
+}
+
+// UI使用
+class NewsListPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ProviderWidget<NewsListViewModel>(
+      model: NewsListViewModel(),
+      onModelReady: (model) => model.refresh(init: true),
+      builder: (context, model, child) {
+        return EasyRefresh(
+          controller: model.refreshController,
+          onRefresh: () => model.refresh(),
+          onLoad: () => model.loadMore(),
+          child: ListView.builder(
+            itemCount: model.list.length,
+            itemBuilder: (context, index) {
+              final item = model.list[index];
+              return ListTile(
+                title: Text(item.title),
+                subtitle: Text(item.summary),
+              );
+            },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
-
-  @override
-  void dispose() {
-    _viewModel.dispose();
-    super.dispose();
-  }
 }
 ```
 
-### 3. 状态管理 (`src/state_management/`)
+### 4. 双Model管理示例
 
-**功能职责**:
-- 应用状态统一管理
-- 状态变化监听
-- 状态持久化
-- 状态恢复机制
-
-**主要组件**:
-- `StateManager` - 状态管理器
-- `StateObserver` - 状态观察者
-- `StatePersistence` - 状态持久化
-- `StateRestore` - 状态恢复
-
-### 4. 数据绑定 (`src/data_binding/`)
-
-**功能职责**:
-- 视图与数据双向绑定
-- 属性变化监听
-- 数据验证机制
-- 绑定表达式解析
-
-**主要组件**:
-- `DataBinder` - 数据绑定器
-- `PropertyObserver` - 属性观察者
-- `ValidationRule` - 验证规则
-- `BindingExpression` - 绑定表达式
-
-### 5. 命令模式 (`src/commands/`)
-
-**功能职责**:
-- 用户操作命令封装
-- 命令执行管理
-- 撤销重做支持
-- 命令队列处理
-
-**主要组件**:
-- `Command` - 命令基类
-- `AsyncCommand` - 异步命令
-- `CommandManager` - 命令管理器
-- `UndoRedoStack` - 撤销重做栈
-
-#### Command 实现
 ```dart
-abstract class Command {
-  bool get canExecute;
-  Future<void> execute();
-  
-  final StreamController<bool> _canExecuteController = 
-      StreamController<bool>.broadcast();
-  
-  Stream<bool> get canExecuteChanged => _canExecuteController.stream;
-  
-  void notifyCanExecuteChanged() {
-    _canExecuteController.add(canExecute);
-  }
-  
-  void dispose() {
-    _canExecuteController.close();
-  }
-}
-
-class AsyncCommand extends Command {
-  final Future<void> Function() _action;
-  final bool Function()? _canExecuteFunc;
-  bool _isExecuting = false;
-  
-  AsyncCommand(this._action, [this._canExecuteFunc]);
-  
-  @override
-  bool get canExecute => !_isExecuting && (_canExecuteFunc?.call() ?? true);
-  
-  @override
-  Future<void> execute() async {
-    if (!canExecute) return;
-    
-    _isExecuting = true;
-    notifyCanExecuteChanged();
-    
-    try {
-      await _action();
-    } finally {
-      _isExecuting = false;
-      notifyCanExecuteChanged();
-    }
-  }
-}
-```
-
-### 6. 基础组件 (`src/base_components/`)
-
-**功能职责**:
-- 通用UI组件封装
-- 业务无关组件
-- 可复用组件库
-- 组件样式统一
-
-**主要组件**:
-- `RefreshableListView` - 可刷新列表
-- `NetworkImageWidget` - 网络图片组件
-- `LoadingWidget` - 加载组件
-- `ErrorWidget` - 错误组件
-
-#### RefreshableListView 实现
-```dart
-class RefreshableListView<T> extends StatefulWidget {
-  final Future<List<T>> Function() onRefresh;
-  final Future<List<T>> Function()? onLoadMore;
-  final Widget Function(BuildContext, T, int) itemBuilder;
-  final Widget? emptyWidget;
-  final Widget? errorWidget;
-  
-  const RefreshableListView({
-    Key? key,
-    required this.onRefresh,
-    this.onLoadMore,
-    required this.itemBuilder,
-    this.emptyWidget,
-    this.errorWidget,
-  }) : super(key: key);
-
-  @override
-  State<RefreshableListView<T>> createState() => _RefreshableListViewState<T>();
-}
-
-class _RefreshableListViewState<T> extends State<RefreshableListView<T>> {
-  final List<T> _items = [];
-  bool _isLoading = false;
-  bool _hasError = false;
-  String? _errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _refresh();
-  }
-
-  Future<void> _refresh() async {
-    setState(() {
-      _isLoading = true;
-      _hasError = false;
-    });
-
-    try {
-      final items = await widget.onRefresh();
-      setState(() {
-        _items.clear();
-        _items.addAll(items);
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _hasError = true;
-        _errorMessage = e.toString();
-      });
-    }
-  }
-
-  Future<void> _loadMore() async {
-    if (widget.onLoadMore == null || _isLoading) return;
-
-    try {
-      final items = await widget.onLoadMore!();
-      setState(() {
-        _items.addAll(items);
-      });
-    } catch (e) {
-      // Handle load more error
-    }
-  }
-
+class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (_isLoading && _items.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_hasError && _items.isEmpty) {
-      return widget.errorWidget ?? 
-          Center(child: Text('Error: $_errorMessage'));
-    }
-
-    if (_items.isEmpty) {
-      return widget.emptyWidget ?? 
-          const Center(child: Text('No data'));
-    }
-
-    return EasyRefresh(
-      onRefresh: _refresh,
-      onLoad: widget.onLoadMore != null ? _loadMore : null,
-      child: ListView.builder(
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          return widget.itemBuilder(context, _items[index], index);
-        },
-      ),
+    return ProviderWidget2<UserViewModel, NotificationViewModel>(
+      model1: UserViewModel(),
+      model2: NotificationViewModel(),
+      onModelReady: (userModel, notificationModel) {
+        userModel.loadUserInfo();
+        notificationModel.loadNotifications();
+      },
+      builder: (context, userModel, notificationModel, child) {
+        return Scaffold(
+          body: Column(
+            children: [
+              // 用户信息区域
+              if (userModel.isBusy)
+                CircularProgressIndicator()
+              else
+                UserInfoWidget(user: userModel.currentUser),
+              
+              // 通知区域
+              if (notificationModel.isBusy)
+                CircularProgressIndicator()
+              else
+                NotificationListWidget(notifications: notificationModel.notifications),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 ```
 
-## MVVM架构模式
+## 依赖配置
 
-### 架构层次
-```
-View Layer (视图层)
-    ↓ (用户交互)
-ViewModel Layer (视图模型层)
-    ↓ (业务逻辑)
-Model Layer (模型层)
-    ↓ (数据操作)
-Data Layer (数据层)
-```
+### pubspec.yaml 关键依赖
 
-### 数据流向
-```mermaid
-graph TD
-    A[View 视图] --> B[ViewModel 视图模型]
-    B --> C[Model 模型]
-    C --> D[Data Source 数据源]
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
     
-    D --> C
-    C --> B
-    B --> A
-    
-    E[User Input 用户输入] --> A
-    F[Data Binding 数据绑定] --> A
+  # 状态管理
+  provider: ^6.0.0
+  
+  # 列表刷新
+  easy_refresh: ^3.0.0
+  
+  # 日志记录
+  # (自定义日志工具类)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
 ```
-
-### 职责分离
-1. **View（视图）**
-   - 负责UI展示
-   - 处理用户交互
-   - 绑定ViewModel数据
-   - 不包含业务逻辑
-
-2. **ViewModel（视图模型）**
-   - 处理业务逻辑
-   - 管理视图状态
-   - 调用Model方法
-   - 提供数据绑定
-
-3. **Model（模型）**
-   - 定义数据结构
-   - 封装业务规则
-   - 提供数据操作接口
-   - 独立于视图层
-
-## 状态管理策略
-
-### 响应式状态
-```dart
-class ResponsiveState<T> {
-  final BehaviorSubject<T> _subject;
-  
-  ResponsiveState(T initialValue) : _subject = BehaviorSubject<T>.seeded(initialValue);
-  
-  T get value => _subject.value;
-  Stream<T> get stream => _subject.stream;
-  
-  void update(T newValue) {
-    _subject.add(newValue);
-  }
-  
-  void dispose() {
-    _subject.close();
-  }
-}
-
-class StateViewModel extends BaseViewModel {
-  final ResponsiveState<String> _title = ResponsiveState<String>('');
-  final ResponsiveState<List<String>> _items = ResponsiveState<List<String>>([]);
-  
-  Stream<String> get titleStream => _title.stream;
-  Stream<List<String>> get itemsStream => _items.stream;
-  
-  void updateTitle(String title) {
-    _title.update(title);
-  }
-  
-  void updateItems(List<String> items) {
-    _items.update(items);
-  }
-  
-  @override
-  void dispose() {
-    _title.dispose();
-    _items.dispose();
-    super.dispose();
-  }
-}
-```
-
-### 状态持久化
-```dart
-class StatePersistence {
-  static const String _keyPrefix = 'mvvm_state_';
-  
-  static Future<void> saveState<T>(String key, T state) async {
-    final prefs = await SharedPreferences.getInstance();
-    final json = jsonEncode(state);
-    await prefs.setString('$_keyPrefix$key', json);
-  }
-  
-  static Future<T?> loadState<T>(String key, T Function(Map<String, dynamic>) fromJson) async {
-    final prefs = await SharedPreferences.getInstance();
-    final json = prefs.getString('$_keyPrefix$key');
-    if (json != null) {
-      final map = jsonDecode(json) as Map<String, dynamic>;
-      return fromJson(map);
-    }
-    return null;
-  }
-  
-  static Future<void> clearState(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('$_keyPrefix$key');
-  }
-}
-```
-
-## 数据绑定机制
-
-### 双向数据绑定
-```dart
-class TwoWayBinding<T> {
-  final ValueNotifier<T> _notifier;
-  final void Function(T)? _onChanged;
-  
-  TwoWayBinding(T initialValue, [this._onChanged]) 
-      : _notifier = ValueNotifier<T>(initialValue);
-  
-  T get value => _notifier.value;
-  set value(T newValue) {
-    _notifier.value = newValue;
-    _onChanged?.call(newValue);
-  }
-  
-  ValueListenable<T> get listenable => _notifier;
-  
-  void dispose() {
-    _notifier.dispose();
-  }
-}
-
-class BindableTextField extends StatefulWidget {
-  final TwoWayBinding<String> binding;
-  final String? hintText;
-  final TextInputType? keyboardType;
-  
-  const BindableTextField({
-    Key? key,
-    required this.binding,
-    this.hintText,
-    this.keyboardType,
-  }) : super(key: key);
-
-  @override
-  State<BindableTextField> createState() => _BindableTextFieldState();
-}
-
-class _BindableTextFieldState extends State<BindableTextField> {
-  late TextEditingController _controller;
-  
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.binding.value);
-    _controller.addListener(_onTextChanged);
-    widget.binding.listenable.addListener(_onBindingChanged);
-  }
-  
-  void _onTextChanged() {
-    widget.binding.value = _controller.text;
-  }
-  
-  void _onBindingChanged() {
-    if (_controller.text != widget.binding.value) {
-      _controller.text = widget.binding.value;
-    }
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: _controller,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-      ),
-      keyboardType: widget.keyboardType,
-    );
-  }
-  
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-```
-
-## 性能优化
-
-### 视图更新优化
-- **局部更新**: 使用Consumer精确控制更新范围
-- **状态分离**: 分离不同类型的状态避免不必要更新
-- **延迟计算**: 使用计算属性延迟复杂计算
-- **缓存机制**: 缓存计算结果避免重复计算
-
-### 内存管理
-- **生命周期管理**: 正确管理ViewModel生命周期
-- **资源释放**: 及时释放Stream和订阅
-- **弱引用**: 使用弱引用避免循环引用
-- **内存监控**: 监控内存使用情况
-
-## 测试策略
-
-### 单元测试
-- **ViewModel测试**: 业务逻辑单元测试
-- **Model测试**: 数据模型测试
-- **Command测试**: 命令执行测试
-- **状态管理测试**: 状态变化测试
-
-### Widget测试
-- **View测试**: UI组件渲染测试
-- **交互测试**: 用户交互响应测试
-- **数据绑定测试**: 数据绑定正确性测试
-- **状态更新测试**: 状态更新后UI变化测试
-
-### 集成测试
-- **端到端测试**: 完整用户流程测试
-- **架构测试**: MVVM架构正确性测试
-- **性能测试**: 架构性能表现测试
-- **兼容性测试**: 不同场景兼容性测试
 
 ## 最佳实践
 
-### 架构设计
-1. **单一职责**: 每个层次职责单一明确
-2. **依赖倒置**: 依赖抽象而非具体实现
-3. **开闭原则**: 对扩展开放对修改关闭
-4. **接口隔离**: 使用小而专的接口
+### 1. ViewModel设计原则
+- 继承ViewStateModel获得基础状态管理能力
+- 将业务逻辑封装在ViewModel中，保持View的简洁
+- 合理使用状态枚举，提供良好的用户体验反馈
+- 及时释放资源，避免内存泄漏
 
-### 开发建议
-1. **状态管理**: 合理划分状态粒度
-2. **数据绑定**: 避免复杂的绑定表达式
-3. **异步处理**: 正确处理异步操作
-4. **错误处理**: 完善的错误处理机制
+### 2. 错误处理策略
+- 使用ViewStateErrorType枚举区分不同错误类型
+- 在UI层根据错误类型提供相应的用户提示
+- 网络错误提供重试机制
 
-### 代码组织
-1. **文件结构**: 按功能和层次组织文件
-2. **命名规范**: 统一的命名约定
-3. **注释文档**: 清晰的代码注释
-4. **代码复用**: 提取公共组件和逻辑
+### 3. 列表优化建议
+- 使用ViewStateRefreshListModel处理列表数据
+- 合理设置分页大小，平衡性能和用户体验
+- 实现适当的缓存策略减少不必要的网络请求
 
-## 总结
+### 4. 内存管理
+- ProviderWidget默认开启autoDispose，自动管理Model生命周期
+- 在Model的dispose方法中清理定时器、流订阅等资源
+- 避免在已销毁的Model上调用notifyListeners
 
-`base_mvvm` 模块作为 OneApp 的MVVM架构基础模块，提供了完整的架构模式实现和配套工具。通过清晰的层次分离、响应式状态管理和双向数据绑定，为Flutter应用开发提供了规范化的架构指导。模块具有良好的可测试性和可维护性，能够支撑大型应用的开发需求。
+## 扩展开发
+
+### 1. 自定义状态类型
+可以扩展ViewState枚举添加业务特定的状态：
+
+```dart
+enum CustomViewState {
+  idle,
+  busy,
+  empty,
+  error,
+  networkError,    // 自定义网络错误状态
+  authRequired,    // 自定义需要认证状态
+}
+```
+
+### 2. 自定义刷新组件
+基于base_mvvm的基础组件，可以创建适合特定业务场景的刷新组件。
+
+### 3. 状态持久化
+结合SharedPreferences等持久化方案，实现ViewState的持久化存储。
+
+## 问题排查
+
+### 常见问题
+1. **Model未正确释放**: 检查ProviderWidget的autoDispose设置
+2. **状态更新无效**: 确认notifyListeners调用时机
+3. **列表刷新异常**: 检查EasyRefreshController的状态管理
+
+### 调试技巧
+- 使用LogUtils记录关键状态变更
+- 通过ViewState枚举值判断当前页面状态
+- 利用Flutter Inspector查看Provider状态

@@ -2,331 +2,139 @@
 
 ## 模块概述
 
-`oneapp_membership` 是 OneApp 的会员系统核心模块，提供会员等级管理、积分系统、权益管理、会员特权等功能。该模块与社区、账户、售后服务等模块深度集成，为用户提供完整的会员生态体验。
+`oneapp_membership` 是 OneApp 的会员系统核心模块，专注于积分系统和签到功能。该模块提供用户积分管理、签到中心、积分任务等功能，与社区、账户等模块深度集成。
 
 ### 基本信息
 - **模块名称**: oneapp_membership
 - **版本**: 0.0.1
 - **类型**: Flutter Package
-- **Dart 版本**: >=3.0.0 <4.0.0
-- **Flutter 版本**: >=1.17.0
+- **主要功能**: 积分系统、签到功能、积分任务管理
+
+### 核心导出组件
+
+```dart
+library oneapp_membership;
+
+// 积分页面
+export 'src/app_modules/app_points/pages/user_points_page.dart';
+// 签到中心页面
+export 'src/app_modules/app_signin/pages/signIn_center_page.dart';
+// 会员事件
+export 'src/app_event/membership_event.dart';
+```
 
 ## 目录结构
 
 ```
 oneapp_membership/
 ├── lib/
-│   ├── oneapp_membership.dart    # 主导出文件
-│   └── src/                      # 源代码目录
-│       ├── pages/                # 会员页面
-│       ├── widgets/              # 会员组件
-│       ├── models/               # 数据模型
-│       ├── services/             # 服务层
-│       ├── blocs/                # 状态管理
-│       ├── utils/                # 工具类
-│       └── constants/            # 常量定义
-├── assets/                       # 静态资源
-├── test/                         # 测试文件
-├── pubspec.yaml                  # 依赖配置
-└── README.md                     # 项目说明
+│   ├── oneapp_membership.dart        # 主导出文件
+│   ├── generated/                    # 生成的国际化文件
+│   ├── l10n/                        # 国际化资源文件
+│   └── src/                         # 源代码目录
+│       ├── app_modules/             # 应用模块
+│       │   ├── app_points/          # 积分模块
+│       │   │   ├── pages/           # 积分页面
+│       │   │   ├── blocs/           # 积分状态管理
+│       │   │   ├── widges/          # 积分组件
+│       │   │   ├── scene/           # 积分场景
+│       │   │   └── beans/           # 积分数据模型
+│       │   └── app_signin/          # 签到模块
+│       │       └── pages/           # 签到页面
+│       ├── app_net_service/         # 网络服务
+│       └── app_event/               # 应用事件
+├── assets/                          # 静态资源
+├── test/                           # 测试文件
+└── pubspec.yaml                    # 依赖配置
 ```
 
 ## 核心功能模块
 
-### 1. 会员等级管理
+### 1. 用户积分页面 (UserPointsPage)
 
-#### 会员等级系统
+基于真实项目代码的用户积分管理页面：
+
 ```dart
-// 会员等级枚举
-enum MembershipTier {
-  bronze,   // 青铜会员
-  silver,   // 白银会员
-  gold,     // 黄金会员
-  platinum, // 铂金会员
-  diamond,  // 钻石会员
-  vip       // VIP会员
+/// 用户积分页面
+class UserPointsPage extends BaseStatefulWidget with RouteObjProvider {
+  UserPointsPage({Key? key, required this.userId});
+
+  final String userId;
+
+  @override
+  BaseStatefulWidgetState<UserPointsPage> getState() => _UserPointsPageState();
 }
 
-// 会员等级模型
-class MembershipLevel {
-  final MembershipTier tier;
-  final String name;
-  final String description;
-  final Color color;
-  final String iconUrl;
-  final int requiredPoints;
-  final List<MemberBenefit> benefits;
-  final MembershipPrivileges privileges;
+class _UserPointsPageState extends BaseStatefulWidgetState<UserPointsPage>
+    with WidgetsBindingObserver {
   
-  const MembershipLevel({
-    required this.tier,
-    required this.name,
-    required this.description,
-    required this.color,
-    required this.iconUrl,
-    required this.requiredPoints,
-    required this.benefits,
-    required this.privileges,
-  });
+  /// 是否需要添加推送积分
+  bool needAddPushPoints = false;
   
-  factory MembershipLevel.bronze() {
-    return MembershipLevel(
-      tier: MembershipTier.bronze,
-      name: '青铜会员',
-      description: '入门级会员，享受基础权益',
-      color: Color(0xFFCD7F32),
-      iconUrl: 'assets/membership/bronze_icon.png',
-      requiredPoints: 0,
-      benefits: [
-        MemberBenefit.basicSupport(),
-        MemberBenefit.monthlyReport(),
-      ],
-      privileges: MembershipPrivileges.bronze(),
-    );
-  }
-  
-  factory MembershipLevel.gold() {
-    return MembershipLevel(
-      tier: MembershipTier.gold,
-      name: '黄金会员',
-      description: '高级会员，享受优质服务',
-      color: Color(0xFFFFD700),
-      iconUrl: 'assets/membership/gold_icon.png',
-      requiredPoints: 10000,
-      benefits: [
-        MemberBenefit.prioritySupport(),
-        MemberBenefit.freeCharging(times: 5),
-        MemberBenefit.exclusiveEvents(),
-        MemberBenefit.discounts(percentage: 15),
-      ],
-      privileges: MembershipPrivileges.gold(),
-    );
-  }
-}
+  /// 是否使用通用导航栏
+  bool useCommonNavigation = false;
 
-// 会员服务管理
-class MembershipService {
-  final MembershipRepository _repository;
-  final PointsService _pointsService;
-  final NotificationService _notificationService;
-  
-  MembershipService(
-    this._repository,
-    this._pointsService,
-    this._notificationService,
-  );
-  
-  // 获取用户会员信息
-  Future<Result<MembershipInfo>> getUserMembership(String userId) async {
-    try {
-      final membershipInfo = await _repository.getUserMembership(userId);
-      return Right(membershipInfo);
-    } catch (e) {
-      return Left(MembershipFailure.loadFailed(e.toString()));
-    }
+  @override
+  List<Widget> get rightActions => [
+    PointsRuleWidge(
+      lable: MemberShipIntlDelegate.current.pointsRule,
+      onTap: () async {
+        // 获取积分规则
+        final rsp3 = await UserPointsTask.getRule(ruleKey: "integrationRule");
+        if ((rsp3.data ?? '').isNotEmpty) {
+          String jumpUrl = 'oneapp://component?routeKey=Key_Community_Postdetail&postId=${rsp3.data}&userName=';
+          
+          try {
+            Uri uri = Uri.tryParse(jumpUrl)!;
+            final routeKey = uri.queryParameters['routeKey'];
+            final meta = RouteCenterAPI.routeMetaBy(routeKey!);
+            NavigatorProxy().launchMeta(
+              meta,
+              meta.routePath,
+              arguments: uri.queryParameters,
+            );
+          } catch (e) {
+            // 处理跳转异常
+          }
+        } else {
+          ToastHelper.showToast(msg: '获取文章失败');
+        }
+      }
+    )
+  ];
+
+  @override
+  String get titleText => MemberShipIntlDelegate.current.myPoints;
+
+  @override
+  double get elevation => 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    addNotifyPoints();
   }
-  
-  // 升级会员等级
-  Future<Result<void>> upgradeMembership({
-    required String userId,
-    required MembershipTier targetTier,
-    required PaymentMethod paymentMethod,
-  }) async {
-    try {
-      final currentMembership = await getUserMembership(userId);
-      return currentMembership.fold(
-        (failure) => Left(failure),
-        (membership) async {
-          // 检查升级条件
-          if (!_canUpgrade(membership.tier, targetTier)) {
-            return Left(MembershipFailure.upgradeNotAllowed());
-          }
-          
-          // 处理支付
-          final upgradeResult = await _processUpgradePayment(
-            userId,
-            targetTier,
-            paymentMethod,
-          );
-          
-          if (upgradeResult.isLeft()) {
-            return Left(MembershipFailure.paymentFailed());
-          }
-          
-          // 更新会员等级
-          await _repository.updateMembershipTier(userId, targetTier);
-          
-          // 发送升级通知
-          await _notificationService.sendMembershipUpgradeNotification(
-            userId: userId,
-            newTier: targetTier,
-          );
-          
-          return Right(unit);
-        },
-      );
-    } catch (e) {
-      return Left(MembershipFailure.upgradeFailed(e.toString()));
+
+  /// 添加通知积分
+  Future<void> addNotifyPoints() async {
+    bool haveNotifyPermission = await Permission.notification.isGranted;
+    if (haveNotifyPermission) {
+      PointsAddCenter().addPoints(PointsOpenPush());
     }
   }
 }
 ```
 
-### 2. 积分系统
+### 2. 积分组件架构
 
-#### 积分管理服务
-```dart
-// 积分系统服务
-class PointsService {
-  final PointsRepository _repository;
-  final MembershipService _membershipService;
-  
-  PointsService(this._repository, this._membershipService);
-  
-  // 获取用户积分余额
-  Future<Result<PointsBalance>> getUserPoints(String userId) async {
-    try {
-      final balance = await _repository.getPointsBalance(userId);
-      return Right(balance);
-    } catch (e) {
-      return Left(PointsFailure.loadFailed(e.toString()));
-    }
-  }
-  
-  // 赚取积分
-  Future<Result<PointsTransaction>> earnPoints({
-    required String userId,
-    required int points,
-    required PointsEarnReason reason,
-    Map<String, dynamic>? metadata,
-  }) async {
-    try {
-      final transaction = PointsTransaction(
-        id: generateId(),
-        userId: userId,
-        type: PointsTransactionType.earn,
-        points: points,
-        reason: reason.toString(),
-        metadata: metadata,
-        createdAt: DateTime.now(),
-      );
-      
-      await _repository.addPointsTransaction(transaction);
-      await _repository.updatePointsBalance(userId, points);
-      
-      // 检查是否触发会员等级升级
-      await _checkMembershipUpgrade(userId);
-      
-      return Right(transaction);
-    } catch (e) {
-      return Left(PointsFailure.earnFailed(e.toString()));
-    }
-  }
-  
-  // 消费积分
-  Future<Result<PointsTransaction>> spendPoints({
-    required String userId,
-    required int points,
-    required PointsSpendReason reason,
-    Map<String, dynamic>? metadata,
-  }) async {
-    try {
-      // 检查积分余额
-      final balanceResult = await getUserPoints(userId);
-      return balanceResult.fold(
-        (failure) => Left(failure),
-        (balance) async {
-          if (balance.availablePoints < points) {
-            return Left(PointsFailure.insufficientPoints());
-          }
-          
-          final transaction = PointsTransaction(
-            id: generateId(),
-            userId: userId,
-            type: PointsTransactionType.spend,
-            points: -points,
-            reason: reason.toString(),
-            metadata: metadata,
-            createdAt: DateTime.now(),
-          );
-          
-          await _repository.addPointsTransaction(transaction);
-          await _repository.updatePointsBalance(userId, -points);
-          
-          return Right(transaction);
-        },
-      );
-    } catch (e) {
-      return Left(PointsFailure.spendFailed(e.toString()));
-    }
-  }
-  
-  // 获取积分历史记录
-  Future<Result<List<PointsTransaction>>> getPointsHistory({
-    required String userId,
-    int page = 1,
-    int pageSize = 20,
-    PointsTransactionType? type,
-  }) async {
-    try {
-      final transactions = await _repository.getPointsTransactions(
-        userId: userId,
-        page: page,
-        pageSize: pageSize,
-        type: type,
-      );
-      return Right(transactions);
-    } catch (e) {
-      return Left(PointsFailure.historyLoadFailed(e.toString()));
-    }
-  }
-}
+实际项目包含的积分相关组件：
 
-// 积分数据模型
-class PointsBalance {
-  final String userId;
-  final int totalEarned;
-  final int totalSpent;
-  final int availablePoints;
-  final int pendingPoints;
-  final DateTime lastUpdated;
-  
-  const PointsBalance({
-    required this.userId,
-    required this.totalEarned,
-    required this.totalSpent,
-    required this.availablePoints,
-    required this.pendingPoints,
-    required this.lastUpdated,
-  });
-  
-  int get lifetimePoints => totalEarned;
-  double get spendingRate => totalEarned > 0 ? totalSpent / totalEarned : 0.0;
-}
-
-// 积分交易记录
-class PointsTransaction {
-  final String id;
-  final String userId;
-  final PointsTransactionType type;
-  final int points;
-  final String reason;
-  final Map<String, dynamic>? metadata;
-  final DateTime createdAt;
-  final PointsTransactionStatus status;
-  
-  const PointsTransaction({
-    required this.id,
-    required this.userId,
-    required this.type,
-    required this.points,
-    required this.reason,
-    this.metadata,
-    required this.createdAt,
-    this.status = PointsTransactionStatus.completed,
-  });
-}
-```
+- **point_score_head_section.dart**: 积分头部区域组件
+- **points_rule_widget.dart**: 积分规则组件  
+- **points_task_cell.dart**: 积分任务单元格组件
+- **PointsAddCenter**: 积分添加中心
+- **points_open_push.dart**: 积分推送开启
 
 ### 3. 会员权益管理
 
