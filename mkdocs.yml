@@ -126,10 +126,10 @@ nav:
       - 概览: account/README.md
       - CLR账户服务: account/clr_account.md
       - 极光验证: account/jverify.md
-  - 售后服务:
-      - 概览: after_sales/README.md
-      - CLR售后服务: after_sales/clr_after_sales.md
-      - 售后应用: after_sales/oneapp_after_sales.md
+  # - 售后服务:
+  #     - 概览: after_sales/README.md
+  #     - CLR售后服务: after_sales/clr_after_sales.md
+  #     - 售后应用: after_sales/oneapp_after_sales.md
   - 车辆服务:
       - 概览: app_car/README.md
       - 应用层组件:
@@ -178,15 +178,15 @@ nav:
       - 工具服务:
           - 日志系统: basic_utils/basic_logger.md
           - 下载器: basic_utils/flutter_downloader.md
-  - 汽车销售:
-      - 概览: car_sales/README.md
-  - 社区功能:
-      - 概览: community/README.md
-  - 会员服务:
-      - 概览: membership/README.md
-  - 服务组件:
-      - 概览: service_component/README.md
-  - 设置功能:
-      - 概览: setting/README.md
-  - 触点模块:
-      - 概览: touch_point/README.md
+  # - 汽车销售:
+  #     - 概览: car_sales/README.md
+  # - 社区功能:
+  #     - 概览: community/README.md
+  # - 会员服务:
+  #     - 概览: membership/README.md
+  # - 服务组件:
+  #     - 概览: service_component/README.md
+  # - 设置功能:
+  #     - 概览: setting/README.md
+  # - 触点模块:
+  #     - 概览: touch_point/README.md
