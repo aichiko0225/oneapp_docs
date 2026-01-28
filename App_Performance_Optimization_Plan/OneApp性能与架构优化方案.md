@@ -126,89 +126,192 @@
 - clr_*：服务 SDK 层，对外暴露 Facade，内部可依赖 basic_*/kit_*
 - app_*：业务模块层，只依赖 basic_*/kit_*/ui_*/clr_*，禁止互相强依赖
 
-现有模块依赖关系图
+现有模块依赖关系图（基于 pubspec.yaml 扫描）
 
-基于OneApp的模块结构，模块间的依赖关系如下：
+应用入口与本地模块归属
 
 ```mermaid
 graph TB
-    subgraph "应用入口层"
-        MAIN[oneapp_main<br/>AppModule]
+    subgraph 应用入口层
+        MAIN[oneapp_main]
     end
-    
-    subgraph "页面模块层"
-        HOME[app_home<br/>HomeModule]
-        DISC[app_discover<br/>DiscoveryModule]  
-        TEST[app_test<br/>TestModule]
+
+    subgraph 业务模块
+        ACC[app_account]
+        SET[app_setting]
+        COM[oneapp_community]
+        MEM[oneapp_membership]
+        AFTER[oneapp_after_sales]
+        CAR_SALES[oneapp_car_sales]
+        TP[oneapp_touch_point]
     end
-    
-    subgraph "业务功能模块层"
-        ACC[oneapp_account<br/>AccountModule]
-        COM[oneapp_community<br/>CommunityModule]
-        MEM[oneapp_membership<br/>MembershipModule]
-        SET[oneapp_setting<br/>SettingModule]
-        CS[oneapp_car_sales<br/>CarSalesModule]
-        AS[oneapp-after-sales<br/>AfterSalesModule]
-        TP[oneapp-touch-point<br/>TouchPointModule]
-        POPUP[OneAppPopupModule]
+
+    subgraph 服务组件
+        CONF[app_configuration]
+        COMP[oneapp_companion]
+        POPUP[oneapp_popup]
+        SHARE[share_to_friends]
     end
-    
-    subgraph "车辆功能模块群"
-        CAR[app_car<br/>CarControlModule]
-        CHARGE[app_charging<br/>AppChargingModule]
-        AVATAR[app_avatar<br/>AppAvatarModule]
-        MAINT[app_maintenance<br/>MaintenanceControlModule]
-        WATCH[app_carwatcher<br/>AppCarwatcherModule]
-        TG[app_touchgo<br/>AppTouchgoModule]
-        WB[app_wallbox<br/>AppWallboxModule]
-        VUR[app_vur<br/>AppVurModule]
-        RPA[app_rpa<br/>AppRpaModule]
-        NAV[app_navigation<br/>AppNavigationModule]
+
+    subgraph 车辆相关
+        CAR[app_car]
+        CHARGE[app_charging]
+        WALLBOX[app_wallbox]
+        WATCH[app_carwatcher]
+        AVATAR[app_avatar]
+        ORDER[app_order]
+        TOUCHGO[app_touchgo]
+        VUR[app_vur]
+        MAINT[app_maintenance]
+        RPA[app_rpa]
+        COMPOSER[app_composer]
     end
-    
-    subgraph "连接层服务模块群 (CLR)"
-        ACC_C[clr_account<br/>AccountConModule]
-        CHARGE_C[clr_charging<br/>ClrChargingModule]
-        ORDER_C[clr_order<br/>ClrOrderModule]
-        SET_C[clr_setting<br/>SettingConModule]
-        GEO_C[clr_geo<br/>GeoModule]
-        MSG_C[clr_message<br/>ClrMessageModule]
-        TG_C[clr_touchgo<br/>ClrTouchgoModule]
-        WB_C[clr_wallbox<br/>ClrWallboxModule]
-        WATCH_C[clr_carwatcher<br/>ClrCarWatcherModule]
-    end
-    
-    subgraph "UI基础设施层"
-        UI_BASIC[ui_basic<br/>BasicUIModule]
-        UI_PAY[ui_payment<br/>PayModule]
-    end
-    
-    MAIN --> HOME
-    MAIN --> DISC
-    MAIN --> TEST
+
     MAIN --> ACC
+    MAIN --> SET
     MAIN --> COM
     MAIN --> MEM
+    MAIN --> AFTER
+    MAIN --> CAR_SALES
+    MAIN --> TP
+    MAIN --> CONF
+    MAIN --> COMP
+    MAIN --> POPUP
+    MAIN --> SHARE
     MAIN --> CAR
     MAIN --> CHARGE
+    MAIN --> WALLBOX
+    MAIN --> WATCH
     MAIN --> AVATAR
-    
-    ACC --> ACC_C
-    CAR --> ACC_C
-    CHARGE --> CHARGE_C
-    CHARGE --> ACC_C
+    MAIN --> ORDER
+    MAIN --> TOUCHGO
+    MAIN --> VUR
+    MAIN --> MAINT
+    MAIN --> RPA
+    MAIN --> COMPOSER
+```
+
+业务模块内部依赖
+
+```mermaid
+graph TB
+    COM[oneapp_community] --> MEM[oneapp_membership]
+    COM --> CAR_SALES[oneapp_car_sales]
+    COM --> TP[oneapp_touch_point]
+    COM --> AFTER[oneapp_after_sales]
+    COM --> SHARE[share_to_friends]
+
+    MEM --> COM
+    MEM --> AFTER
+    MEM --> ACC[app_account]
+
+    CAR_SALES --> CONF[app_configuration]
+    CAR_SALES --> AFTER
+    CAR_SALES --> TP
+
+    CONF --> CAR_SALES
+
+    SET[app_setting] --> MEM
+```
+
+业务模块与 CLR 依赖
+
+```mermaid
+graph TB
+    subgraph 业务模块
+        ACC[app_account]
+        SET[app_setting]
+        AFTER[oneapp_after_sales]
+        CONF[app_configuration]
+        COMP[oneapp_companion]
+    end
+
+    subgraph CLR
+        MNO_C[clr_mno]
+        SET_C[clr_setting]
+        MEDIA_C[clr_media]
+        GEO_C[clr_geo]
+        CONF_C[clr_configuration]
+        COMP_C[clr_companion]
+    end
+
+    ACC --> MNO_C
     SET --> SET_C
+    SET --> MEDIA_C
+    AFTER --> GEO_C
+    CONF --> CONF_C
+    COMP --> COMP_C
+```
+
+车辆模块与 CLR 依赖
+
+```mermaid
+graph TB
+    subgraph 车辆模块
+        CAR[app_car]
+        CHARGE[app_charging]
+        MAINT[app_maintenance]
+        WATCH[app_carwatcher]
+        AVATAR[app_avatar]
+        ORDER[app_order]
+        TOUCHGO[app_touchgo]
+    end
+
+    subgraph CLR
+        GEO_C[clr_geo]
+        CHARGE_C[clr_charging]
+        MAINT_C[clr_maintenance]
+        WATCH_C[clr_carwatcher]
+        TOUCHGO_C[clr_touchgo]
+        ORDER_C[clr_order]
+        PAY_C[clr_payment]
+        ACC_C[clr_account]
+        MNO_C[clr_mno]
+        VOICE_C[clr_voiceclone]
+    end
+
     CAR --> GEO_C
+    CAR --> CHARGE_C
+    CAR --> MNO_C
+
+    CHARGE --> CHARGE_C
+    CHARGE --> GEO_C
+    CHARGE --> PAY_C
+
+    MAINT --> MAINT_C
+    MAINT --> GEO_C
+
     WATCH --> WATCH_C
-    TG --> TG_C
-    WB --> WB_C
-    
-    HOME --> ACC_C
-    HOME --> GEO_C
-    
-    UI_PAY --> UI_BASIC
-    COM --> UI_BASIC
-    MEM --> UI_BASIC
+    WATCH --> GEO_C
+
+    AVATAR --> ORDER_C
+    AVATAR --> PAY_C
+    AVATAR --> VOICE_C
+
+    ORDER --> ORDER_C
+    ORDER --> PAY_C
+    ORDER --> ACC_C
+
+    TOUCHGO --> GEO_C
+    TOUCHGO --> TOUCHGO_C
+```
+
+UI 模块与 CLR 依赖
+
+```mermaid
+graph TB
+    subgraph UI
+        UI_BASIC[ui_basic]
+        UI_BUSINESS[ui_business]
+    end
+
+    subgraph CLR
+        GEO_C[clr_geo]
+        MSG_C[clr_message]
+    end
+
+    UI_BUSINESS --> GEO_C
+    UI_BUSINESS --> MSG_C
 ```
 
 ### 2) 当前存在的问题
