@@ -1,185 +1,459 @@
-# OneApp 性能与架构优化方案（2026）
+# OneApp 性能与架构优化方案（内存与模块化）
 
-## 1. 背景与范围
+本方案包含三部分：性能与内存优化理论、架构改造（模块化完善）与内存优化实战，并补充性能监控方案、成本与风险评估。
 
-当前 OneApp 已经具备初步的性能与稳定性监控能力，但要达到“性能非常优异的 APP”仍存在明显差距。本方案聚焦以下范围：
+## 理论基础：内存模型、排查方法与治理策略
 
-- 性能与稳定性提升：监控基建完善、历史遗留问题清理、内存与资源使用优化
-- 架构改造：在不“彻底动架构”的前提下，进一步强化模块化与解耦
-- 基础库升级：Flutter/Android/iOS 三端基础库升级与治理
+### 1) 内存构成（跨端共识）
 
-## 2. 现状与依赖基础
+- Flutter/Dart：Dart Heap、Native Heap、GPU 纹理、ImageCache、Skia 资源
+- Android：Java Heap、Native Heap、Graphics/GL、Ashmem/匿名共享、文件映射
+- iOS：Heap、VM、Metal/纹理、ImageIO 解码缓存
 
-### 2.1 架构与模块化现状
+### 2) 常见内存问题类型
 
-当前项目采用分层架构与模块化体系，主结构已在架构文档中明确：[OneApp架构设计文档.md](../OneApp架构设计文档.md)。
+- 泄漏：对象生命周期失控，无法被 GC/ARC 回收
+- 峰值过高：大图、视频、批量解析造成瞬时激增
+- 缓存失控：图片/列表/业务缓存无上限或无 TTL
+- 碎片与抖动：高频创建大对象导致频繁 GC/ARC
 
-关键现状：
-- Flutter 业务模块与基础模块大量并行开发
-- 模块化已经形成，但边界与依赖治理不足
+### 3) 使用 DevTools 排查内存问题（流程化）
 
-### 2.2 监控与调试基础
+- 基线建立：进入核心场景（首页、车控、地图/媒体、个人中心）分别记录内存曲线与峰值
+- 事件复现：复现场景触发后，观察内存是否回落到基线附近
+- 快照对比：多次快照对比，锁定增长中的对象类型与数量
+- 引用链分析：定位“谁在持有对象”，找出未释放的根因
+- GC 验证：触发 GC 后仍不回落，优先排查泄漏与缓存失控
+- 输出结论：标注对象类型、持有链路、场景、复现步骤与修复建议
 
-现有监控/调试基础包括：
-- 监控插件：`kit_app_monitor` [kit_app_monitor.md](../basic_utils/kit_app_monitor.md)
-- 调试工具集：[debug_tools.md](../debug_tools.md)
-- 业务侧的基础打点能力（如通用埋点管理）
+### 3.1) 内存自动化回归（AirtestIDE）
 
-这为性能监控基建升级提供了可复用的基础能力，但缺少统一指标体系、采样策略与跨平台一致性。
+- 目标
+  - 替代人工点击，稳定复现核心场景并采集内存曲线
+  - 形成可重复的回归路径与对比基线
+- 脚本覆盖
+  - 首页 → 车控 → 地图/媒体 → 个人中心 → 返回首页
+  - 前后台切换、列表滚动、资源密集操作路径
+- 采集策略
+  - 启动前清理缓存，保证基线一致
+  - 场景进入与退出分别记录峰值与回落
+  - 与内存告警联动，定位异常场景
+- 产出物
+  - Airtest 脚本与用例集
+  - 自动化内存基线报告与回归对比报告
 
-## 3. 总体目标与原则
+### 4) 僵尸对象与内存不释放的判断方法
 
-### 3.1 目标
+- 僵尸对象特征：页面退出后对象仍在内存中、数量持续上升、被全局单例或静态集合持有
+- 常见来源：未取消订阅、缓存未清理、生命周期未对齐、异步任务回调未释放
+- 判断方式：同场景多次进入退出，观察对象数量是否线性增长
+- 处理策略：明确生命周期边界、集中释放入口、限制缓存上限、引入弱引用或定时清理
 
-- 性能与稳定性体系化建设，形成可持续的“指标—监控—分析—治理”闭环
-- 内存占用显著下降（基线先建立，按阶段目标下降）
-- 模块化进一步强化，高内聚低耦合，支持独立演进与风险隔离
-- 三端基础库升级并形成稳定的升级节奏
+### 5) 解决思路的优先级
 
-### 3.2 原则
+- 限制缓存上限与生命周期（优先）
+- 下采样与降规格加载（优先）
+- 资源释放与生命周期治理（优先）
+- 计算迁移与异步分批处理（中）
+- 架构层优化与模块拆分（长期）
 
-- 保持当前架构主干稳定，不进行彻底重构
-- 优先完善监控与治理基建，再做深度优化
-- 以数据驱动优化，优先解决影响面最大的问题
-- 形成可复制、可持续的治理流程
+### 6) 性能监控方案（内存与卡顿）
 
-## 4. 监控与性能基建方案
+- 指标体系
+  - 内存：PSS、Dart Heap、Native Heap、峰值与稳定值、低内存告警次数
+  - 卡顿：FPS、Jank 帧占比、平均/90 分位帧耗时、UI/渲染线程耗时、GC 频次
+  - 体验：页面首帧时间、路由切换耗时、列表滑动掉帧率
+  - 稳定性：OOM、Crash、页面白屏/卡死
+- 采集策略
+  - 核心场景高频采样，非核心场景抽样采集
+  - 前后台切换、页面进出、资源密集操作、帧耗时异常触发关键事件
+- 上报链路
+  - 本地缓存 + 批量上报 + 失败重试
+  - 与现有内存告警联动，形成“告警—定位—修复—验证”闭环
+- 产出物
+  - 基线报告、卡顿场景榜单、专项优化清单、回归对比报告
 
-### 4.1 监控指标体系
+### 7) 代码层面的漏洞与泄漏高发点（排查清单）
 
-核心指标分层：
-- 启动性能：冷启动、温启动、首帧、首交互
-- 渲染性能：FPS、卡顿率、长帧占比、掉帧场景
-- 内存：PSS、Dart Heap、Native Heap、峰值与稳定值
-- 稳定性：Crash、ANR、卡死/黑屏、页面白屏
-- 网络：请求耗时、失败率、弱网体验
-- 资源：图片缓存命中率、磁盘占用、缓存淘汰
+- 生命周期与订阅
+  - StreamSubscription/RxDart/EventBus 未取消订阅
+  - Timer/Isolate/Compute 任务未停止或回收
+  - MethodChannel/EventChannel 监听未释放
+- 控制器与资源
+  - AnimationController/ScrollController/TextEditingController/FocusNode 未 dispose
+  - 视频/地图/纹理资源未 stop/destroy
+- 缓存与引用
+  - 单例/静态集合持有 BuildContext/Widget/State
+  - 图片/业务缓存无上限或无 TTL，列表 keepAlive 过度使用
+- 主线程阻塞
+  - 大 JSON 解析/排序/解码在主线程执行
+  - 同步磁盘 IO 或大量 setState/重建导致帧耗时激增
 
-### 4.2 监控数据链路
+排查要点
+- 同场景多次进入退出，对象数量应稳定或回落
+- 退出页面后仍增长的对象，优先回溯持有链与订阅源
+- 发生卡顿时定位长帧对应的函数与调用链，先移出主线程
 
-![监控体系](images/monitoring_architecture.svg)
+### 8) 常见内存问题与解决方案（摘要）
 
-采集与上报建议：
-- 统一采样策略，避免过度采集影响性能
-- 关键指标提供高频采样，非关键采用抽样
-- 本地缓存与批量上报，降低网络开销
+- 图片与纹理占用过大 → 统一下采样、限制缓存上限、资源按需加载
+- 列表长期驻留 → 分页与复用、减少 keepAlive、页面退出清理
+- 业务缓存失控 → TTL 与容量上限、冷热分层、统一清理入口
+- 异步任务未释放 → 统一取消订阅与回调清理
+- 资源引擎未释放 → 提供 destroy/stop 入口并强制调用
 
-### 4.3 监控模块改造建议
+### 9) 验收标准（以基线报告为准）
 
-基于 `kit_app_monitor` 能力进行扩展：
-- 新增统一的指标定义与版本管理
-- 引入跨平台一致的指标采集接口
-- 为 Flutter 与原生提供统一的数据封装结构
+- 内存指标
+  - 核心场景峰值下降、退场后回落至基线区间
+  - 低内存告警次数显著下降
+- 卡顿指标
+  - 核心场景 Jank 帧占比下降、长帧数量显著降低
+  - 滑动与路由切换场景的帧耗时回落至基线区间
+- 稳定性指标
+  - OOM 与相关 Crash 明显下降
+- 过程指标
+  - 形成可复用的排查流程与问题归因闭环
+  - 代码层泄漏清单闭环，关键模块释放入口覆盖率提升
 
-## 5. 性能与稳定性治理策略
+## 架构改造：模块化完善（高内聚低耦合）
 
-### 5.1 性能治理闭环
+### 1) 模块分层与依赖方向
 
-闭环流程：
-1. 建立基线与指标阈值  
-2. 监控收集与告警  
-3. 问题定位与归因  
-4. 优化与验证  
-5. 回归监控与持续治理
+- basic_*：基础设施层，只依赖基础能力，不依赖业务
+- kit_*：通用工具与能力，允许被 app_*/clr_* 依赖
+- ui_*：UI 组件层，不依赖 app_*，仅依赖 basic_*/kit_*
+- clr_*：服务 SDK 层，对外暴露 Facade，内部可依赖 basic_*/kit_*
+- app_*：业务模块层，只依赖 basic_*/kit_*/ui_*/clr_*，禁止互相强依赖
 
-### 5.2 重点治理方向
+现有模块依赖关系图
 
-#### 5.2.1 内存优化
+基于OneApp的模块结构，模块间的依赖关系如下：
 
-- 分模块基线统计：首屏、核心业务、长时运行
-- 梳理大对象与泄漏风险：图像、列表、缓存、全局单例
-- Dart/Native 双向跟踪，统一内存报警阈值
+```mermaid
+graph TB
+    subgraph "应用入口层"
+        MAIN[oneapp_main<br/>AppModule]
+    end
+    
+    subgraph "页面模块层"
+        HOME[app_home<br/>HomeModule]
+        DISC[app_discover<br/>DiscoveryModule]  
+        TEST[app_test<br/>TestModule]
+    end
+    
+    subgraph "业务功能模块层"
+        ACC[oneapp_account<br/>AccountModule]
+        COM[oneapp_community<br/>CommunityModule]
+        MEM[oneapp_membership<br/>MembershipModule]
+        SET[oneapp_setting<br/>SettingModule]
+        CS[oneapp_car_sales<br/>CarSalesModule]
+        AS[oneapp-after-sales<br/>AfterSalesModule]
+        TP[oneapp-touch-point<br/>TouchPointModule]
+        POPUP[OneAppPopupModule]
+    end
+    
+    subgraph "车辆功能模块群"
+        CAR[app_car<br/>CarControlModule]
+        CHARGE[app_charging<br/>AppChargingModule]
+        AVATAR[app_avatar<br/>AppAvatarModule]
+        MAINT[app_maintenance<br/>MaintenanceControlModule]
+        WATCH[app_carwatcher<br/>AppCarwatcherModule]
+        TG[app_touchgo<br/>AppTouchgoModule]
+        WB[app_wallbox<br/>AppWallboxModule]
+        VUR[app_vur<br/>AppVurModule]
+        RPA[app_rpa<br/>AppRpaModule]
+        NAV[app_navigation<br/>AppNavigationModule]
+    end
+    
+    subgraph "连接层服务模块群 (CLR)"
+        ACC_C[clr_account<br/>AccountConModule]
+        CHARGE_C[clr_charging<br/>ClrChargingModule]
+        ORDER_C[clr_order<br/>ClrOrderModule]
+        SET_C[clr_setting<br/>SettingConModule]
+        GEO_C[clr_geo<br/>GeoModule]
+        MSG_C[clr_message<br/>ClrMessageModule]
+        TG_C[clr_touchgo<br/>ClrTouchgoModule]
+        WB_C[clr_wallbox<br/>ClrWallboxModule]
+        WATCH_C[clr_carwatcher<br/>ClrCarWatcherModule]
+    end
+    
+    subgraph "UI基础设施层"
+        UI_BASIC[ui_basic<br/>BasicUIModule]
+        UI_PAY[ui_payment<br/>PayModule]
+    end
+    
+    MAIN --> HOME
+    MAIN --> DISC
+    MAIN --> TEST
+    MAIN --> ACC
+    MAIN --> COM
+    MAIN --> MEM
+    MAIN --> CAR
+    MAIN --> CHARGE
+    MAIN --> AVATAR
+    
+    ACC --> ACC_C
+    CAR --> ACC_C
+    CHARGE --> CHARGE_C
+    CHARGE --> ACC_C
+    SET --> SET_C
+    CAR --> GEO_C
+    WATCH --> WATCH_C
+    TG --> TG_C
+    WB --> WB_C
+    
+    HOME --> ACC_C
+    HOME --> GEO_C
+    
+    UI_PAY --> UI_BASIC
+    COM --> UI_BASIC
+    MEM --> UI_BASIC
+```
 
-#### 5.2.2 图片缓存与资源治理
+### 2) 当前存在的问题
 
-- 统一图片加载策略与缓存策略
-- 高分辨率资源按需加载
-- 关键页面图片预加载控制
+- 版本治理
+  - 大量使用 dependency_overrides，反映依赖版本冲突与治理缺失
+  - 本地路径依赖多，模块版本同步与冲突解决成本高
+- 构建效率
+  - 模块数量多且粒度偏小，构建时间长，增量构建收益不足
+- 依赖关系
+  - 部分模块间存在潜在循环依赖风险
+  - 业务模块彼此直接引用内部实现，边界不清晰
 
-#### 5.2.3 存储与缓存治理
+### 3) 改善目标
 
-- 缓存分层：内存、磁盘、远程
-- 统一缓存淘汰策略与容量上限
-- 热点数据与历史数据分层管理
+- 版本治理统一化：逐步消灭 dependency_overrides，统一基础依赖版本
+- 边界与解耦强化：业务模块只经由 Facade/Service 接口交互，禁止跨层直接依赖
+- 模块粒度优化：合并过小、强相关模块，提升构建与维护效率
+- 构建效率提升：缩短全量构建时间，引入更明确的增量构建策略
+- 依赖安全：杜绝循环依赖，建立依赖白名单/黑名单与审计机制
 
-#### 5.2.4 稳定性与异常治理
+### 4) 模块边界与接口约束
 
-- Crash/ANR 建立统一分类与标签体系
-- 高频问题建立专项治理清单
-- 回归版本进行监控对比
+- 每个模块必须提供唯一对外入口（如 `lib/<module>.dart`）
+- 模块内部代码禁止被外部直接 import（通过导出文件统一暴露）
+- 业务模块之间通过接口或事件解耦，禁止直接访问彼此内部实现
 
-## 6. 代码层面优化方向
+### 5) 模块自闭环能力要求
 
-### 6.1 Flutter 性能优化
+- 模块内部完成“接口 + 实现 + 测试”闭环
+- 公共能力上收至 basic_*/kit_*，避免横向复制
+- 业务模块内禁止重复定义通用模型与工具类
 
-- 减少无效 rebuild 与 state 更新范围
-- 列表与复杂布局进行分片渲染
-- 重度计算迁移到 Isolate
-- 避免不必要的同步阻塞与大对象拷贝
+### 6) 依赖治理与版本策略
 
-### 6.2 原生侧优化
+- 统一基础依赖版本，逐步减少 `dependency_overrides`
+- 建立模块依赖白名单与黑名单规则
+- 每个模块提供版本变更说明与兼容策略
 
-- Android：减少主线程阻塞，降低过度日志与 I/O
-- iOS：优化对象生命周期与图像解码策略
+### 7) 模块化完善具体方案（落地步骤）
 
-## 7. 架构与模块化优化
+1. 依赖梳理：输出模块依赖关系图与循环依赖清单  
+2. 依赖拆解：识别横向耦合点，抽取到 basic_*/kit_*  
+3. 接口对齐：模块外只通过 Facade/Service 访问  
+4. 路由收敛：模块内自注册路由，外部只调用入口  
+5. 回归验证：每次迁移只影响单模块，确保低风险落地  
 
-### 7.1 模块边界与依赖治理
+### 8) 模块化完善的验收清单
 
-- 明确模块职责与可见边界
-- 禁止跨层依赖与非必要双向依赖
-- 建立模块依赖审计机制
+- app_* 之间无直接依赖
+- ui_* 不依赖任何业务模块
+- clr_* 仅暴露 Facade API
+- basic_*/kit_* 不依赖业务模块
+- 模块版本与依赖版本统一可追溯
+- 构建指标达标：全量构建时间下降、增量构建命中率提升
+- 依赖指标达标：dependency_overrides 清零或极少量、循环依赖为零
 
-### 7.2 模块自闭环策略
+## 1. 内存优化（基于现有代码）
 
-- 模块内部完成“接口-实现-测试”闭环
-- 公共能力进入 `basic_*` 或 `kit_*` 模块
+- 入口内存告警联动（应用主入口使用 MemoryWatcher）
+  - 代码位置：[app_widget.dart:L312-L337]
 
-### 7.3 重点模块改造顺序
+```dart
+Widget _createApp() => MemoryWatcher(
+  memoryWarningLine: minWarningFreeMemory,
+  onMemoryWarning: () {
+    pushFacade.postEvent(topic: memoryPressureTopic);
+    OneAppConfigHandler.instance.clearMemory();
+  },
+  child: MaterialApp.router(
+    builder: FlutterSmartDialog.init(),
+    key: ContextProvider.globalKey,
+    onGenerateTitle: (context) => AppIntlDelegate.of(context).appTitle,
+    title: 'ID. UX',
+    theme: themeFacade.theme.ofStandard().themeData,
+    routeInformationParser: Modular.routeInformationParser,
+    routerDelegate: Modular.routerDelegate,
+    scrollBehavior: _NoGlowingBehavior(),
+  ).routerIntlConfig(
+    _supportLocale,
+    _localizationsDelegates,
+  ),
+);
+```
 
-建议按业务影响与性能收益排序：
-1. 核心启动链路
-2. 高频访问模块（首页、车控、个人中心）
-3. 资源密集模块（地图、图片、媒体）
+- 系统内存压力回调与全局缓存清理
+  - 代码位置：[app_config_handler.dart:L57-L78]
 
-## 8. 基础库升级策略
+```dart
+@override
+void didHaveMemoryPressure() {
+  Logger.w("app_config: didHaveMemoryPressure", LogTag_App);
+  if (currentAppState != AppLifecycleState.resumed) {
+    Logger.d("app_config: in background, not clear");
+    return;
+  }
+  if (!OneDeviceInfoUtil.isLowMemoryIOSDevice()) {
+    Logger.d("app_config: not need clear");
+    return;
+  }
+  clearMemory();
+  super.didHaveMemoryPressure();
+}
 
-### 8.1 升级节奏
+void clearMemory() {
+  PaintingBinding.instance.imageCache.clear();
+  DefaultCacheManager manager = DefaultCacheManager();
+  manager.store.emptyMemoryCache(); //clears all data in cache.
+}
+```
 
-- 每季度做一次三端基础库统一升级
-- 每次升级设置可回滚策略
+- 设置模块缓存清理
+  - 代码位置：[clear_cache_util.dart]
 
-### 8.2 升级优先级
+```dart
+static Future<bool> clear() async {
+  final Directory tempDir = await getTemporaryDirectory();
+  await _delete(tempDir);
+  String locale = Intl.getCurrentLocale();
+  String environment = AppEnvironmentConfig.getCurEnvironment().toString().split('.').last;
+  String componetJsonCacheKey1 = 'Component_${ComponentPageCode.DISCOVER}_${locale}_${environment}';
+  String componetJsonCacheKey2 = 'Component_${ComponentPageCode.COMMUNITY}_${locale}_${environment}';
+  await clearSpCahceByKeys([componetJsonCacheKey1, componetJsonCacheKey2]);
+  return true;
+}
+```
 
-- Flutter SDK 与关键依赖（状态管理、路由、网络）
-- Android/iOS 原生 SDK 与重要三方库
+- 账号模块内存缓存清理
+  - 代码位置：[garage_facade_impl.dart:L395-L401]
 
-## 9. 里程碑与交付物
+```dart
+@override
+Future<void> clearCache() async {
+  Logger.i('$_tagPrefix#clearCache: calling', clrAccountTag);
+  await encryptedModuleBox.delete(vehicleCacheKey);
+  _memoryCache.clear();
+  _defaultVehicle = null;
+}
+```
 
-![阶段路线图](images/performance_roadmap.svg)
+- 原生资源释放（AvatarX 模块）
+  - 代码位置：[AvatarxManager.swift:L685-L696]
 
-### 9.1 阶段目标
+```swift
+func destroy() {
+    FUAvatarHelper.destroy()
+    FURenderKit.destroy()
+    FUAIKit.destroy()
+    FUAIKit.unloadAllAIMode()
+    removeDisplayView()
+    initResource = false
+    isLoadDefaultBundle = false
+}
+```
 
-- 阶段 1：完成指标基线与监控链路统一  
-- 阶段 2：完成核心模块性能专项优化  
-- 阶段 3：完成模块化治理与基础库升级闭环  
+### 1.1 现状缺口（基于仓库检索）
 
-### 9.2 交付物
+- 未找到全局 ImageCache 上限的真实配置代码
+- 未找到统一的图片下采样封装入口
+- 未找到 Isolate 大计算通用封装入口
+- Android/iOS 侧缺少统一的缓存限额策略代码
 
-- 性能指标基线报告  
-- 性能与稳定性监控平台规范  
-- 优化专项清单与治理结果  
-- 模块化治理与依赖关系报告  
+### 1.2 直接可做的补齐任务（基于现有框架）
 
-## 10. 适配与扩展
+1. 在应用入口补齐 ImageCache 上限配置，挂载在已有 MemoryWatcher 初始化流程中  
+2. 基于现有 DefaultCacheManager 清理逻辑，补齐业务级缓存 TTL 与最大内存占用  
+3. 增加图片加载统一封装（业务模块只用封装入口，不直接 Image.network）  
+4. 对耗时解析/批量处理提供统一异步处理入口  
+## 2. Android 内存优化（现状与补齐）
 
-在 Android 与 iOS 基础上，新增鸿蒙平台接入时：
-- 复用监控指标体系
-- 接入统一的监控链路与数据规范
-- 与原有平台保持指标可对齐
+### 2.1 现状
 
-## 11. 关联文档
+当前仓库中未检索到 Android 侧的 onTrimMemory/onLowMemory、Bitmap 下采样、LruCache 等内存治理实现代码。现阶段内存清理主要集中在 Flutter 层与业务缓存逻辑。
 
-- [OneApp架构设计文档.md](../OneApp架构设计文档.md)
-- [kit_app_monitor.md](../basic_utils/kit_app_monitor.md)
-- [debug_tools.md](../debug_tools.md)
+### 2.2 补齐方向（基于现有架构可落地）
+
+- 在 Android Application 级别接入内存回调并驱动缓存清理
+- 为高频图片/视频模块补齐下采样与缓存限额策略
+- 统一原生缓存上限与回收入口，供 Flutter 侧触发
+
+## 3. iOS 内存优化（现状与补齐）
+
+### 3.1 现状
+
+- iOS 低内存设备识别已在基础能力中实现，用于清理策略判断  
+  - 代码位置：[one_device_info_util.dart:L27-L49]
+
+```dart
+static bool isLowMemoryIOSDevice() {
+  switch (oneDeviceType) {
+    case OneDeviceType.iPhone_7:
+    case OneDeviceType.iPhone_7_Plus:
+    case OneDeviceType.iPhone_8:
+    case OneDeviceType.iPhone_8_Plus:
+    case OneDeviceType.iPhone_X:
+    case OneDeviceType.iPhone_XS:
+    case OneDeviceType.iPhone_XS_MAX:
+    case OneDeviceType.iPhone_XR:
+    case OneDeviceType.iPhone_11:
+    case OneDeviceType.iPhone_11_Pro:
+    case OneDeviceType.iPhone_11_Pro_Max:
+    case OneDeviceType.iPhone_SE_2:
+    case OneDeviceType.iPhone_12_mini:
+    case OneDeviceType.iPhone_12:
+    case OneDeviceType.iPhone_13_mini:
+    case OneDeviceType.iPhone_13:
+    case OneDeviceType.iPhone_SE_3:
+      return true;
+    default:
+      return false;
+  }
+}
+```
+
+### 3.2 补齐方向
+
+- 统一 iOS 侧图片/模型资源下采样入口
+- 统一 NSCache/LRU 上限并与 Flutter 清理逻辑联动
+
+## 4. 统一缓存治理（跨端，基于现状的改造点）
+
+- 现状清理入口：OneAppConfigHandler.clearMemory() 已在内存告警触发时执行  
+  - 代码位置：[app_config_handler.dart:L73-L77]
+- 业务缓存清理入口：设置模块提供清理临时目录与组件缓存逻辑  
+  - 代码位置：[clear_cache_util.dart]
+
+## 5. 落地改造优先级（基于现有代码的下一步）
+
+1. 在应用入口补齐 ImageCache 上限配置，接入现有 MemoryWatcher  
+2. 业务缓存统一 TTL 与内存上限，复用 DefaultCacheManager 清理入口  
+3. 引入统一图片加载封装，替换业务模块直接 Image.network 使用  
+4. 对批量解析/重计算提供统一异步处理入口  
+5. Android/iOS 侧补齐统一的内存回调与缓存上限策略  
+
+## 6. 成本与风险评估（结合当前项目）
+
+- 低成本/低风险
+  - 缓存清理入口统一、内存告警联动优化、生命周期释放规范化
+- 中成本/中风险
+  - 图片加载统一封装、缓存策略统一、模块依赖治理
+- 高成本/高风险
+  - 核心业务模块重构、原生侧深度改造、三端基础库大版本升级
+
+## 7. 结合当前项目的建议行动
+
+- 先做基线：以核心场景建立内存基线与峰值对照表
+- 先修高收益：围绕内存告警链路与缓存清理入口做闭环
+- 再做结构性优化：模块边界治理、依赖统一、缓存策略统一
