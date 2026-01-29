@@ -1675,6 +1675,11 @@ graph TB
         A --> A3[订单管理]
         A --> A4[社区互动]
         A --> A5[会员中心]
+        A --> A6[售后服务]
+        A --> A7[购车服务]
+        A --> A8[地图与导航]
+        A --> A9[消息中心]
+        A --> A10[设置与个人中心]
     end
     
     subgraph "业务逻辑层 (Business Layer)"
@@ -1683,6 +1688,10 @@ graph TB
         B3[社区模块<br/>oneapp_community]
         B4[会员模块<br/>oneapp_membership]
         B5[设置模块<br/>oneapp_setting]
+        B6[售后模块<br/>oneapp_after_sales]
+        B7[购车模块<br/>oneapp_car_sales]
+        B8[触点/活动模块<br/>oneapp_touch_point]
+        B9[订单模块<br/>app_order]
     end
     
     subgraph "服务接入层 (Service Layer)"
@@ -1691,6 +1700,9 @@ graph TB
         C3[订单服务<br/>clr_order]
         C4[媒体服务<br/>clr_media]
         C5[地理服务<br/>clr_geo]
+        C6[消息服务<br/>clr_message]
+        C7[账户服务<br/>clr_account]
+        C8[设置服务<br/>clr_setting]
     end
     
     subgraph "基础设施层 (Infrastructure Layer)"
@@ -1706,25 +1718,39 @@ graph TB
         E2[iOS<br/>Swift/ObjC]
     end
     
-    A1 --> B1
     A1 --> B2
     A2 --> B2
-    A3 --> B4
+    A3 --> B9
     A4 --> B3
     A5 --> B4
+    A6 --> B6
+    A7 --> B7
+    A8 --> B2
+    A9 --> B8
+    A10 --> B5
+    A10 --> B1
     
-    B1 --> C1
+    B1 --> C7
     B2 --> C1
     B2 --> C2
-    B4 --> C3
-    B3 --> C4
     B2 --> C5
+    B3 --> C4
+    B4 --> C3
+    B5 --> C8
+    B6 --> C5
+    B7 --> C3
+    B8 --> C6
+    B9 --> C3
+    B9 --> C2
     
     C1 --> D1
     C2 --> D1
     C3 --> D2
     C4 --> D3
     C5 --> D4
+    C6 --> D1
+    C7 --> D2
+    C8 --> D2
     
     D1 --> E1
     D2 --> E1
